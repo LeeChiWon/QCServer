@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>icon/add.png</file>
+        <file>icon/minus.png</file>
+        <file>icon/play-button.png</file>
+        <file>icon/settings-4.png</file>
+        <file>icon/link.png</file>
+        <file>icon/clock.png</file>
+        <file>icon/ipaddress.png</file>
+        <file>icon/settings.png</file>
+        <file>icon/screen.png</file>
+        <file>icon/sewing-machine.png</file>
+        <file>icon/light-bulb_green.png</file>
+        <file>icon/light-bulb_red.png</file>
+        <file>icon/play-button16.png</file>
+        <file>icon/stop.png</file>
+    </qresource>
+</RCC>
