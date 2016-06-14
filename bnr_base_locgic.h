@@ -52,7 +52,6 @@ public:
     QWebEnginePage optionpage1;
     int pageloadfinish_length = 0;
     QString webenginenamestr;
-
 #endif
 
     QSqlDatabase remotedb;

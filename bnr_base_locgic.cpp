@@ -93,7 +93,7 @@ void Bnr_base_locgic::managerfinished(QNetworkReply *reply){
 }
 
 void Bnr_base_locgic::pageloadfinish(bool result){
-    #if QT_VERSION > QT_VERSION_CHECK(5,6,0)
+#if QT_VERSION > QT_VERSION_CHECK(5,6,0)
        mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
        if(result){
            QWebEnginePage *page =  (QWebEnginePage *)QObject::sender();
@@ -106,17 +106,25 @@ void Bnr_base_locgic::pageloadfinish(bool result){
                          webenginenamestr=s.toString();
                     });
                 valuestr = QString("a[%1].getElementsByClassName(\"value\")[0].textContent").arg(i);
-                        page->runJavaScript(valuestr,[this](const QVariant &s){
+                        page->runJavaScript(valuestr,[this,page](const QVariant &s){
                           datamap->insert(webenginenamestr,new BNRvalue(webenginenamestr,s.toString()));
                           //qDebug()<<"webenginenamestr = "<<webenginenamestr<<" value = "<<s.toString();
+                          if(webenginenamestr.compare("FINISH")==0){ //FINISH로 마지막을 구분한다.
+                               if(page->url().toString().indexOf("BNRbase.asp")>0){
+                                    url_bnrbaseloop();
+                               }else if(page->url().toString().indexOf("TAC1XX11warning.as")>0){
 
+                               }else {
+
+                               }
+                          }
                      });
                 }
            }); //람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
            parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
            parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
        }//람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
-    #endif
+#endif
 }
 
 void Bnr_base_locgic::url_bnrbaseloop(){
@@ -173,8 +181,14 @@ void Bnr_base_locgic::url_bnrbaseloop(){
 
     int mode = datamap->value("MMI_DATA.Mode")->value.toInt();
     QString modestr;
-    if(mode==1){
-
+    if(mode == 1){
+        modestr=tr("auto");
+    }else if(mode ==2){
+        modestr=tr("helfauto");
+    }else if(mode ==4){
+        modestr=tr("munual");
+    }else if(mode ==5){
+        modestr=tr("mold");
     }
 
 
@@ -195,9 +209,6 @@ void Bnr_base_locgic::url_bnrbaseloop(){
                             .arg(datamap->value("MA_STAT.AbAlarmPending")->value)
                             .arg(mancine_name);
     mysqlquery1.exec(update_temp);
-
-}
-void Bnr_base_locgic::url_tac1xx11warningloop(){
 
 }
 
