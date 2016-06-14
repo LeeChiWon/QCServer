@@ -116,7 +116,7 @@ void MainWindow::litesql_init(){
     QSqlQuery litequery1(litedb);
     litequery1.exec("CREATE TABLE  IF NOT EXISTS systemset (remoteserverip TEXT,"
                     "remoteserverport TEXT,"
-                    "remoteserverdame TEXT,"
+                    "remoteserverdbname TEXT,"
                     "version INTEGER,"
                     "remoteserverusername TEXT,"
                     "remoteserveruserpassword TEXT"
@@ -135,6 +135,7 @@ void MainWindow::litesql_init(){
                     "\'QCmen\',"
                     "\'1234\' "
                     "where not exists(select * from systemset);");
+
 }
 void MainWindow::remotesql_connect(){
     QSqlQuery litequery1(litedb);

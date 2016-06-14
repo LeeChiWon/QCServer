@@ -12,7 +12,7 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
     ip = new QLabel(iptext);
     machinename = new QLabel(machinenametext);
     type = new QComboBox();
-    setupbtn = new QPushButton(tr("설치"));
+    setupbtn = new QPushButton(tr("setup"));
     connectlabel->setTextFormat(Qt::RichText);
     connectlabel->setText(tr("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect"));
     type->addItem("gefranseven");

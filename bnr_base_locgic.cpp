@@ -10,9 +10,15 @@ Bnr_base_locgic::Bnr_base_locgic(QObject *parentmslot,QObject *parent) :
 bool Bnr_base_locgic::init(){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     datamap = new QMap<QString,BNRvalue *>;
+#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
     connect(&manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerfinished(QNetworkReply*)));
+#else
+    connect(&basepage,SIGNAL(loadFinished(bool)),this,SLOT(pageloadfinish(bool)));
+    connect(&optionpage1,SIGNAL(loadFinished(bool)),this,SLOT(pageloadfinish(bool)));
+#endif
     remotedb  = QSqlDatabase::database("remotedb");
     initflag=true;
+    return initflag;
 }
 void Bnr_base_locgic::loop(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
@@ -26,13 +32,22 @@ void Bnr_base_locgic::loop(){
 }
 void Bnr_base_locgic::requst_read_value(QString ip,QString address){
     QString url = QString("http://%1/%2").arg(ip).arg(address);
+#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
     requast.setUrl(url);
     manager.get(requast);
+#else
+    if(address.compare("BNRbase.asp") == 0){
+        basepage.load(QUrl(url));
+    }else if (address.compare("TAC1XX11warning.asp")==0){
+        optionpage1.load(QUrl(url));
+    }
+#endif
 }
 void Bnr_base_locgic::managerfinished(QNetworkReply *reply){
     QByteArray temp_data;
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     temp_data = reply->readAll();
+#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
     if(temp_data.size()>0){
         webpage.mainFrame()->setHtml(temp_data);
         documents = webpage.mainFrame()->findAllElements("div");
@@ -69,7 +84,39 @@ void Bnr_base_locgic::managerfinished(QNetworkReply *reply){
 
     }
     //qDebug()<<temp_data;
+
+
+
     delete reply;
+
+#endif
+}
+
+void Bnr_base_locgic::pageloadfinish(bool result){
+    #if QT_VERSION > QT_VERSION_CHECK(5,6,0)
+       mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
+       if(result){
+           QWebEnginePage *page =  (QWebEnginePage *)QObject::sender();
+           page->runJavaScript("var a = document.getElementsByTagName(\"div\");");
+           page->runJavaScript("a.length",[this,page](const QVariant &v){
+                pageloadfinish_length = v.toInt();
+                for(int i=0;i<pageloadfinish_length;i++){
+                QString valuestr = QString("a[%1].getAttribute(\"name\")").arg(i);
+                    page->runJavaScript(valuestr,[this](const QVariant &s){
+                         webenginenamestr=s.toString();
+                    });
+                valuestr = QString("a[%1].getElementsByClassName(\"value\")[0].textContent").arg(i);
+                        page->runJavaScript(valuestr,[this](const QVariant &s){
+                          datamap->insert(webenginenamestr,new BNRvalue(webenginenamestr,s.toString()));
+                          //qDebug()<<"webenginenamestr = "<<webenginenamestr<<" value = "<<s.toString();
+
+                     });
+                }
+           }); //람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
+           parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
+           parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
+       }//람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
+    #endif
 }
 
 void Bnr_base_locgic::url_bnrbaseloop(){
@@ -126,15 +173,10 @@ void Bnr_base_locgic::url_bnrbaseloop(){
 
     int mode = datamap->value("MMI_DATA.Mode")->value.toInt();
     QString modestr;
-    if(mode == 1){
-        modestr=tr("전자동");
-    }else if(mode ==2){
-        modestr=tr("반자동");
-    }else if(mode ==4){
-        modestr=tr("수동");
-    }else if(mode ==5){
-        modestr=tr("금형취부");
+    if(mode==1){
+
     }
+
 
     update_temp = QString("UPDATE Systeminfo SET production_count = %1,"
                           "object_count = %2,"
