@@ -70,10 +70,8 @@ void Bnr_base_locgic::managerfinished(QNetworkReply *reply){
         if(reply->url().toString().indexOf("BNRbase.asp")>0){
             url_bnrbaseloop();
         }else if(reply->url().toString().indexOf("TAC1XX11warning.asp")>0){
-            url_tac1xx11warningloop();
+
         }
-
-
 
         parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
         parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
