@@ -15,4 +15,8 @@
         <file>icon/play-button16.png</file>
         <file>icon/stop.png</file>
     </qresource>
+    <qresource prefix="/lang">
+        <file>qt_en.qm</file>
+        <file>qt_ko.qm</file>
+    </qresource>
 </RCC>

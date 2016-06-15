@@ -4,9 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network sql ftp webkit webkitwidgets
+QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+lessThan(QT_VERSION, 5.6): QT += webkit webkitwidgets
+greaterThan(QT_VERSION, 5.6): QT += webenginewidgets
+
+TRANSLATIONS = qt_ko.ts qt_en.ts
+
 
 TARGET = QCServer
 TEMPLATE = app
@@ -29,3 +34,6 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     Res.qrc
+
+DISTFILES +=
+
