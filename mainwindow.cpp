@@ -432,5 +432,6 @@ void MainWindow::closeEvent(QCloseEvent *event){
         valuelist.at(i)->bnr_base_logic->basepage->deleteLater();
         valuelist.at(i)->bnr_base_logic->optionpage1->deleteLater();
     }
+    serversetform->deleteLater();
 
 }
