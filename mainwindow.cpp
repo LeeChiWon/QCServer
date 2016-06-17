@@ -426,3 +426,11 @@ void MainWindow::on_serverstopbtn_clicked()
         valuelist.at(i)->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
     }
 }
+void MainWindow::closeEvent(QCloseEvent *event){
+    QList<mslotitem *> valuelist = itemmap->values();
+    for(int i=0;i<valuelist.count();i++){
+        valuelist.at(i)->bnr_base_logic->basepage->deleteLater();
+        valuelist.at(i)->bnr_base_logic->optionpage1->deleteLater();
+    }
+
+}

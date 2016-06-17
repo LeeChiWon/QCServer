@@ -31,6 +31,8 @@ public:
     void remotesql_connect();
     void remotesql_init();
     void remote_init_read_machineinfo();
+    void closeEvent(QCloseEvent *event);
+
 
     ~MainWindow();
 

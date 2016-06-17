@@ -14,6 +14,7 @@
 #include <QWebElement>
 #else
 #include <QWebEnginePage>
+#include <QWebEngineView>
 #endif
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -51,8 +52,8 @@ public:
     QWebElement first_document;
     QWebElementCollection documents;
 #else
-    QWebEnginePage basepage;
-    QWebEnginePage optionpage1;
+    QWebEngineView *basepage;
+    QWebEngineView *optionpage1;
     int pageloadfinish_length = 0;
     QString webenginenamestr;
 #endif
@@ -61,6 +62,8 @@ public:
 
     void requst_read_value(QString ip, QString address);
     void url_bnrbaseloop();
+    ~Bnr_base_locgic();
+
 
 signals:
 
