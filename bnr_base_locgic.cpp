@@ -7,10 +7,9 @@ Bnr_base_locgic::Bnr_base_locgic(QObject *parentmslot,QObject *parent) :
 {
     this->parentmslot = parentmslot;
     initflag=false;
-    basepage = new QWebEngineView((QWidget *)parent);
-    optionpage1 = new QWebEngineView((QWidget *)parent);
-    basepage->show();
-    optionpage1->show();
+    basepage = new QWebEnginePage();
+    optionpage1 = new QWebEnginePage();
+
 
 }
 Bnr_base_locgic::~Bnr_base_locgic(){
@@ -106,41 +105,41 @@ void Bnr_base_locgic::managerfinished(QNetworkReply *reply){
 
 void Bnr_base_locgic::pageloadfinish(bool result){
 #if QT_VERSION > QT_VERSION_CHECK(5,6,0)
-//       mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
-//       QWebEngineView *pageView =  (QWebEngineView *)QObject::sender();
-//       qDebug()<<"tile"<<pageView->page()->title();
-//       if(result){
-//           pageView->page()->runJavaScript("var a = document.getElementsByTagName(\"div\");");
-//           pageView->page()->runJavaScript("a.length",[this,pageView](const QVariant &v){
-//                pageloadfinish_length = v.toInt();
-//                for(int i=0;i<pageloadfinish_length;i++){
-//                QString valuestr = QString("a[%1].getAttribute(\"name\")").arg(i);
-//                    pageView->page()->runJavaScript(valuestr,[this](const QVariant &s){
-//                         webenginenamestr=s.toString();
-//                    });
-//                valuestr = QString("a[%1].getElementsByClassName(\"value\")[0].textContent").arg(i);
-//                        pageView->page()->runJavaScript(valuestr,[this,pageView](const QVariant &s){
-//                          datamap->insert(webenginenamestr,new BNRvalue(webenginenamestr,s.toString()));
-//                          //qDebug()<<"webenginenamestr = "<<webenginenamestr<<" value = "<<s.toString();
-//                          if(webenginenamestr.compare("FINISH")==0){ //FINISH로 마지막을 구분한다.
-//                               if(pageView->page()->url().toString().indexOf("BNRbase.asp")>0){
-//                                    url_bnrbaseloop();
-//                               }else if(pageView->page()->url().toString().indexOf("TAC1XX11warning.as")>0){
+       mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
+       QWebEnginePage *pageView =  (QWebEnginePage *)QObject::sender();
+//       qDebug()<<"tile"<<pageView->title();
+       if(result){
+           pageView->runJavaScript("var a = document.getElementsByTagName(\"div\");");
+           pageView->runJavaScript("a.length",[this,pageView](const QVariant &v){
+                pageloadfinish_length = v.toInt();
+                for(int i=0;i<pageloadfinish_length;i++){
+                QString valuestr = QString("a[%1].getAttribute(\"name\")").arg(i);
+                    pageView->runJavaScript(valuestr,[this](const QVariant &s){
+                         webenginenamestr=s.toString();
+                    });
+                valuestr = QString("a[%1].getElementsByClassName(\"value\")[0].textContent").arg(i);
+                        pageView->runJavaScript(valuestr,[this,pageView](const QVariant &s){
+                          datamap->insert(webenginenamestr,new BNRvalue(webenginenamestr,s.toString()));
+                          //qDebug()<<"webenginenamestr = "<<webenginenamestr<<" value = "<<s.toString();
+                          if(webenginenamestr.compare("FINISH")==0){ //FINISH로 마지막을 구분한다.
+                               if(pageView->url().toString().indexOf("BNRbase.asp")>0){
+                                    url_bnrbaseloop();
+                               }else if(pageView->url().toString().indexOf("TAC1XX11warning.as")>0){
 
-//                               }else {
+                               }else {
 
-//                               }
-//                          }
-//                     });
-//                }
-//           }); //람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
-//           parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
-//           parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
-//       }//람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
-//       else if(pageView->page()->title().compare("Ststcms")!=0){
-//           parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
-//           parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
-//       }
+                               }
+                          }
+                     });
+                }
+           }); //람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
+           parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
+           parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
+       }//람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
+       else if(pageView->title().compare("Ststcms")!=0){
+           parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
+           parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
+       }
 #endif
 }
 

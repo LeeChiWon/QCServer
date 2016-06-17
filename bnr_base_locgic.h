@@ -52,8 +52,8 @@ public:
     QWebElement first_document;
     QWebElementCollection documents;
 #else
-    QWebEngineView *basepage;
-    QWebEngineView *optionpage1;
+    QWebEnginePage *basepage;
+    QWebEnginePage *optionpage1;
     int pageloadfinish_length = 0;
     QString webenginenamestr;
 #endif
