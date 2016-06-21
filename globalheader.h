@@ -15,4 +15,14 @@
 #define ITEMTYPE 4
 #define ITEMSETUP 5
 
+#define INJSPD 0
+#define INJPRS 1
+#define INJPOS 2
+#define HOLDPRS 1
+#define HOLDSPD 0
+#define HOLDTIME 2
+#define CHGSPD 0
+#define CHGBPS 1
+#define CHGPOS 2
+
 #endif // GLOBALHEADER_H
