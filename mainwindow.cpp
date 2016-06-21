@@ -366,7 +366,7 @@ void MainWindow::remotesql_init(){
                            .arg(TEMPTABLEVERSION)
                            .arg(MOLDINFOVERSION)
                            .arg(DBVERSION);
-    //qDebug()<<strquery;
+
     mysqlquery1.exec(strquery);
 
     mysqlquery1.exec("CREATE TABLE `works` ("
@@ -380,8 +380,75 @@ void MainWindow::remotesql_init(){
                      ";"
                     );
 
-
-
+    mysqlquery1.exec("CREATE TABLE IF NOT EXISTS `Recipe_Info` ("
+                                      "`machine_name` VARCHAR(50) NOT NULL,"
+                                      "`injstep` SMALLINT(6) NOT NULL DEFAULT '0',"
+                                      "`holdstep` SMALLINT(6) NOT NULL DEFAULT '0',"
+                                      "`injspd_1` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injspd_2` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injspd_3` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injspd_4` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injspd_5` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injspd_6` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injspd_7` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injspd_8` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injspd_9` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injspd_10` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_1` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_2` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_3` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_4` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_5` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_6` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_7` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_8` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_9` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injprs_10` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_1` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_2` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_3` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_4` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_5` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_6` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_7` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_8` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_9` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injpos_10` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdspd_1` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdspd_2` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdspd_3` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdspd_4` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdspd_5` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdprs_1` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdprs_2` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdprs_3` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdprs_4` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdprs_5` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdtime_1` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdtime_2` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdtime_3` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdtime_4` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`holdtime_5` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgspd_1` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgspd_2` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgspd_3` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgbps_1` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgbps_2` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgbps_3` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgpos_1` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgpos_2` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgpos_3` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`sovpos` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`sovtime` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injtime` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`injdeltime` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`cooltime` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`chgdeltime` DOUBLE NOT NULL DEFAULT '0',"
+                                      "UNIQUE INDEX `machine_name` (`machine_name`)"
+                                  ")"
+                                  "COLLATE='utf8_bin'"
+                                  "ENGINE=InnoDB"
+                                  ";");
 }
 
 void MainWindow::on_deletebtn_clicked()
