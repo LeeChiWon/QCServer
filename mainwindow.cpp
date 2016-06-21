@@ -439,7 +439,7 @@ void MainWindow::remotesql_init(){
                                       "`chgpos_2` DOUBLE NOT NULL DEFAULT '0',"
                                       "`chgpos_3` DOUBLE NOT NULL DEFAULT '0',"
                                       "`sovpos` DOUBLE NOT NULL DEFAULT '0',"
-                                      "`sovtime` DOUBLE NOT NULL DEFAULT '0',"
+                                      "`sovprs` DOUBLE NOT NULL DEFAULT '0',"
                                       "`injtime` DOUBLE NOT NULL DEFAULT '0',"
                                       "`injdeltime` DOUBLE NOT NULL DEFAULT '0',"
                                       "`cooltime` DOUBLE NOT NULL DEFAULT '0',"
