@@ -75,6 +75,25 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
                         "`temp21_set`=0 , `temp21_up`=0 , `temp21_down`=0 , `temp21_real`=0 "
                         ).arg(machinenametext);
     mysqlquery1.exec(quertstr2);
+
+    quertstr2=QString("insert into Recipe_Info (machine_name) values ('%1')"
+                      "on duplicate key update "
+                      "`injstep`=0, `holdstep`=0,"
+                      "`injspd_1`=0, `injspd_2`=0, `injspd_3`=0, `injspd_4`=0, `injspd_5`=0,"
+                      "`injspd_6`=0, `injspd_7`=0, `injspd_8`=0, `injspd_9`=0, `injspd_10`=0,"
+                      "`injprs_1`=0, `injprs_2`=0, `injprs_3`=0, `injprs_4`=0, `injprs_5`=0,"
+                      "`injprs_6`=0, `injprs_7`=0, `injprs_8`=0, `injprs_9`=0, `injprs_10`=0,"
+                      "`injpos_1`=0, `injpos_2`=0, `injpos_3`=0, `injpos_4`=0, `injpos_5`=0,"
+                      "`injpos_6`=0, `injpos_7`=0, `injpos_8`=0, `injpos_9`=0, `injpos_10`=0,"
+                      "`holdspd_1`=0, `holdspd_2`=0, `holdspd_3`=0, `holdspd_4`=0, `holdspd_5`=0,"
+                      "`holdprs_1`=0, `holdprs_2`=0, `holdprs_3`=0, `holdprs_4`=0, `holdprs_5`=0,"
+                      "`holdtime_1`=0, `holdtime_2`=0, `holdtime_3`=0, `holdtime_4`=0, `holdtime_5`=0,"
+                      "`chgspd_1`=0, `chgspd_2`=0, `chgspd_3`=0,"
+                      "`chgbps_1`=0, `chgbps_2`=0, `chgbps_3`=0,"
+                      "`chgpos_1`=0, `chgpos_2`=0, `chgpos_3`=0,"
+                      "`sovpos`=0, `sovprs`=0, `injtime`=0, `injdeltime`=0, `cooltime`=0, `chgdeltime`=0").arg(machinenametext);
+    mysqlquery1.exec(quertstr2);
+
     maintimer.setInterval(MAINTIMERTIME);
     bnr_base_logic = new Bnr_base_locgic(this);
 
