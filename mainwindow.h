@@ -9,7 +9,7 @@
 #include "serversetform.h"
 #include <QSqlDatabase>
 #include <QSqlQuery>
-#include <globalheader.h>
+#include "globalheader.h"
 
 namespace Ui {
 class MainWindow;

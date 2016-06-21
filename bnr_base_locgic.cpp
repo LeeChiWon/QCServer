@@ -7,8 +7,10 @@ Bnr_base_locgic::Bnr_base_locgic(QObject *parentmslot,QObject *parent) :
 {
     this->parentmslot = parentmslot;
     initflag=false;
+#if QT_VERSION > QT_VERSION_CHECK(5,6,0)
     basepage = new QWebEnginePage();
     optionpage1 = new QWebEnginePage();
+#endif
 
 
 }

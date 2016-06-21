@@ -16,8 +16,9 @@
 #include <QDebug>
 #include <QSqlQuery>
 #include <QTimer>
-#include <bnr_base_locgic.h>
-#include <globalheader.h>
+#include "bnr_base_locgic.h"
+#include "gefranseven_base_logic.h"
+#include "globalheader.h"
 
 class mslotitem : public QObject
 {
@@ -35,6 +36,7 @@ public:
     QString machinenametext;
     QTimer maintimer;
     Bnr_base_locgic *bnr_base_logic;
+    gefranseven_base_logic *gefran_base_logic;
     void set_connectlabel_text(QString data);
     void set_status_text(QString data);
 
