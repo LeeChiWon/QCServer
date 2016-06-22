@@ -306,7 +306,13 @@
 	<div name = REC_DATA.IP.PL.Ss[0] ><p>REC_DATA.IP.PL.Ss[0] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.PL.Ss[0]"); %></p> </div>
 	<div name = REC_DATA.IP.PL.Ss[1] ><p>REC_DATA.IP.PL.Ss[1] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.PL.Ss[1]"); %></p> </div>
 	<div name = REC_DATA.IP.PL.Ss[2] ><p>REC_DATA.IP.PL.Ss[2] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.PL.Ss[2]"); %></p> </div>	
-		
+	<!--강제후퇴속도-->
+	<div name = REC_DATA.IP.NS.SvDB ><p>REC_DATA.IP.NS.SvDB	= </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SvDB"); %></p> </div>
+	<div name = REC_DATA.IP.NS.SvDA ><p>REC_DATA.IP.NS.SvDA	= </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SvDA"); %></p> </div>
+	<!--강제후퇴위치-->
+	<div name = REC_DATA.IP.NS.SsDB ><p>REC_DATA.IP.NS.SsDB	= </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SsDB"); %></p> </div>
+	<div name = REC_DATA.IP.NS.SsDA ><p>REC_DATA.IP.NS.SsDA = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SsDA"); %></p> </div>
+	
 	<div name = FINISH> <p>MA_STAT.AbAlarmPending = </P> <p class = "value">0</p> </div>
 </body>
 </html>
