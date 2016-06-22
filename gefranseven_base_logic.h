@@ -1,5 +1,5 @@
-#ifndef BNR_BASE_LOCGIC_H
-#define BNR_BASE_LOCGIC_H
+#ifndef GEFRANSEVEN_BASE_LOGIC_H
+#define GEFRANSEVEN_BASE_LOGIC_H
 
 #include <QObject>
 #include <QMap>
@@ -19,57 +19,55 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
-class BNRvalue {
+class gefranvalue {
 public:
     QString name;
     QString value;
-    BNRvalue(){
+    gefranvalue(){
 
     }
-    BNRvalue(QString name,QString value){
+    gefranvalue(QString name,QString value){
         this->name=name;
         this->value=value;
     }
 };
 
-class Bnr_base_locgic : public QObject
+class gefranseven_base_logic : public QObject
 {
     Q_OBJECT
 public:
-    explicit Bnr_base_locgic(QObject *parentmslot,QObject *parent = 0);
+    explicit gefranseven_base_logic(QObject *parentmslot,QObject *parent = 0);
     bool initflag;
     bool init();
     void loop();
     QObject *parentmslot;
-    QMap<QString,BNRvalue *> *datamap; //<name,value>
+    QMap<QString,gefranvalue *> *datamap; //<name,value>
     QNetworkAccessManager manager;
     QNetworkRequest requast;
 #if QT_VERSION < QT_VERSION_CHECK(5,6,0)
     QWebPage webpage;
-    QWebElement document;
+    QWebElement document1;
+    QWebElement document2;
     QWebElement first_document;
-    QWebElementCollection documents;
+    QWebElementCollection documents1;
+    QWebElementCollection documents2;
 #else
     QWebEnginePage *basepage;
     QWebEnginePage *optionpage1;
     int pageloadfinish_length = 0;
     QString webenginenamestr;
+    QVector<QString> var_list;
+    QByteArray html_data;
+    bool pagerun_flag;
 #endif
 
     QSqlDatabase remotedb;
-
     void requst_read_value(QString ip, QString address);
-    void url_bnrbaseloop();
-    ~Bnr_base_locgic();
-
-
+    void url_gefranbaseloop();
 signals:
 
 public slots:
     void managerfinished(QNetworkReply *reply);
-    void pageloadfinish(bool);
-
 };
 
-
-#endif // BNR_BASE_LOCGIC_H
+#endif // GEFRANSEVEN_BASE_LOGIC_H

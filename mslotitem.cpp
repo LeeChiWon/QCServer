@@ -15,8 +15,8 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
     setupbtn = new QPushButton(tr("setup"));
     connectlabel->setTextFormat(Qt::RichText);
     connectlabel->setText(tr("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect"));
-    type->addItem("gefranseven");
-    type->addItem("es600");
+    type->addItem("gefranseven/");
+    type->addItem("es600/");
     type->addItem("BNR/TAC1XX11");
     status->setTextFormat(Qt::RichText);
     status->setText(tr("<img src=\":/icon/icon/stop.png\">  STOP"));
@@ -97,6 +97,7 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
 
     maintimer.setInterval(MAINTIMERTIME);
     bnr_base_logic = new Bnr_base_locgic(this);
+    gefran_base_logic = new gefranseven_base_logic(this);
 
     connect(type,SIGNAL(currentTextChanged(QString)),this,SLOT(typechange(QString)));
     connect(&maintimer,SIGNAL(timeout()),this,SLOT(maintimer_timeout()));
@@ -121,9 +122,13 @@ void mslotitem::maintimer_timeout(){
         }
         //loop logic
         bnr_base_logic->loop();
-    }else if(type->currentText().compare("gefranseven")==0){
+    }else if(type->currentText().split("/").at(0).compare("gefranseven")==0){
+        if(!gefran_base_logic->initflag){
+            gefran_base_logic->init();
+        }
+        gefran_base_logic->loop();
 
-    }else if(type->currentText().compare("es600")==0){
+    }else if(type->currentText().split("/").at(0).compare("es600")==0){
 
     }
 

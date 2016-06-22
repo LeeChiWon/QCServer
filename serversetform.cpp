@@ -43,5 +43,7 @@ void Serversetform::on_applybtn_clicked()
     str = QString("update systemset set remoteserveruserpassword = \'%1\';").arg(ui->remoteserveruserpassword->text());
     query2.exec(str);
 
+    close();
+
 
 }

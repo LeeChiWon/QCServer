@@ -499,10 +499,12 @@ void MainWindow::on_serverstopbtn_clicked()
 }
 void MainWindow::closeEvent(QCloseEvent *event){
     QList<mslotitem *> valuelist = itemmap->values();
+#if QT_VERSION > QT_VERSION_CHECK(5,6,0)
     for(int i=0;i<valuelist.count();i++){
         valuelist.at(i)->bnr_base_logic->basepage->deleteLater();
         valuelist.at(i)->bnr_base_logic->optionpage1->deleteLater();
     }
+#endif
     serversetform->deleteLater();
 
 }

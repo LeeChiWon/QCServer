@@ -21,13 +21,17 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     mslotitem.cpp \
     serversetform.cpp \
-    bnr_base_locgic.cpp
+    bnr_base_locgic.cpp \
+    es600_base_locgic.cpp \
+    gefranseven_base_logic.cpp
 
 HEADERS  += mainwindow.h \
     mslotitem.h \
     serversetform.h \
     globalheader.h \
-    bnr_base_locgic.h
+    bnr_base_locgic.h \
+    es600_base_locgic.h \
+    gefranseven_base_logic.h
 
 FORMS    += mainwindow.ui \
     serversetform.ui
