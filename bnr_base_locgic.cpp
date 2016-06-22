@@ -300,6 +300,12 @@ void Bnr_base_locgic::url_bnrbaseloop(){
     update_temp.append(QString("%1%2%3").arg(Charge[CHGBPS].at(0),Charge[CHGBPS].at(1),Charge[CHGBPS].at(2)));
     update_temp.append(QString("%1%2%3").arg(Charge[CHGPOS].at(0),Charge[CHGPOS].at(1),Charge[CHGPOS].at(2)));
 
+    update_temp.append(QString("suckbspd_1=%1, suckbspd_2=%2, suckbpos_1=%3, suckbpos_2=%4,")
+                       .arg(datamap->value("REC_DATA.IP.NS.SvDB")->value.toFloat()/10)
+                       .arg(datamap->value("REC_DATA.IP.NS.SvDA")->value.toFloat()/10)
+                       .arg(datamap->value("REC_DATA.IP.NS.SsDB")->value.toFloat()/10)
+                       .arg(datamap->value("REC_DATA.IP.NS.SsDA")->value.toFloat()/10));
+
     update_temp.append(QString("sovpos=%1, sovprs=%2, injtime=%3, injdeltime=%4, cooltime=%5, chgdeltime=%6 where machine_name='%7'")
                        .arg(datamap->value("REC_DATA.IP.NEG.SsSov")->value.toFloat()/10)
                        .arg(datamap->value("REC_DATA.IP.NEG.SpSov")->value.toFloat()/10)

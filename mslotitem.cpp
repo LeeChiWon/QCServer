@@ -91,6 +91,7 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
                       "`chgspd_1`=0, `chgspd_2`=0, `chgspd_3`=0,"
                       "`chgbps_1`=0, `chgbps_2`=0, `chgbps_3`=0,"
                       "`chgpos_1`=0, `chgpos_2`=0, `chgpos_3`=0,"
+                      "`suckbspd_1`=0, `suckbspd_2`=0, `suckbpos_1`=0, `suckbpos_2`=0,"
                       "`sovpos`=0, `sovprs`=0, `injtime`=0, `injdeltime`=0, `cooltime`=0, `chgdeltime`=0").arg(machinenametext);
     mysqlquery1.exec(quertstr2);
 
