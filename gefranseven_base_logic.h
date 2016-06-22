@@ -56,6 +56,9 @@ public:
     QWebEnginePage *optionpage1;
     int pageloadfinish_length = 0;
     QString webenginenamestr;
+    QVector<QString> var_list;
+    QByteArray html_data;
+    bool pagerun_flag;
 #endif
 
     QSqlDatabase remotedb;

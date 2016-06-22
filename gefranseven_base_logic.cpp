@@ -5,14 +5,20 @@ gefranseven_base_logic::gefranseven_base_logic(QObject *parentmslot,QObject *par
 {
     this->parentmslot = parentmslot;
     initflag=false;
+#if QT_VERSION > QT_VERSION_CHECK(5,6,0)
+
+#endif
 }
 
 bool gefranseven_base_logic::init(){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     datamap = new QMap<QString,gefranvalue *>;
-#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
+
+
     connect(&manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerfinished(QNetworkReply*)));
-#endif
+
+
+
     remotedb  = QSqlDatabase::database("RemoteDB");
     initflag=true;
     return initflag;
@@ -25,14 +31,12 @@ void gefranseven_base_logic::loop(){
 }
 void gefranseven_base_logic::requst_read_value(QString ip, QString address){
     QString url = QString("http://%1/%2").arg(ip).arg(address);
-#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
     requast.setUrl(url);
     manager.get(requast);
-#endif
 }
 void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
     QByteArray temp_data;
-#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
+
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     temp_data = reply->readAll();
     if(temp_data.size()>0){
@@ -45,6 +49,7 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
         return ;
     }
     if(temp_data.indexOf("PLC Realtime monitoring")>0){
+#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
         webpage.mainFrame()->setHtml(temp_data);
         documents1 = webpage.mainFrame()->findAllElements("table tr td p i");
         documents2 = webpage.mainFrame()->findAllElements("table tr td p b");
@@ -63,6 +68,7 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
             }
             tempgefdata->value = value;
         }
+#endif
         url_gefranbaseloop();
 
     }else if(temp_data.indexOf("Please enter login information")>0){
@@ -78,6 +84,7 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
 
         manager.post(requast,postData);
     }else if (temp_data.indexOf("Select listed variables and click")>0){
+#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
         QByteArray postData;
         webpage.mainFrame()->setHtml(temp_data);
         documents1 = webpage.mainFrame()->findAllElements("input");
@@ -98,10 +105,13 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
         requast.setHeader(QNetworkRequest::ContentTypeHeader,
                           "application/x-www-form-urlencoded");
         manager.post(requast,postData);
-    }
 #endif
+
+    }
     delete reply;
 }
+
+
 void gefranseven_base_logic::url_gefranbaseloop(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
