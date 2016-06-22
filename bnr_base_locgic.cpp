@@ -156,28 +156,28 @@ void Bnr_base_locgic::url_bnrbaseloop(){
         if(i == 7){
             temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6, ")
                     .arg(i)
-                    .arg(datamap->value(QString("REC_DATA.HC.Oil.ST"))->value)
+                    .arg(datamap->value(QString("REC_DATA.HC.Oil.ST"))->value.toDouble()/10)
                     .arg(0)
                     .arg(0)
-                    .arg(datamap->value(QString("ACT_DATA.System.ATOil"))->value)
+                    .arg(datamap->value(QString("ACT_DATA.System.ATOil"))->value.toDouble()/10)
                     .arg(1);
 
         }else if(i == 21){
             temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6 ")
                     .arg(i)
-                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i-1))->value)
-                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i-1))->value)
-                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i-1))->value)
-                    .arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value)
+                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i-1))->value.toDouble()/10)
+                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i-1))->value.toDouble()/10)
+                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i-1))->value.toDouble()/10)
+                    .arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value.toDouble()/10)
                     .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i-1))->value);
 
         }else {
             temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6, ")
                     .arg(i)
-                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i-1))->value)
-                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i-1))->value)
-                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i-1))->value)
-                    .arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value)
+                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i-1))->value.toDouble()/10)
+                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i-1))->value.toDouble()/10)
+                    .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i-1))->value.toDouble()/10)
+                    .arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value.toDouble()/10)
                     .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i-1))->value);
 
         }
