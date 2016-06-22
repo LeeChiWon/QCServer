@@ -30,19 +30,40 @@ void gefranseven_base_logic::requst_read_value(QString ip, QString address){
     manager.get(requast);
 #endif
 }
-
-
 void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
     QByteArray temp_data;
+#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     temp_data = reply->readAll();
-    qDebug()<<temp_data;
+    if(temp_data.size()>0){
+        parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
+        parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
+    }else {
+        parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
+        parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
+        delete reply;
+        return ;
+    }
     if(temp_data.indexOf("PLC Realtime monitoring")>0){
-        qDebug()<<"this town";
-        QString ip = parent_item->ip->text();
-        QString seturl = QString("http://%1/cgi-bin/SevenCgiLib.out").arg(ip);
-        requast.setUrl(QUrl(seturl));
-        manager.get(requast);
+        webpage.mainFrame()->setHtml(temp_data);
+        documents1 = webpage.mainFrame()->findAllElements("table tr td p i");
+        documents2 = webpage.mainFrame()->findAllElements("table tr td p b");
+        for(int i=0;i<documents1.count();i++){
+            document1 = documents1.at(i);
+            QString name = document1.toPlainText();
+            document2 = documents2.at(i);
+            QString value = document2.toPlainText();
+            gefranvalue *tempgefdata;
+            if(!datamap->contains(name)){
+                tempgefdata = new gefranvalue();
+                tempgefdata->name = name;
+                datamap->insert(name,tempgefdata);
+            }else {
+                tempgefdata = datamap->value(name);
+            }
+            tempgefdata->value = value;
+        }
+        url_gefranbaseloop();
 
     }else if(temp_data.indexOf("Please enter login information")>0){
         QByteArray postData;
@@ -59,10 +80,10 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
     }else if (temp_data.indexOf("Select listed variables and click")>0){
         QByteArray postData;
         webpage.mainFrame()->setHtml(temp_data);
-        documents = webpage.mainFrame()->findAllElements("input");
-        for(int i=0;i<documents.count();i++){
-             document = documents.at(i);
-             QString name = document.attribute("name");
+        documents1 = webpage.mainFrame()->findAllElements("input");
+        for(int i=0;i<documents1.count();i++){
+             document1 = documents1.at(i);
+             QString name = document1.attribute("name");
              if((name.compare("button_getvars")==0) || (name.compare("button")==0)){
                 //no cycle
              }else{
@@ -78,7 +99,13 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
                           "application/x-www-form-urlencoded");
         manager.post(requast,postData);
     }
-
+#endif
     delete reply;
+}
+void gefranseven_base_logic::url_gefranbaseloop(){
+    mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
+    QString mancine_name = parent_item->machinename->text();
+    QSqlQuery mysqlquery1(remotedb);
+    //qDebug()<<datamap->value(QString("sp_Injec_0"))->value;
 
 }

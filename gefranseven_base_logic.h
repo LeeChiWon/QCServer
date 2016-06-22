@@ -46,9 +46,11 @@ public:
     QNetworkRequest requast;
 #if QT_VERSION < QT_VERSION_CHECK(5,6,0)
     QWebPage webpage;
-    QWebElement document;
+    QWebElement document1;
+    QWebElement document2;
     QWebElement first_document;
-    QWebElementCollection documents;
+    QWebElementCollection documents1;
+    QWebElementCollection documents2;
 #else
     QWebEnginePage *basepage;
     QWebEnginePage *optionpage1;
@@ -58,7 +60,7 @@ public:
 
     QSqlDatabase remotedb;
     void requst_read_value(QString ip, QString address);
-    void url_bnrbaseloop();
+    void url_gefranbaseloop();
 signals:
 
 public slots:
