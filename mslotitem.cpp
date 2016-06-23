@@ -98,9 +98,11 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
     maintimer.setInterval(MAINTIMERTIME);
     bnr_base_logic = new Bnr_base_locgic(this);
     gefran_base_logic = new gefranseven_base_logic(this);
+    Es600_base_locgic = new es600_base_locgic(this);
 
     connect(type,SIGNAL(currentTextChanged(QString)),this,SLOT(typechange(QString)));
     connect(&maintimer,SIGNAL(timeout()),this,SLOT(maintimer_timeout()));
+
 
 }
 void mslotitem::typechange(QString data){
@@ -129,7 +131,10 @@ void mslotitem::maintimer_timeout(){
         gefran_base_logic->loop();
 
     }else if(type->currentText().split("/").at(0).compare("es600")==0){
-
+        if(!Es600_base_locgic->initflag){
+            Es600_base_locgic->init();
+        }
+        Es600_base_locgic->loop();
     }
 
 }
