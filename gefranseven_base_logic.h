@@ -19,6 +19,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
+
 class gefranvalue {
 public:
     QString name;
