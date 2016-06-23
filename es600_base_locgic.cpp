@@ -26,8 +26,22 @@ void es600_base_locgic::loop(){
 //modbus address 추가는 es600_modbus_thread->run()->addrlist.append(주소값)
 void es600_base_locgic::es600_base_loop(){
     //example
-    //datamap->value("114")->value
-
+    qDebug()<<"temp1_set="<<datamap->value(QString("%1").arg(mb_temp1_set))->value;
+    qDebug()<<"temp2_set="<<datamap->value(QString("%1").arg(mb_temp2_set))->value;
+    qDebug()<<"temp3_set="<<datamap->value(QString("%1").arg(mb_temp3_set))->value;
+    qDebug()<<"temp4_set="<<datamap->value(QString("%1").arg(mb_temp4_set))->value;
+    qDebug()<<"temp5_set="<<datamap->value(QString("%1").arg(mb_temp5_set))->value;
+    qDebug()<<"temp6_set="<<datamap->value(QString("%1").arg(mb_temp6_set))->value;
+    qDebug()<<"temp7_set="<<datamap->value(QString("%1").arg(mb_temp7_set))->value;
+    qDebug()<<"temp8_set="<<datamap->value(QString("%1").arg(mb_temp8_set))->value;
+    qDebug()<<"temp9_set="<<datamap->value(QString("%1").arg(mb_temp9_set))->value;
+    qDebug()<<"temp10_set="<<datamap->value(QString("%1").arg(mb_temp10_set))->value;
+    qDebug()<<"temp11_set="<<datamap->value(QString("%1").arg(mb_temp11_set))->value;
+    qDebug()<<"temp12_set="<<datamap->value(QString("%1").arg(mb_temp12_set))->value;
+    qDebug()<<"temp13_set="<<datamap->value(QString("%1").arg(mb_temp13_set))->value;
+    qDebug()<<"temp14_set="<<datamap->value(QString("%1").arg(mb_temp14_set))->value;
+    qDebug()<<"temp15_set="<<datamap->value(QString("%1").arg(mb_temp15_set))->value;
+    qDebug()<<"temp16_set="<<datamap->value(QString("%1").arg(mb_temp16_set))->value;
 }
 void es600_base_locgic::slot_statue_update(bool statue){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
