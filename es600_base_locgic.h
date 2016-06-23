@@ -144,6 +144,13 @@ public:
     QMutex mutex;
     QString ip;
     modbus_t *ctx;
+    QVector<int> addrlist;
+    int temp_set_atnumber;
+    int temp_up_atnumber;
+    int temp_down_atnumber;
+    int temp_real_atnumber;
+    int temp_onoff_atnumber;
+
 
 
     void es600_base_loop();

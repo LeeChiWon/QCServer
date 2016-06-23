@@ -18,6 +18,7 @@ public:
     QObject *parent;
     quint16 reg[10];
 
+
 private:
     void run();
 
