@@ -13,12 +13,7 @@ gefranseven_base_logic::gefranseven_base_logic(QObject *parentmslot,QObject *par
 bool gefranseven_base_logic::init(){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     datamap = new QMap<QString,gefranvalue *>;
-
-
     connect(&manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerfinished(QNetworkReply*)));
-
-
-
     remotedb  = QSqlDatabase::database("RemoteDB");
     initflag=true;
     return initflag;

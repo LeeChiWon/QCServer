@@ -19,6 +19,7 @@
 #include "bnr_base_locgic.h"
 #include "gefranseven_base_logic.h"
 #include "globalheader.h"
+#include "es600_base_locgic.h"
 
 class mslotitem : public QObject
 {
@@ -37,6 +38,7 @@ public:
     QTimer maintimer;
     Bnr_base_locgic *bnr_base_logic;
     gefranseven_base_logic *gefran_base_logic;
+    es600_base_locgic *Es600_base_locgic;
     void set_connectlabel_text(QString data);
     void set_status_text(QString data);
 
