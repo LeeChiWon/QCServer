@@ -135,6 +135,7 @@ void gefranseven_base_logic::url_gefranbaseloop(){
     if(result){
 
     }else {
+        remotedb.open();
         qDebug()<<"gefran false";
     }
 //    qDebug()<<datamap->value(QString("sp_Injec_0"))->value;
