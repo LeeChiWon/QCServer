@@ -143,13 +143,17 @@ public:
     QWaitCondition waitcondition;
     QMutex mutex;
     QString ip;
-    modbus_t *ctx;
+    QSqlDatabase es600db;
+    QSqlDatabase litedb;
     QVector<int> addrlist;
+
     int temp_set_atnumber;
     int temp_up_atnumber;
     int temp_down_atnumber;
     int temp_real_atnumber;
     int temp_onoff_atnumber;
+
+    modbus_t *ctx;
 
 
 

@@ -148,6 +148,7 @@ void Bnr_base_locgic::pageloadfinish(bool result){
 void Bnr_base_locgic::url_bnrbaseloop(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
+
     QSqlQuery mysqlquery1(remotedb);
 
     QString update_temp = QString("UPDATE `temp_table` SET ");
@@ -226,7 +227,13 @@ void Bnr_base_locgic::url_bnrbaseloop(){
             .arg(modestr)
             .arg(datamap->value("MA_STAT.AbAlarmPending")->value)
             .arg(mancine_name);
-    mysqlquery1.exec(update_temp);
+    bool result = mysqlquery1.exec(update_temp);
+    if(result){
+
+    }else {
+        qDebug()<<"bnr sql false";
+    }
+
 
     update_temp=QString("update Recipe_Info set injstep=%1, holdstep=%2, ")
             .arg(datamap->value("REC_DATA.IP.NrInjectionProfile")->value,datamap->value("REC_DATA.IP.NrHoldonProfile")->value);

@@ -14,7 +14,7 @@ bool gefranseven_base_logic::init(){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     datamap = new QMap<QString,gefranvalue *>;
     connect(&manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerfinished(QNetworkReply*)));
-    remotedb  = QSqlDatabase::database("RemoteDB");
+    remotedb  = QSqlDatabase::database("remotedb");
     initflag=true;
     return initflag;
 }
@@ -111,6 +111,12 @@ void gefranseven_base_logic::url_gefranbaseloop(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
     QSqlQuery mysqlquery1(remotedb);
-    //qDebug()<<datamap->value(QString("sp_Injec_0"))->value;
+    bool result;
+    result = mysqlquery1.exec("UPDATE `temp_table` SET `temp1_down`=6 WHERE  `machine_name`=\'5호\'");
+    if(result){
 
+    }else {
+        qDebug()<<"gefran false";
+    }
+//    qDebug()<<datamap->value(QString("sp_Injec_0"))->value;
 }
