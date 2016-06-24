@@ -195,6 +195,7 @@ void es600_base_locgic::es600_base_loop(){
     if(result){
 
     }else {
+        es600db.open();
         qDebug()<<"es600 false";
     }
 
