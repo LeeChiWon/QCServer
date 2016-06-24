@@ -169,20 +169,20 @@ void es600_base_locgic::es600_base_loop(){
         if(i == 16){
             temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6 ")
                                .arg(i)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value);
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0)
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0)
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0)
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0)
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0);
 
         }else {
          temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6, ")
                             .arg(i)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value);
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0)
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0)
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0)
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0)
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0);
 
         }
          update_temp.append(temp_append);
