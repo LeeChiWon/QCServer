@@ -18,6 +18,9 @@
 #endif
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QWaitCondition>
+#include <QMutex>
+#include "bnr_moudle_thread.h"
 
 class BNRvalue {
 public:
@@ -55,9 +58,11 @@ public:
     int pageloadfinish_length = 0;
     QString webenginenamestr;
 #endif
-
+    QSqlDatabase litedb;
     QSqlDatabase remotedb;
-
+    QWaitCondition waitcondition;
+    QMutex mutex;
+    bnr_moudle_thread *moudle_thread;
     void requst_read_value(QString ip, QString address);
     void url_bnrbaseloop();
     ~Bnr_base_locgic();

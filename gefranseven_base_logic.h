@@ -18,6 +18,9 @@
 #endif
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QWaitCondition>
+#include <QMutex>
+#include "gefranseven_moudle_thread.h"
 
 
 class gefranvalue {
@@ -61,8 +64,11 @@ public:
     QByteArray html_data;
     bool pagerun_flag;
 #endif
-
+    QSqlDatabase litedb;
     QSqlDatabase remotedb;
+    QWaitCondition waitcondition;
+    QMutex mutex;
+    gefranseven_moudle_thread *moudle_thread;
     void requst_read_value(QString ip, QString address);
     void url_gefranbaseloop();
 signals:
