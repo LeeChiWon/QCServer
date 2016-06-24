@@ -1,5 +1,6 @@
 #include "es600_base_locgic.h"
 #include "mslotitem.h"
+#include <QSqlError>
 
 es600_base_locgic::es600_base_locgic(QObject *parentmslot,QObject *parent) : QObject(parent)
 {
@@ -10,17 +11,34 @@ bool es600_base_locgic::init(){
      mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
      datamap = new QMap<QString,es600value *>;
      ip = parent_item->ip->text();
+     litedb = QSqlDatabase::database("localdb");
+     QSqlQuery litequery1(litedb);
+     litequery1.exec("select * from systemset;");
+     litequery1.next();
 
-     remotedb  = QSqlDatabase::database("RemoteDB");
+     es600db = QSqlDatabase::addDatabase("QMYSQL");
+     es600db.setHostName(litequery1.value("remoteserverip").toString());
+     es600db.setDatabaseName(litequery1.value("remoteserverdbname").toString());
+     es600db.setPort(litequery1.value("remoteserverport").toInt());
+     es600db.setUserName(litequery1.value("remoteserverusername").toString());
+     es600db.setPassword(litequery1.value("remoteserveruserpassword").toString());
 
-     addrlist.append(mb_object_count);  //0
-     addrlist.append(mb_production_count);  //1
-     addrlist.append(mb_run_mode);  //2
-     addrlist.append(mb_warning_flag); //3
+     if(!es600db.open()){
+         qDebug()<<"es600 DB not open";
+
+     }else {
+        qDebug()<<"es600 DB open";
+     }
+
+
+     addrlist.append(mb_object_count);
+     addrlist.append(mb_production_count);
+     addrlist.append(mb_run_mode);
+     addrlist.append(mb_warning_flag);
      addrlist.append(mb_cabity);
 
      addrlist.append(mb_temp1_set);
-     temp_set_atnumber = addrlist.count();
+     temp_set_atnumber = addrlist.count()-1;
      addrlist.append(mb_temp2_set);
      addrlist.append(mb_temp3_set);
      addrlist.append(mb_temp4_set);
@@ -38,7 +56,7 @@ bool es600_base_locgic::init(){
      addrlist.append(mb_temp16_set);
 
      addrlist.append(mb_temp1_up);
-     temp_up_atnumber = addrlist.count();
+     temp_up_atnumber = addrlist.count()-1;
      addrlist.append(mb_temp2_up);
      addrlist.append(mb_temp3_up);
      addrlist.append(mb_temp4_up);
@@ -56,7 +74,7 @@ bool es600_base_locgic::init(){
      addrlist.append(mb_temp16_up);
 
      addrlist.append(mb_temp1_down);
-     temp_down_atnumber = addrlist.count();
+     temp_down_atnumber = addrlist.count()-1;
      addrlist.append(mb_temp2_down);
      addrlist.append(mb_temp3_down);
      addrlist.append(mb_temp4_down);
@@ -74,7 +92,7 @@ bool es600_base_locgic::init(){
      addrlist.append(mb_temp16_down);
 
      addrlist.append(mb_temp1_real);
-     temp_real_atnumber = addrlist.count();
+     temp_real_atnumber = addrlist.count()-1;
      addrlist.append(mb_temp2_real);
      addrlist.append(mb_temp3_real);
      addrlist.append(mb_temp4_real);
@@ -92,7 +110,7 @@ bool es600_base_locgic::init(){
      addrlist.append(mb_temp16_real);
 
      addrlist.append(mb_temp1_onoff);
-     temp_onoff_atnumber = addrlist.count();
+     temp_onoff_atnumber = addrlist.count()-1;
      addrlist.append(mb_temp2_onoff);
      addrlist.append(mb_temp3_onoff);
      addrlist.append(mb_temp4_onoff);
@@ -144,18 +162,40 @@ void es600_base_locgic::es600_base_loop(){
  */
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
-    QSqlQuery mysqlquery1(remotedb);
+    QSqlQuery mysqlquery1(es600db);
     QString update_temp = QString("UPDATE `temp_table` SET ");
     QString temp_append ;
-    for(int i=0;i<=15;i++){
-    temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6, ")
-                            .arg(i)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i)))->value)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i)))->value)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i)))->value)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i)))->value)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i)))->value);
+    for(int i=1;i<=16;i++){
+        if(i == 16){
+            temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6 ")
+                               .arg(i)
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value)
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value)
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value)
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value)
+                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value);
 
+        }else {
+         temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6, ")
+                            .arg(i)
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value)
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value)
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value)
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value)
+                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value);
+
+        }
+         update_temp.append(temp_append);
+    }
+    temp_append = QString("WHERE  `machine_name`=\'%1\'").arg(mancine_name);
+
+    update_temp.append(temp_append);
+
+    bool result = mysqlquery1.exec(update_temp);
+    if(result){
+
+    }else {
+        qDebug()<<"es600 false";
     }
 
 
