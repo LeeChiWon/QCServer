@@ -32,7 +32,7 @@ bool Bnr_base_locgic::init(){
     litequery1.exec("select * from systemset;");
     litequery1.next();
 
-    remotedb = QSqlDatabase::addDatabase("QMYSQL");
+    remotedb = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
     remotedb.setHostName(litequery1.value("remoteserverip").toString());
     remotedb.setDatabaseName(litequery1.value("remoteserverdbname").toString());
     remotedb.setPort(litequery1.value("remoteserverport").toInt());
