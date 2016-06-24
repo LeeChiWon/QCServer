@@ -466,6 +466,7 @@ void MainWindow::on_deletebtn_clicked()
         mysqlquery1.exec(query);
         ui->maintablewidget->removeRow(cellcurrentrow);
     }
+
 }
 
 void MainWindow::on_maintablewidget_cellClicked(int row, int column)
