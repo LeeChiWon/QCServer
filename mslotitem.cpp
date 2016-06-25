@@ -102,8 +102,6 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
 
     connect(type,SIGNAL(currentTextChanged(QString)),this,SLOT(typechange(QString)));
     connect(&maintimer,SIGNAL(timeout()),this,SLOT(maintimer_timeout()));
-
-
 }
 void mslotitem::typechange(QString data){
     QSqlQuery mysqlquery1(remotedb);

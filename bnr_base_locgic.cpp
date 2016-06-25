@@ -27,11 +27,32 @@ bool Bnr_base_locgic::init(){
     connect(basepage,SIGNAL(loadFinished(bool)),this,SLOT(pageloadfinish(bool)));
     connect(optionpage1,SIGNAL(loadFinished(bool)),this,SLOT(pageloadfinish(bool)));
 #endif
-    remotedb  = QSqlDatabase::database("remotedb");
+    litedb = QSqlDatabase::database("localdb");
+    QSqlQuery litequery1(litedb);
+    litequery1.exec("select * from systemset;");
+    litequery1.next();
+
+    remotedb = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
+    remotedb.setHostName(litequery1.value("remoteserverip").toString());
+    remotedb.setDatabaseName(litequery1.value("remoteserverdbname").toString());
+    remotedb.setPort(litequery1.value("remoteserverport").toInt());
+    remotedb.setUserName(litequery1.value("remoteserverusername").toString());
+    remotedb.setPassword(litequery1.value("remoteserveruserpassword").toString());
+
+    if(!remotedb.open()){
+        qDebug()<<"bnr DB not open";
+
+    }else {
+       qDebug()<<"bnr DB open";
+    }
+    moudle_thread = new bnr_moudle_thread(this);
+    moudle_thread->start();
+
     initflag=true;
     return initflag;
 }
 void Bnr_base_locgic::loop(){
+
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString ip = parent_item->ip->text();
     //qDebug()<<ip;
@@ -39,7 +60,6 @@ void Bnr_base_locgic::loop(){
     if(parent_item->type->currentText().split("/").at(1).compare("TAC1XX11")==0){
         requst_read_value(ip,"TAC1XX11warning.asp");
     }
-
 }
 void Bnr_base_locgic::requst_read_value(QString ip,QString address){
     QString url = QString("http://%1/%2").arg(ip).arg(address);
@@ -84,12 +104,14 @@ void Bnr_base_locgic::managerfinished(QNetworkReply *reply){
             //qDebug()<<QString("BNRhttp web var = %1, data = %2").arg(tempbnrdata->name).arg(tempbnrdata->value);
         }
         if(reply->url().toString().indexOf("BNRbase.asp")>0){
-            url_bnrbaseloop();
+            waitcondition.wakeAll();
         }else if(reply->url().toString().indexOf("TAC1XX11warning.asp")>0){
 
         }
-        parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
-        parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
+        if(parent_item->connectlabel->text().indexOf("play-button")<0){
+            parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
+            parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
+        }
 
     }else {
         parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
@@ -97,9 +119,6 @@ void Bnr_base_locgic::managerfinished(QNetworkReply *reply){
 
     }
     //qDebug()<<temp_data;
-
-
-
     delete reply;
 
 #endif
@@ -135,8 +154,10 @@ void Bnr_base_locgic::pageloadfinish(bool result){
                 });
             }
         }); //람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
+        if(parent_item->connectlabel->text().indexOf("play-button")<0){
         parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
         parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
+        }
     }//람다 함수의 실행은 소속되어 있는 함수 리턴후 바로 실행 된다.
     else if(pageView->title().compare("Ststcms")!=0){
         parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
@@ -148,6 +169,7 @@ void Bnr_base_locgic::pageloadfinish(bool result){
 void Bnr_base_locgic::url_bnrbaseloop(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
+
     QSqlQuery mysqlquery1(remotedb);
 
     QString update_temp = QString("UPDATE `temp_table` SET ");
@@ -226,7 +248,14 @@ void Bnr_base_locgic::url_bnrbaseloop(){
             .arg(modestr)
             .arg(datamap->value("MA_STAT.AbAlarmPending")->value)
             .arg(mancine_name);
-    mysqlquery1.exec(update_temp);
+    bool result = mysqlquery1.exec(update_temp);
+    if(result){
+
+    }else {
+        qDebug()<<"bnr sql false";
+        remotedb.open();
+    }
+
 
     update_temp=QString("update Recipe_Info set injstep=%1, holdstep=%2, ")
             .arg(datamap->value("REC_DATA.IP.NrInjectionProfile")->value,datamap->value("REC_DATA.IP.NrHoldonProfile")->value);

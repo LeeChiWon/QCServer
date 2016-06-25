@@ -14,7 +14,24 @@ bool gefranseven_base_logic::init(){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     datamap = new QMap<QString,gefranvalue *>;
     connect(&manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerfinished(QNetworkReply*)));
-    remotedb  = QSqlDatabase::database("RemoteDB");
+    litedb = QSqlDatabase::database("localdb");
+    QSqlQuery litequery1(litedb);
+    litequery1.exec("select * from systemset;");
+    litequery1.next();
+    remotedb = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
+    remotedb.setHostName(litequery1.value("remoteserverip").toString());
+    remotedb.setDatabaseName(litequery1.value("remoteserverdbname").toString());
+    remotedb.setPort(litequery1.value("remoteserverport").toInt());
+    remotedb.setUserName(litequery1.value("remoteserverusername").toString());
+    remotedb.setPassword(litequery1.value("remoteserveruserpassword").toString());
+    if(!remotedb.open()){
+        qDebug()<<"gefran DB not open";
+
+    }else {
+       qDebug()<<"gefran DB open";
+    }
+    moudle_thread = new gefranseven_moudle_thread(this);
+    moudle_thread->start();
     initflag=true;
     return initflag;
 }
@@ -35,8 +52,10 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     temp_data = reply->readAll();
     if(temp_data.size()>0){
-        parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
-        parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
+         if(parent_item->connectlabel->text().indexOf("play-button")<0){
+                parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
+                parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
+         }
     }else {
         parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
         parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
@@ -64,7 +83,7 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
             tempgefdata->value = value;
         }
 #endif
-        url_gefranbaseloop();
+        waitcondition.wakeAll();
 
     }else if(temp_data.indexOf("Please enter login information")>0){
         QByteArray postData;
@@ -111,6 +130,13 @@ void gefranseven_base_logic::url_gefranbaseloop(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
     QSqlQuery mysqlquery1(remotedb);
-    //qDebug()<<datamap->value(QString("sp_Injec_0"))->value;
+    bool result;
+    result = mysqlquery1.exec("UPDATE `temp_table` SET `temp1_down`=6 WHERE  `machine_name`=\'5호\'");
+    if(result){
 
+    }else {
+        remotedb.open();
+        qDebug()<<"gefran false";
+    }
+//    qDebug()<<datamap->value(QString("sp_Injec_0"))->value;
 }

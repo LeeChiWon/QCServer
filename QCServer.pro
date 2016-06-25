@@ -31,7 +31,9 @@ SOURCES += main.cpp\
     modbus-data.c \
     modbus-rtu.c \
     modbus-tcp.c \
-    es600_modbus_thread.cpp
+    es600_modbus_thread.cpp \
+    bnr_moudle_thread.cpp \
+    gefranseven_moudle_thread.cpp
 
 HEADERS  += mainwindow.h \
     mslotitem.h \
@@ -48,7 +50,9 @@ HEADERS  += mainwindow.h \
     modbus-tcp-private.h \
     modbus-version.h \
     config.h \
-    es600_modbus_thread.h
+    es600_modbus_thread.h \
+    bnr_moudle_thread.h \
+    gefranseven_moudle_thread.h
 
 FORMS    += mainwindow.ui \
     serversetform.ui
