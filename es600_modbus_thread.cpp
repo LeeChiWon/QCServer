@@ -37,6 +37,7 @@ void es600_modbus_thread::run(){
                       tempvalue->value = QString("%1").arg(0);
                }
              }else {
+                 emit sig_statue_update(true);
                  QString addr = QString("%1").arg(parent_des->addrlist.at(i));
                  if(!parent_des->datamap->contains(addr)){
                        parent_des->datamap->insert(addr,new es600value(addr,QString("%1").arg(reg[0])));
