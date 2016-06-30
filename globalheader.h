@@ -25,4 +25,7 @@
 #define CHGBPS 1
 #define CHGPOS 2
 
+#define MYSQL 1
+#define ODBC 2
+
 #endif // GLOBALHEADER_H

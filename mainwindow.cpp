@@ -119,7 +119,8 @@ void MainWindow::litesql_init(){
                     "remoteserverdbname TEXT,"
                     "version INTEGER,"
                     "remoteserverusername TEXT,"
-                    "remoteserveruserpassword TEXT"
+                    "remoteserveruserpassword TEXT,"
+                    "remoteservertype TEXT"
                     ");");
     //만약조건이없다면 업데이트
     litequery1.exec("insert into systemset(remoteserverip,"
@@ -127,13 +128,15 @@ void MainWindow::litesql_init(){
                     "remoteserverdbname,"
                     "version,"
                     "remoteserverusername,"
-                    "remoteserveruserpassword) "
+                    "remoteserveruserpassword,"
+                    "remoteservertype) "
                     "select \'127.0.0.1\',"
                     "\'3306\',"
                     "\'QCproject\',"
                     "1,"
                     "\'QCmen\',"
-                    "\'1234\' "
+                    "\'1234\',"
+                    "\'MYSQL\' "
                     "where not exists(select * from systemset);");
 
 }
@@ -141,7 +144,11 @@ void MainWindow::remotesql_connect(){
     QSqlQuery litequery1(litedb);
     litequery1.exec("select * from systemset;");
     litequery1.next();
-    mdb =QSqlDatabase::addDatabase("QMYSQL","remotedb");
+    if(litequery1.value("remoteservertype").toString().compare("MYSQL")==0){
+        mdb = QSqlDatabase::addDatabase("QMYSQL","remotedb");
+    }else if(litequery1.value("remoteservertype").toString().compare("ODBC")==0){
+        mdb = QSqlDatabase::addDatabase("QODBC","remotedb");
+    }
     mdb.setHostName(litequery1.value("remoteserverip").toString());
     mdb.setDatabaseName(litequery1.value("remoteserverdbname").toString());
     mdb.setPort(litequery1.value("remoteserverport").toInt());
@@ -154,10 +161,21 @@ void MainWindow::remotesql_connect(){
     }else {
         ui->logtext->append("remtoe DB open");
     }
+    qDebug()<<mdb.lastError().text();
 }
 
 void MainWindow::remotesql_init(){
     QSqlQuery mysqlquery1(mdb);
+    QSqlQuery litequery1(litedb);
+    litequery1.exec("select * from systemset;");
+    litequery1.next();
+    int type = 0;
+    if(litequery1.value("remoteservertype").toString().compare("MYSQL")==0){
+        type =MYSQL;
+    }else if(litequery1.value("remoteservertype").toString().compare("ODBC")==0){
+        type =ODBC;
+    }
+    if(type == MYSQL){
     mysqlquery1.exec("CREATE TABLE `DBvsersion` ("
                          "`id` INT(11) NOT NULL DEFAULT '1',"
                          "`systeminfoversion` INT(11) NULL DEFAULT NULL,"
@@ -170,6 +188,22 @@ void MainWindow::remotesql_init(){
                      "ENGINE=InnoDB"
                      ";"
                 );
+    }else if(type == ODBC){
+    mysqlquery1.exec("CREATE TABLE DBvsersion ("
+                             "id INT NOT NULL DEFAULT '1',"
+                             "systeminfoversion INT NULL DEFAULT NULL,"
+                             "temp_tableversion INT NULL DEFAULT NULL,"
+                             "mold_infoversion INT NULL DEFAULT NULL,"
+                             "DBversion INT NULL DEFAULT NULL,"
+                             "PRIMARY KEY (id)"
+                         ")"
+                         ""
+                         ""
+                         ";"
+                    );
+
+    }
+    if(type == MYSQL){
     mysqlquery1.exec("CREATE TABLE `Systeminfo` ("
                          "`machine_name` VARCHAR(50) NULL DEFAULT NULL COMMENT '',"
                          "`ipaddress` TEXT NULL DEFAULT NULL COMMENT '',"
@@ -197,6 +231,38 @@ void MainWindow::remotesql_init(){
                      "ENGINE=InnoDB"
                      ";"
                    );
+    }else if(type == ODBC){
+    mysqlquery1.exec("CREATE TABLE Systeminfo ("
+                             "machine_name VARCHAR(50) NULL DEFAULT NULL  ,"
+                             "ipaddress TEXT NULL DEFAULT NULL  ,"
+                             "ITEMCONNECT TEXT NULL DEFAULT NULL  ,"
+                             "ITEMSTATUS TEXT NULL DEFAULT NULL  ,"
+                             "ITEMTYPE TEXT NULL DEFAULT NULL  ,"
+                             "mold_name TEXT NULL DEFAULT NULL  ,"
+                             "worker TEXT NULL DEFAULT NULL  ,"
+                             "item_code TEXT NULL DEFAULT NULL  ,"
+                             "item_name TEXT NULL DEFAULT NULL  ,"
+                             "orders_count TEXT NULL DEFAULT NULL  ,"
+                             "cycle_time TIME NULL DEFAULT NULL  ,"
+                             "cabity INT NOT NULL DEFAULT '0'  ,"
+                             "production_count INT NOT NULL DEFAULT '0' ,"
+                             "object_count INT NOT NULL DEFAULT '0' ,"
+                             "achievemen_rate float  NOT NULL DEFAULT '0' ,"
+                             "good_count INT NOT NULL DEFAULT '0' ,"
+                             "poor_count INT NOT NULL DEFAULT '0' ,"
+                             "weight float NOT NULL DEFAULT '0' ,"
+                             "run_mode TEXT NULL DEFAULT NULL ,"
+                             "warning_flag INT NOT NULL DEFAULT '0',"
+                             "UNIQUE INDEX machine_name (machine_name)"
+                         ")"
+                          ""
+                         ""
+                         ";"
+                       );
+    }
+
+    qDebug()<<mysqlquery1.lastQuery();
+    qDebug()<<mysqlquery1.lastError().text();
     mysqlquery1.exec(tr("CREATE TABLE `mold_info` ("
                          "`mold_name` VARCHAR(50) NULL DEFAULT NULL COMMENT '',"
                          "`item_name` TEXT NULL DEFAULT NULL COMMENT '',"
