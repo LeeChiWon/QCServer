@@ -26,6 +26,9 @@ private slots:
 
     void on_applybtn_clicked();
 
+
+    void on_DBtypecombo_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::Serversetform *ui;
 };

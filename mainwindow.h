@@ -10,6 +10,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include "globalheader.h"
+#include <QSqlError>
 
 namespace Ui {
 class MainWindow;
