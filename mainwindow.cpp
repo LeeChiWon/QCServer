@@ -253,7 +253,7 @@ void MainWindow::remotesql_init(){
                              "weight float NOT NULL DEFAULT '0' ,"
                              "run_mode TEXT NULL DEFAULT NULL ,"
                              "warning_flag INT NOT NULL DEFAULT '0',"
-                             "UNIQUE INDEX machine_name (machine_name)"
+                             "UNIQUE (machine_name)"
                          ")"
                           ""
                          ""
@@ -261,8 +261,8 @@ void MainWindow::remotesql_init(){
                        );
     }
 
-    qDebug()<<mysqlquery1.lastQuery();
-    qDebug()<<mysqlquery1.lastError().text();
+
+    if(type == MYSQL){
     mysqlquery1.exec(tr("CREATE TABLE `mold_info` ("
                          "`mold_name` VARCHAR(50) NULL DEFAULT NULL COMMENT '',"
                          "`item_name` TEXT NULL DEFAULT NULL COMMENT '',"
@@ -274,6 +274,20 @@ void MainWindow::remotesql_init(){
                      ";"
                   )
                 );
+    }else if(type == ODBC){
+        mysqlquery1.exec(tr("CREATE TABLE mold_info ("
+                             "mold_name VARCHAR(50) NULL DEFAULT NULL ,"
+                             "item_name TEXT NULL DEFAULT NULL ,"
+                             "item_code TEXT NULL DEFAULT NULL ,"
+                             "UNIQUE (mold_name)"
+                         ")"
+                        ""
+                         ";"
+                      )
+                    );
+    }
+
+    if(type == MYSQL){
     mysqlquery1.exec(tr("CREATE TABLE `temp_table` ("
                          "`machine_name` VARCHAR(50) NULL DEFAULT NULL,"
                          "`temp1_set` DOUBLE NOT NULL DEFAULT '0' COMMENT '',"
@@ -409,8 +423,145 @@ void MainWindow::remotesql_init(){
                      "ENGINE=InnoDB"
                      ";"
                 ));
+    }else if(type == ODBC){
+        mysqlquery1.exec(tr("CREATE TABLE temp_table ("
+                             "machine_name VARCHAR(50) NULL DEFAULT NULL,"
+                             "temp1_set float NOT NULL DEFAULT '0' ,"
+                             "temp1_up float NOT NULL DEFAULT '0' ,"
+                             "temp1_down float NOT NULL DEFAULT '0' ,"
+                             "temp1_real float NOT NULL DEFAULT '0' ,"
+                             "temp1_name VARCHAR(50) NOT NULL DEFAULT 'temp1',"
+                             "temp1_onoff INT NOT NULL DEFAULT '0',"
+                             "temp2_set float NOT NULL DEFAULT '0' ,"
+                             "temp2_up float NOT NULL DEFAULT '0' ,"
+                             "temp2_down float NOT NULL DEFAULT '0' ,"
+                             "temp2_real float NOT NULL DEFAULT '0' ,"
+                             "temp2_name VARCHAR(50) NOT NULL DEFAULT 'temp2' ,"
+                             "temp2_onoff INT NOT NULL DEFAULT '0',"
+                             "temp3_set float NOT NULL DEFAULT '0' ,"
+                             "temp3_up float NOT NULL DEFAULT '0' ,"
+                             "temp3_down float NOT NULL DEFAULT '0' ,"
+                             "temp3_real float NOT NULL DEFAULT '0' ,"
+                             "temp3_name VARCHAR(50) NOT NULL DEFAULT 'temp3' ,"
+                             "temp3_onoff INT NOT NULL DEFAULT '0',"
+                             "temp4_set float NOT NULL DEFAULT '0' ,"
+                             "temp4_up float NOT NULL DEFAULT '0' ,"
+                             "temp4_down float NOT NULL DEFAULT '0' ,"
+                             "temp4_real float NOT NULL DEFAULT '0' ,"
+                             "temp4_name VARCHAR(50) NOT NULL DEFAULT 'temp4' ,"
+                             "temp4_onoff INT NOT NULL DEFAULT '0',"
+                             "temp5_set float NOT NULL DEFAULT '0' ,"
+                             "temp5_up float NOT NULL DEFAULT '0' ,"
+                             "temp5_down float NOT NULL DEFAULT '0' ,"
+                             "temp5_real float NOT NULL DEFAULT '0' ,"
+                             "temp5_name VARCHAR(50) NOT NULL DEFAULT 'temp5' ,"
+                             "temp5_onoff INT NOT NULL DEFAULT '0',"
+                             "temp6_set float NOT NULL DEFAULT '0' ,"
+                             "temp6_up float NOT NULL DEFAULT '0' ,"
+                             "temp6_down float NOT NULL DEFAULT '0' ,"
+                             "temp6_real float NOT NULL DEFAULT '0' ,"
+                             "temp6_name VARCHAR(50) NOT NULL DEFAULT 'temp6' ,"
+                             "temp6_onoff INT NOT NULL DEFAULT '0',"
+                             "temp7_set float NOT NULL DEFAULT '0' ,"
+                             "temp7_up float NOT NULL DEFAULT '0' ,"
+                             "temp7_down float NOT NULL DEFAULT '0' ,"
+                             "temp7_real float NOT NULL DEFAULT '0' ,"
+                             "temp7_name VARCHAR(50) NOT NULL DEFAULT 'temp7' ,"
+                             "temp7_onoff INT NOT NULL DEFAULT '0',"
+                             "temp8_set float NOT NULL DEFAULT '0' ,"
+                             "temp8_up float NOT NULL DEFAULT '0' ,"
+                             "temp8_down float NOT NULL DEFAULT '0' ,"
+                             "temp8_real float NOT NULL DEFAULT '0' ,"
+                             "temp8_name VARCHAR(50) NOT NULL DEFAULT 'temp8' ,"
+                             "temp8_onoff INT NOT NULL DEFAULT '0',"
+                             "temp9_set float NOT NULL DEFAULT '0' ,"
+                             "temp9_up float NOT NULL DEFAULT '0' ,"
+                             "temp9_down float NOT NULL DEFAULT '0' ,"
+                             "temp9_real float NOT NULL DEFAULT '0' ,"
+                             "temp9_name VARCHAR(50) NOT NULL DEFAULT 'temp9' ,"
+                             "temp9_onoff INT NOT NULL DEFAULT '0',"
+                             "temp10_set float NOT NULL DEFAULT '0' ,"
+                             "temp10_up float NOT NULL DEFAULT '0' ,"
+                             "temp10_down float NOT NULL DEFAULT '0' ,"
+                             "temp10_real float NOT NULL DEFAULT '0' ,"
+                             "temp10_name VARCHAR(50) NOT NULL DEFAULT 'temp10' ,"
+                             "temp10_onoff INT NOT NULL DEFAULT '0',"
+                             "temp11_set float NOT NULL DEFAULT '0' ,"
+                             "temp11_up float NOT NULL DEFAULT '0' ,"
+                             "temp11_down float NOT NULL DEFAULT '0' ,"
+                             "temp11_real float NOT NULL DEFAULT '0' ,"
+                             "temp11_name VARCHAR(50) NOT NULL DEFAULT 'temp11' ,"
+                             "temp11_onoff INT NOT NULL DEFAULT '0',"
+                             "temp12_set float NOT NULL DEFAULT '0' ,"
+                             "temp12_up float NOT NULL DEFAULT '0' ,"
+                             "temp12_down float NOT NULL DEFAULT '0' ,"
+                             "temp12_real float NOT NULL DEFAULT '0' ,"
+                             "temp12_name VARCHAR(50) NOT NULL DEFAULT 'temp12' ,"
+                             "temp12_onoff INT NOT NULL DEFAULT '0',"
+                             "temp13_set float NOT NULL DEFAULT '0' ,"
+                             "temp13_up float NOT NULL DEFAULT '0' ,"
+                             "temp13_down float NOT NULL DEFAULT '0' ,"
+                             "temp13_real float NOT NULL DEFAULT '0' ,"
+                             "temp13_name VARCHAR(50) NOT NULL DEFAULT 'temp13' ,"
+                             "temp13_onoff INT NOT NULL DEFAULT '0',"
+                             "temp14_set float NOT NULL DEFAULT '0' ,"
+                             "temp14_up float NOT NULL DEFAULT '0' ,"
+                             "temp14_down float NOT NULL DEFAULT '0' ,"
+                             "temp14_real float NOT NULL DEFAULT '0' ,"
+                             "temp14_name VARCHAR(50) NOT NULL DEFAULT 'temp14',"
+                             "temp14_onoff INT NOT NULL DEFAULT '0',"
+                             "temp15_set float NOT NULL DEFAULT '0' ,"
+                             "temp15_up float NOT NULL DEFAULT '0' ,"
+                             "temp15_down float NOT NULL DEFAULT '0' ,"
+                             "temp15_real float NOT NULL DEFAULT '0' ,"
+                             "temp15_name VARCHAR(50) NOT NULL DEFAULT 'temp15',"
+                             "temp15_onoff INT NOT NULL DEFAULT '0',"
+                             "temp16_set float NOT NULL DEFAULT '0' ,"
+                             "temp16_up float NOT NULL DEFAULT '0' ,"
+                             "temp16_down float NOT NULL DEFAULT '0' ,"
+                             "temp16_real float NOT NULL DEFAULT '0' ,"
+                             "temp16_name VARCHAR(50) NOT NULL DEFAULT 'temp16' ,"
+                             "temp16_onoff INT NOT NULL DEFAULT '0',"
+                             "temp17_set float NOT NULL DEFAULT '0' ,"
+                             "temp17_up float NOT NULL DEFAULT '0' ,"
+                             "temp17_down float NOT NULL DEFAULT '0' ,"
+                             "temp17_real float NOT NULL DEFAULT '0' ,"
+                             "temp17_name VARCHAR(50) NOT NULL DEFAULT 'temp17' ,"
+                             "temp17_onoff INT NOT NULL DEFAULT '0',"
+                             "temp18_set float NOT NULL DEFAULT '0' ,"
+                             "temp18_up float NOT NULL DEFAULT '0' ,"
+                             "temp18_down float NOT NULL DEFAULT '0' ,"
+                             "temp18_real float NOT NULL DEFAULT '0' ,"
+                             "temp18_name VARCHAR(50) NOT NULL DEFAULT 'temp18' ,"
+                             "temp18_onoff INT NOT NULL DEFAULT '0',"
+                             "temp19_set float NOT NULL DEFAULT '0' ,"
+                             "temp19_up float NOT NULL DEFAULT '0' ,"
+                             "temp19_down float NOT NULL DEFAULT '0' ,"
+                             "temp19_real float NOT NULL DEFAULT '0' ,"
+                             "temp19_name VARCHAR(50) NOT NULL DEFAULT 'temp19' ,"
+                             "temp19_onoff INT NOT NULL DEFAULT '0',"
+                             "temp20_set float NOT NULL DEFAULT '0' ,"
+                             "temp20_up float NOT NULL DEFAULT '0' ,"
+                             "temp20_down float NOT NULL DEFAULT '0' ,"
+                             "temp20_real float NOT NULL DEFAULT '0' ,"
+                             "temp20_name VARCHAR(50) NOT NULL DEFAULT 'temp20' ,"
+                             "temp20_onoff INT NOT NULL DEFAULT '0',"
+                             "temp21_set float NOT NULL DEFAULT '0' ,"
+                             "temp21_up float NOT NULL DEFAULT '0' ,"
+                             "temp21_down float NOT NULL DEFAULT '0' ,"
+                             "emp21_real float NOT NULL DEFAULT '0' ,"
+                             "temp21_name VARCHAR(50) NOT NULL DEFAULT 'temp21' ,"
+                             "temp21_onoff INT NOT NULL DEFAULT '0',"
+                             "modift_version INT NOT NULL DEFAULT '0' ,"
+                             "UNIQUE (machine_name)"
+                         ")"
 
+                         ";"
+                    ));
 
+    }
+
+   if(type == MYSQL){
     QString strquery = QString("INSERT INTO DBvsersion ("
                                "id,"
                                "systeminfoversion,"
@@ -433,9 +584,29 @@ void MainWindow::remotesql_init(){
                            .arg(TEMPTABLEVERSION)
                            .arg(MOLDINFOVERSION)
                            .arg(DBVERSION);
+        mysqlquery1.exec(strquery);
+   }else if(type == ODBC){
+       QString strquery = QString("UPDATE DBvsersion set "
+                                  "systeminfoversion = %1,"
+                                  "temp_tableversion = %2,"
+                                  "mold_infoversion = %3,"
+                                  "DBversion = %4 "
+                                  "where id = 1 "
+                                  "IF @@ROWCOUNT=0 INSERT INTO DBvsersion("
+                                  "id,"
+                                  "systeminfoversion,"
+                                  "temp_tableversion,"
+                                  "mold_infoversion,"
+                                  "DBversion) "
+                                  "values(1,%1,%2,%3,%4)"
+                                  ).arg(SYSTEMINFOVERSION)
+                                    .arg(TEMPTABLEVERSION)
+                                    .arg(MOLDINFOVERSION)
+                                    .arg(DBVERSION);
+           mysqlquery1.exec(strquery);
+   }
 
-    mysqlquery1.exec(strquery);
-
+   if(type == MYSQL){
     mysqlquery1.exec("CREATE TABLE `works` ("
                          "`number` VARCHAR(50) NOT NULL DEFAULT '0' COLLATE 'utf8_bin',"
                          "`name` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_bin',"
@@ -446,7 +617,19 @@ void MainWindow::remotesql_init(){
                      "ENGINE=InnoDB"
                      ";"
                     );
+   }else if(type == ODBC){
+       mysqlquery1.exec("CREATE TABLE works ("
+                            "number VARCHAR(50) NOT NULL DEFAULT '0' ,"
+                            "name VARCHAR(50) NULL DEFAULT NULL ,"
+                            "time VARCHAR(50) NULL DEFAULT NULL ,"
+                            "UNIQUE (number)"
+                        ")"
+                        ";"
+                       );
 
+   }
+
+    if(type == MYSQL){
     mysqlquery1.exec("CREATE TABLE IF NOT EXISTS `Recipe_Info` ("
                                       "`machine_name` VARCHAR(50) NOT NULL,"
                                       "`injstep` SMALLINT(6) NOT NULL DEFAULT '0',"
@@ -520,6 +703,84 @@ void MainWindow::remotesql_init(){
                                   "COLLATE='utf8_bin'"
                                   "ENGINE=InnoDB"
                                   ";");
+    }else if(type == ODBC){
+        mysqlquery1.exec("CREATE TABLE Recipe_Info ("
+                                          "machine_name VARCHAR(50) NOT NULL,"
+                                          "injstep SMALLINT NOT NULL DEFAULT '0',"
+                                          "holdstep SMALLINT NOT NULL DEFAULT '0',"
+                                          "injspd_1 float NOT NULL DEFAULT '0',"
+                                          "injspd_2 float NOT NULL DEFAULT '0',"
+                                          "injspd_3 float NOT NULL DEFAULT '0',"
+                                          "injspd_4 float NOT NULL DEFAULT '0',"
+                                          "injspd_5 float NOT NULL DEFAULT '0',"
+                                          "injspd_6 float NOT NULL DEFAULT '0',"
+                                          "injspd_7 float NOT NULL DEFAULT '0',"
+                                          "injspd_8 float NOT NULL DEFAULT '0',"
+                                          "injspd_9 float NOT NULL DEFAULT '0',"
+                                          "injspd_10 float NOT NULL DEFAULT '0',"
+                                          "injprs_1 float NOT NULL DEFAULT '0',"
+                                          "injprs_2 float NOT NULL DEFAULT '0',"
+                                          "injprs_3 float NOT NULL DEFAULT '0',"
+                                          "injprs_4 float NOT NULL DEFAULT '0',"
+                                          "injprs_5 float NOT NULL DEFAULT '0',"
+                                          "injprs_6 float NOT NULL DEFAULT '0',"
+                                          "injprs_7 float NOT NULL DEFAULT '0',"
+                                          "injprs_8 float NOT NULL DEFAULT '0',"
+                                          "injprs_9 float NOT NULL DEFAULT '0',"
+                                          "injprs_10 float NOT NULL DEFAULT '0',"
+                                          "injpos_1 float NOT NULL DEFAULT '0',"
+                                          "injpos_2 float NOT NULL DEFAULT '0',"
+                                          "injpos_3 float NOT NULL DEFAULT '0',"
+                                          "injpos_4 float NOT NULL DEFAULT '0',"
+                                          "injpos_5 float NOT NULL DEFAULT '0',"
+                                          "injpos_6 float NOT NULL DEFAULT '0',"
+                                          "injpos_7 float NOT NULL DEFAULT '0',"
+                                          "injpos_8 float NOT NULL DEFAULT '0',"
+                                          "injpos_9 float NOT NULL DEFAULT '0',"
+                                          "injpos_10 float NOT NULL DEFAULT '0',"
+                                          "holdspd_1 float NOT NULL DEFAULT '0',"
+                                          "holdspd_2 float NOT NULL DEFAULT '0',"
+                                          "holdspd_3 float NOT NULL DEFAULT '0',"
+                                          "holdspd_4 float NOT NULL DEFAULT '0',"
+                                          "holdspd_5 float NOT NULL DEFAULT '0',"
+                                          "holdprs_1 float NOT NULL DEFAULT '0',"
+                                          "holdprs_2 float NOT NULL DEFAULT '0',"
+                                          "holdprs_3 float NOT NULL DEFAULT '0',"
+                                          "holdprs_4 float NOT NULL DEFAULT '0',"
+                                          "holdprs_5 float NOT NULL DEFAULT '0',"
+                                          "holdtime_1 float NOT NULL DEFAULT '0',"
+                                          "holdtime_2 float NOT NULL DEFAULT '0',"
+                                          "holdtime_3 float NOT NULL DEFAULT '0',"
+                                          "holdtime_4 float NOT NULL DEFAULT '0',"
+                                          "holdtime_5 float NOT NULL DEFAULT '0',"
+                                          "chgspd_1 float NOT NULL DEFAULT '0',"
+                                          "chgspd_2 float NOT NULL DEFAULT '0',"
+                                          "chgspd_3 float NOT NULL DEFAULT '0',"
+                                          "chgbps_1 float NOT NULL DEFAULT '0',"
+                                          "chgbps_2 float NOT NULL DEFAULT '0',"
+                                          "chgbps_3 float NOT NULL DEFAULT '0',"
+                                          "chgpos_1 float NOT NULL DEFAULT '0',"
+                                          "chgpos_2 float NOT NULL DEFAULT '0',"
+                                          "chgpos_3 float NOT NULL DEFAULT '0',"
+                                          "suckbspd_1 float NOT NULL DEFAULT '0',"
+                                          "suckbspd_2 float NOT NULL DEFAULT '0',"
+                                          "suckbpos_1 float NOT NULL DEFAULT '0',"
+                                          "suckbpos_2 float NOT NULL DEFAULT '0',"
+                                          "sovpos float NOT NULL DEFAULT '0',"
+                                          "sovprs float NOT NULL DEFAULT '0',"
+                                          "injtime float NOT NULL DEFAULT '0',"
+                                          "injdeltime float NOT NULL DEFAULT '0',"
+                                          "cooltime float NOT NULL DEFAULT '0',"
+                                          "chgdeltime float NOT NULL DEFAULT '0',"
+                                          "UNIQUE (machine_name)"
+                                      ")"
+                                      ";");
+    }
+
+
+
+    qDebug()<<mysqlquery1.lastQuery();
+    qDebug()<<mysqlquery1.lastError().text();
 }
 
 void MainWindow::on_deletebtn_clicked()
