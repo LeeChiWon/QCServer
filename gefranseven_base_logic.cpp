@@ -18,7 +18,11 @@ bool gefranseven_base_logic::init(){
     QSqlQuery litequery1(litedb);
     litequery1.exec("select * from systemset;");
     litequery1.next();
-    remotedb = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
+    if(litequery1.value("remoteservertype").toString().compare("MYSQL")==0){
+        remotedb = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
+    }else if("ODBC"){
+        remotedb = QSqlDatabase::addDatabase("QODBC",parent_item->iptext);
+    }
     remotedb.setHostName(litequery1.value("remoteserverip").toString());
     remotedb.setDatabaseName(litequery1.value("remoteserverdbname").toString());
     remotedb.setPort(litequery1.value("remoteserverport").toInt());

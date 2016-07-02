@@ -21,6 +21,13 @@ Serversetform::Serversetform(QWidget *parent) :
     ui->remoteserverusername->setText(remoteusername);
     QString remoteuserpassword = query1.value("remoteserveruserpassword").toString();
     ui->remoteserveruserpassword->setText(remoteuserpassword);
+    disconnect(ui->DBtypecombo,SIGNAL(currentIndexChanged(QString)),this,SLOT(on_DBtypecombo_currentIndexChanged(QString)));
+    ui->DBtypecombo->addItem("MYSQL");
+    ui->DBtypecombo->addItem("ODBC");
+    QString remoteservertype = query1.value("remoteservertype").toString();
+    ui->DBtypecombo->setCurrentText(remoteservertype);
+    connect(ui->DBtypecombo,SIGNAL(currentIndexChanged(QString)),this,SLOT(on_DBtypecombo_currentIndexChanged(QString)));
+
 }
 
 Serversetform::~Serversetform()
@@ -46,4 +53,11 @@ void Serversetform::on_applybtn_clicked()
     close();
 
 
+}
+
+void Serversetform::on_DBtypecombo_currentIndexChanged(const QString &arg1)
+{
+    QSqlQuery query2(litedb);
+    QString str = QString("update systemset set remoteservertype = \'%1\';").arg(arg1);
+    query2.exec(str);
 }

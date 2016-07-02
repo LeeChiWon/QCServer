@@ -15,8 +15,11 @@ bool es600_base_locgic::init(){
      QSqlQuery litequery1(litedb);
      litequery1.exec("select * from systemset;");
      litequery1.next();
-
-     es600db = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
+     if(litequery1.value("remoteservertype").toString().compare("MYSQL")==0){
+         es600db = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
+     }else if("ODBC"){
+         es600db = QSqlDatabase::addDatabase("QODBC",parent_item->iptext);
+     }
      es600db.setHostName(litequery1.value("remoteserverip").toString());
      es600db.setDatabaseName(litequery1.value("remoteserverdbname").toString());
      es600db.setPort(litequery1.value("remoteserverport").toInt());
