@@ -8,14 +8,6 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QNetworkReply>
-#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
-#include <QWebPage>
-#include <QWebFrame>
-#include <QWebElement>
-#else
-#include <QWebEnginePage>
-#include <QWebEngineView>
-#endif
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QWaitCondition>
@@ -47,17 +39,6 @@ public:
     QMap<QString,BNRvalue *> *datamap; //<name,value>
     QNetworkAccessManager manager;
     QNetworkRequest requast;
-#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
-    QWebPage webpage;
-    QWebElement document;
-    QWebElement first_document;
-    QWebElementCollection documents;
-#else
-    QWebEnginePage *basepage;
-    QWebEnginePage *optionpage1;
-    int pageloadfinish_length = 0;
-    QString webenginenamestr;
-#endif
     QSqlDatabase litedb;
     QSqlDatabase remotedb;
     QWaitCondition waitcondition;
