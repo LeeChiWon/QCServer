@@ -55,6 +55,7 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
 
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     temp_data = reply->readAll();
+    QString htmldata  = QString(temp_data);
     if(temp_data.size()>0){
          if(parent_item->connectlabel->text().indexOf("play-button")<0){
                 parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
@@ -67,26 +68,28 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
         return ;
     }
     if(temp_data.indexOf("PLC Realtime monitoring")>0){
-#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
-        webpage.mainFrame()->setHtml(temp_data);
-        documents1 = webpage.mainFrame()->findAllElements("table tr td p i");
-        documents2 = webpage.mainFrame()->findAllElements("table tr td p b");
-        for(int i=0;i<documents1.count();i++){
-            document1 = documents1.at(i);
-            QString name = document1.toPlainText();
-            document2 = documents2.at(i);
-            QString value = document2.toPlainText();
-            gefranvalue *tempgefdata;
-            if(!datamap->contains(name)){
-                tempgefdata = new gefranvalue();
-                tempgefdata->name = name;
-                datamap->insert(name,tempgefdata);
-            }else {
-                tempgefdata = datamap->value(name);
-            }
-            tempgefdata->value = value;
-        }
-#endif
+
+        qDebug()<<"PLC Realtime monitoring";
+//#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
+//        webpage.mainFrame()->setHtml(temp_data);
+//        documents1 = webpage.mainFrame()->findAllElements("table tr td p i");
+//        documents2 = webpage.mainFrame()->findAllElements("table tr td p b");
+//        for(int i=0;i<documents1.count();i++){
+//            document1 = documents1.at(i);
+//            QString name = document1.toPlainText();
+//            document2 = documents2.at(i);
+//            QString value = document2.toPlainText();
+//            gefranvalue *tempgefdata;
+//            if(!datamap->contains(name)){
+//                tempgefdata = new gefranvalue();
+//                tempgefdata->name = name;
+//                datamap->insert(name,tempgefdata);
+//            }else {
+//                tempgefdata = datamap->value(name);
+//            }
+//            tempgefdata->value = value;
+//        }
+//#endif
         waitcondition.wakeAll();
 
     }else if(temp_data.indexOf("Please enter login information")>0){
@@ -102,19 +105,22 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
 
         manager.post(requast,postData);
     }else if (temp_data.indexOf("Select listed variables and click")>0){
-#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
         QByteArray postData;
-        webpage.mainFrame()->setHtml(temp_data);
-        documents1 = webpage.mainFrame()->findAllElements("input");
-        for(int i=0;i<documents1.count();i++){
-             document1 = documents1.at(i);
-             QString name = document1.attribute("name");
-             if((name.compare("button_getvars")==0) || (name.compare("button")==0)){
-                //no cycle
-             }else{
-                QString data  = QString("%1=SEL-ON&").arg(name);
-                postData.append(data.toLocal8Bit());
-             }
+        int startpoint = 0;
+        while(true){
+            int intputstartpoint =  htmldata.indexOf("<input",startpoint);
+            if(intputstartpoint<0){
+                break;
+            }
+            startpoint = intputstartpoint + 6;
+            int intputendpoint =  htmldata.indexOf("</input>",startpoint);
+            QString linesplit = htmldata.mid(intputstartpoint,intputendpoint-intputstartpoint);
+            QString selon_name = linesplit.split('\"').at(3);
+            if(selon_name.compare("Submit")==0){
+                break;
+            }
+            QString data  = QString("%1=SEL-ON&").arg(selon_name);
+            postData.append(data.toLocal8Bit());
         }
         postData.append("button_getvars=submit");
         QString ip = parent_item->ip->text();
@@ -123,8 +129,6 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
         requast.setHeader(QNetworkRequest::ContentTypeHeader,
                           "application/x-www-form-urlencoded");
         manager.post(requast,postData);
-#endif
-
     }
     delete reply;
 }
