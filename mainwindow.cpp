@@ -797,7 +797,6 @@ void MainWindow::on_deletebtn_clicked()
         mslotitem *temp_item =  itemmap->value(machinenametext);
         itemmap->remove(machinenametext);
         temp_item->deleteLater();
-
     }
 }
 
