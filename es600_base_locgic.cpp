@@ -130,6 +130,149 @@ bool es600_base_locgic::init(){
      addrlist.append(mb_temp15_onoff);
      addrlist.append(mb_temp16_onoff);
 
+     addrlist.append(mb_actstatus);
+
+     addrlist.append(mb_SHOTDATA_count);
+     addrlist.append(mb_currenttotalcount);
+     addrlist.append(mb_SHOTDATA_fooldata);
+     addrlist.append(mb_SHOTDATA_fillingtime);
+     addrlist.append(mb_SHOTDATA_plasticizing_time);
+     addrlist.append(mb_SHOTDATA_cycle_time);
+     addrlist.append(mb_SHOTDATA_cushion_position);
+     addrlist.append(mb_SHOTDATA_plasticizing_position);
+     addrlist.append(mb_SHOTDATA_temp1);
+     addrlist.append(mb_SHOTDATA_temp2);
+     addrlist.append(mb_SHOTDATA_temp3);
+     addrlist.append(mb_SHOTDATA_temp4);
+     addrlist.append(mb_SHOTDATA_temp5);
+     addrlist.append(mb_SHOTDATA_temp6);
+     addrlist.append(mb_SHOTDATA_temp7);
+     addrlist.append(mb_SHOTDATA_temp8);
+     addrlist.append(mb_SHOTDATA_oil_temp);
+     addrlist.append(mb_moldname1);
+     addrlist.append(mb_moldname2);
+     addrlist.append(mb_moldname3);
+     addrlist.append(mb_moldname4);
+     addrlist.append(mb_moldname5);
+
+     addrlist.append(mb_injstep);
+     addrlist.append(mb_hldstep);
+
+     addrlist.append(mb_injVelocity1);
+     addrlist.append(mb_injVelocity2);
+     addrlist.append(mb_injVelocity3);
+     addrlist.append(mb_injVelocity4);
+     addrlist.append(mb_injVelocity5);
+     addrlist.append(mb_injVelocity6);
+     addrlist.append(mb_injPressure1);
+     addrlist.append(mb_injPressure2);
+     addrlist.append(mb_injPressure3);
+     addrlist.append(mb_injPressure4);
+     addrlist.append(mb_injPressure5);
+     addrlist.append(mb_injPressure6);
+     addrlist.append(mb_injPosition1);
+     addrlist.append(mb_injPosition2);
+     addrlist.append(mb_injPosition3);
+     addrlist.append(mb_injPosition4);
+     addrlist.append(mb_injPosition5);
+     addrlist.append(mb_injPosition6);
+
+     addrlist.append(mb_injstep);
+     addrlist.append(mb_hldstep);
+
+     addrlist.append(mb_injVelocity1);
+     addrlist.append(mb_injVelocity2);
+     addrlist.append(mb_injVelocity3);
+     addrlist.append(mb_injVelocity4);
+     addrlist.append(mb_injVelocity5);
+     addrlist.append(mb_injVelocity6);
+
+     addrlist.append(mb_injPressure1);
+     addrlist.append(mb_injPressure2);
+     addrlist.append(mb_injPressure3);
+     addrlist.append(mb_injPressure4);
+     addrlist.append(mb_injPressure5);
+     addrlist.append(mb_injPressure6);
+
+     addrlist.append(mb_injPosition1);
+     addrlist.append(mb_injPosition2);
+     addrlist.append(mb_injPosition3);
+     addrlist.append(mb_injPosition4);
+     addrlist.append(mb_injPosition5);
+     addrlist.append(mb_injPosition6);
+
+     addrlist.append(mb_hldPressure1);
+     addrlist.append(mb_hldPressure2);
+     addrlist.append(mb_hldPressure3);
+
+     addrlist.append(mb_hldTime1);
+     addrlist.append(mb_hldTime2);
+     addrlist.append(mb_hldTime3);
+
+     addrlist.append(mb_hldVel1);
+     addrlist.append(mb_hldVel2);
+     addrlist.append(mb_hldVel3);
+
+     addrlist.append(mb_chgPosition1);
+     addrlist.append(mb_chgPosition2);
+     addrlist.append(mb_chgPosition3);
+     addrlist.append(mb_chgPosition4);
+
+     addrlist.append(mb_chgSpeed1);
+     addrlist.append(mb_chgSpeed2);
+     addrlist.append(mb_chgSpeed3);
+     addrlist.append(mb_chgSpeed4);
+
+     addrlist.append(mb_backPressure1);
+     addrlist.append(mb_backPressure2);
+     addrlist.append(mb_backPressure3);
+     addrlist.append(mb_backPressure4);
+
+     addrlist.append(mb_suckbackPosition2);
+
+     addrlist.append(mb_suckbackSpeed1);
+     addrlist.append(mb_suckbackSpeed2);
+
+     addrlist.append(mb_tempues1);
+     addrlist.append(mb_tempues2);
+     addrlist.append(mb_tempues3);
+     addrlist.append(mb_tempues4);
+     addrlist.append(mb_tempues5);
+     addrlist.append(mb_tempues6);
+     addrlist.append(mb_tempues7);
+
+     addrlist.append(mb_tempset1);
+     addrlist.append(mb_tempset2);
+     addrlist.append(mb_tempset3);
+     addrlist.append(mb_tempset4);
+     addrlist.append(mb_tempset5);
+     addrlist.append(mb_tempset6);
+     addrlist.append(mb_tempset7);
+     addrlist.append(mb_oilset);
+
+     addrlist.append(mb_moldtempuse1);
+     addrlist.append(mb_moldtempuse2);
+     addrlist.append(mb_moldtempuse3);
+     addrlist.append(mb_moldtempuse4);
+     addrlist.append(mb_moldtempuse5);
+     addrlist.append(mb_moldtempuse6);
+     addrlist.append(mb_moldtempuse7);
+     addrlist.append(mb_moldtempuse8);
+
+    addrlist.append(mb_moldtempset1);
+    addrlist.append(mb_moldtempset2);
+    addrlist.append(mb_moldtempset3);
+    addrlist.append(mb_moldtempset4);
+    addrlist.append(mb_moldtempset5);
+    addrlist.append(mb_moldtempset6);
+    addrlist.append(mb_moldtempset7);
+    addrlist.append(mb_moldtempset8);
+
+    addrlist.append(mb_injtime);
+    addrlist.append(mb_cooltime);
+    addrlist.append(mb_chgtime);
+
+
 
 
      modbus_thread = new es600_modbus_thread(this);

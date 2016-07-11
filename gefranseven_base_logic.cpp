@@ -68,28 +68,31 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
         return ;
     }
     if(temp_data.indexOf("PLC Realtime monitoring")>0){
+        int startpoint = 0;
 
-        qDebug()<<"PLC Realtime monitoring";
-//#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
-//        webpage.mainFrame()->setHtml(temp_data);
-//        documents1 = webpage.mainFrame()->findAllElements("table tr td p i");
-//        documents2 = webpage.mainFrame()->findAllElements("table tr td p b");
-//        for(int i=0;i<documents1.count();i++){
-//            document1 = documents1.at(i);
-//            QString name = document1.toPlainText();
-//            document2 = documents2.at(i);
-//            QString value = document2.toPlainText();
-//            gefranvalue *tempgefdata;
-//            if(!datamap->contains(name)){
-//                tempgefdata = new gefranvalue();
-//                tempgefdata->name = name;
-//                datamap->insert(name,tempgefdata);
-//            }else {
-//                tempgefdata = datamap->value(name);
-//            }
-//            tempgefdata->value = value;
-//        }
-//#endif
+        while(true){
+            int startpointvar = htmldata.indexOf("<i>",startpoint);
+            if(startpointvar<0){
+                break;
+            }
+            startpoint = startpointvar + 3; //numer4 is mean <i> length;
+            int endpointlabel = htmldata.indexOf("</i>",startpoint);
+            QString varname = htmldata.mid(startpoint,endpointlabel-startpoint);
+            int startpoint_value = htmldata.indexOf("[ <b>",endpointlabel);
+            startpoint_value = startpoint_value + 5;
+            int endpoint_value = htmldata.indexOf("</b>  ]",startpoint_value);
+            QString value = htmldata.mid(startpoint_value,endpoint_value-startpoint_value);
+            gefranvalue *tempgefdata;
+            if(!datamap->contains(varname)){
+                 tempgefdata = new gefranvalue();
+                 tempgefdata->name = varname;
+                 datamap->insert(varname,tempgefdata);
+             }else {
+                  tempgefdata = datamap->value(varname);
+             }
+             tempgefdata->value = value;
+        }
+
         waitcondition.wakeAll();
 
     }else if(temp_data.indexOf("Please enter login information")>0){
@@ -140,6 +143,8 @@ void gefranseven_base_logic::url_gefranbaseloop(){
     QSqlQuery mysqlquery1(remotedb);
     bool result;
     result = mysqlquery1.exec("UPDATE `temp_table` SET `temp1_down`=6 WHERE  `machine_name`=\'5호\'");
+    qDebug()<<"TOTPS = "<<datamap->value("TOTPS")->value;
+    qDebug()<<"LSTCYC = "<<datamap->value("LSTCYC")->value;
     if(result){
 
     }else {
