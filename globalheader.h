@@ -28,4 +28,6 @@
 #define MYSQL 1
 #define ODBC 2
 
+#define CRYPTO_NUMBER 0x776F6F6A696E
+
 #endif // GLOBALHEADER_H
