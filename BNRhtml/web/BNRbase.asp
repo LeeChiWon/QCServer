@@ -63,7 +63,7 @@
  <!--공정횟수-->
 	<div name = ACT_DATA.System.ACNoCycles ><p>ACT_DATA.System.ACNoCycles = </p> <p class = "value"><% ReadPLC("ACT_DATA.System.ACNoCycles"); %></p> </div>
  <!--경보플레그-->
-	<div name = MA_STAT.AbAlarmPending > <p>MA_STAT.AbAlarmPending = </p> <p class = "value"><% ReadPLC("MA_STAT.AbAlarmPending"); %></p> </div>
+	<div name = MMI_DATA.Alarm.Req > <p>MMI_DATA.Alarm.Req = </p> <p class = "value"><% ReadPLC("MMI_DATA.Alarm.Req"); %></p> </div>
  <!--프로그램 이름-->
 	<div name = ProgVersion ><p>ProgVersion = </p><p class = "value"><% ReadPLC("ProgVersion"); %></p> </div>
  <!--프로그램 구성-->
@@ -315,7 +315,29 @@
 	<div name = REC_DATA.IP.NS.SsDB ><p>REC_DATA.IP.NS.SsDB	= </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SsDB"); %></p> </div>
 	<div name = REC_DATA.IP.NS.SsDA ><p>REC_DATA.IP.NS.SsDA = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SsDA"); %></p> </div>
 
+	<!--사출속도퍼센트 사용-->
+	<div name = MA_FIX.OPT.SbInjSpeedPercent ><p>MA_FIX.OPT.SbInjSpeedPercent = </P> <p class = "value"><% ReadPLC("MA_FIX.OPT.SbInjSpeedPercent"); %></p> </div>
+	
+	<!--사출최대 속도-->
+	<div name = IP_FIX.NEG.SvMaxVis ><p>IP_FIX.NEG.SvMaxVis = </P> <p class = "value"><% ReadPLC("IP_FIX.NEG.SvMaxVis"); %></p> </div>
 
+	<!--SQC 데이터-->
+	<div name = ACT_DATA.SQC.Data[0] ><p>ACT_DATA.SQC.Data[0] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[0]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[1] ><p>ACT_DATA.SQC.Data[1] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[1]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[2] ><p>ACT_DATA.SQC.Data[2] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[2]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[3] ><p>ACT_DATA.SQC.Data[3] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[3]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[4] ><p>ACT_DATA.SQC.Data[4] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[4]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[5] ><p>ACT_DATA.SQC.Data[5] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[5]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[6] ><p>ACT_DATA.SQC.Data[6] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[6]"); %></p> </div>	
+	<div name = ACT_DATA.SQC.Data[7] ><p>ACT_DATA.SQC.Data[7] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[7]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[8] ><p>ACT_DATA.SQC.Data[8] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[8]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[9] ><p>ACT_DATA.SQC.Data[9] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[9]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[10] ><p>ACT_DATA.SQC.Data[10] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[10]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[11] ><p>ACT_DATA.SQC.Data[11] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[11]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[12] ><p>ACT_DATA.SQC.Data[12] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[12]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[13] ><p>ACT_DATA.SQC.Data[13] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[13]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[14] ><p>ACT_DATA.SQC.Data[14] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[14]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[15] ><p>ACT_DATA.SQC.Data[15] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[15]"); %></p> </div>
 	
 	<div name = FINISH> <p>MA_STAT.AbAlarmPending = </P> <p class = "value">0</p> </div>
 
