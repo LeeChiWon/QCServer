@@ -172,7 +172,6 @@ void Bnr_base_locgic::TA_current_update(){
                     .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i-1))->value.toDouble()/10)
                     .arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value.toDouble()/10)
                     .arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i-1))->value);
-
         }
         update_temp.append(temp_append);
     }
@@ -216,7 +215,7 @@ void Bnr_base_locgic::TA_current_update(){
                           "run_mode = \'%6\',"
                           "warning_flag = '%7' "
                           "where machine_name = \'%8\'")
-            .arg(crypto.encryptToString(datamap->value("udTotalProd_actpcs")->value))
+            .arg(crypto.decryptToString(datamap->value("udTotalProd_actpcs")->value))
             .arg(crypto.encryptToString(datamap->value("udTotalProd_setpcs")->value))
             .arg(crypto.encryptToString(datamap->value("uiNoOfCavity")->value))
             .arg(crypto.encryptToString(QString("%1").arg(1,0,'f',achievemen_rate)))
@@ -226,6 +225,7 @@ void Bnr_base_locgic::TA_current_update(){
             .arg(mancine_name);
 
     bool result = mysqlquery1.exec(update_temp);
+
     if(result){
 
     }else {
