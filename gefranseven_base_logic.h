@@ -13,6 +13,7 @@
 #include <QWaitCondition>
 #include <QMutex>
 #include "gefranseven_moudle_thread.h"
+#include <QTcpSocket>
 
 
 class gefranvalue {
@@ -45,12 +46,18 @@ public:
     QWaitCondition waitcondition;
     QMutex mutex;
     gefranseven_moudle_thread *moudle_thread;
+    QTcpSocket *tcpsocket;
+    QString result_mold_name;
+    QString temp_mold_info;
+    int connect_time_loop;
     void requst_read_value(QString ip, QString address);
     void url_gefranbaseloop();
 signals:
 
 public slots:
     void managerfinished(QNetworkReply *reply);
+    void telnetreadready();
+    void telnetjoinerror(QAbstractSocket::SocketError number);
 };
 
 #endif // GEFRANSEVEN_BASE_LOGIC_H
