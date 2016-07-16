@@ -5,6 +5,7 @@ gefranseven_base_logic::gefranseven_base_logic(QObject *parentmslot,QObject *par
 {
     this->parentmslot = parentmslot;
     initflag=false;
+    connect_time_loop = 0;
 #if QT_VERSION > QT_VERSION_CHECK(5,6,0)
 
 #endif
@@ -34,16 +35,97 @@ bool gefranseven_base_logic::init(){
     }else {
        qDebug()<<"gefran DB open";
     }
+    tcpsocket = new QTcpSocket();
+    tcpsocket->connectToHost(parent_item->ip->text(),23);
+    connect(tcpsocket,SIGNAL(readyRead()),this,SLOT(telnetreadready()));
+    connect(tcpsocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(telnetjoinerror(QAbstractSocket::SocketError)));
     moudle_thread = new gefranseven_moudle_thread(this);
     moudle_thread->start();
     initflag=true;
     return initflag;
 }
 
+
+
+void gefranseven_base_logic::telnetjoinerror(QAbstractSocket::SocketError number){
+    mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
+
+}
+//금형 이름 받는 로직
+void gefranseven_base_logic::telnetreadready(){
+    QByteArray data;
+    mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
+    while(true){
+        data = tcpsocket->readLine();
+        if(data.size()==0){
+            break;
+        }
+        QString datastr = QString(data);
+
+        int errormsg = datastr.indexOf("Sorry,");
+        if(errormsg>=0){
+            tcpsocket->disconnectFromHost();
+
+        }
+        int loginfind = datastr.indexOf("login:");
+
+        if(loginfind>0){
+            tcpsocket->write("telnet\r\n");
+            tcpsocket->write("gefranseven\r\n");
+            tcpsocket->flush();
+        }
+        int startpointfin2 = datastr.indexOf("WorkFile = ");
+        if(startpointfin2>=0){
+            QString tempfrount = datastr.split(':').at(0);
+            QString tempaddrvalue= tempfrount.split('=').at(1);
+            tempaddrvalue = tempaddrvalue.trimmed();
+            tcpsocket->write(QString("d %1,13\r\n").arg(tempaddrvalue).toLocal8Bit());
+            tcpsocket->flush();
+        }
+        if(datastr.split('*').size()==3){
+            QString tempfrontstr = datastr.split('*').at(0);
+            QString tempfrontstr1 =  tempfrontstr.split(':').at(1);
+            bool msgendflag = false;
+            if(tempfrontstr1.indexOf("00")>2){
+                 msgendflag = true;
+                 temp_mold_info.append(QString(datastr.split('*').at(1)));
+            }else if(tempfrontstr1.indexOf("00")<0){
+                msgendflag = false;
+                temp_mold_info.append(QString(datastr.split('*').at(1)));
+            }else{
+                msgendflag = false;
+            }
+
+            if(msgendflag){
+                result_mold_name = temp_mold_info.replace('.',"").trimmed();
+                temp_mold_info = "";
+                 qDebug()<<result_mold_name;
+            }
+        }
+//        qDebug()<<datastr;
+    }
+}
+
 void gefranseven_base_logic::loop(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString ip = parent_item->ip->text();
     requst_read_value(ip,"cgi-bin/SevenCgiLib.out");
+    //금형 이름을 받기 위함
+    if(tcpsocket->state() == QTcpSocket::ConnectedState){
+        tcpsocket->write("WorkFile\r\n");
+        tcpsocket->flush();
+    }else if (tcpsocket->state() == QTcpSocket::UnconnectedState){
+        tcpsocket->connectToHost(parent_item->ip->text(),23);
+        parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
+        parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
+    }else if (tcpsocket->state() == QTcpSocket::HostLookupState){
+
+    }else if(tcpsocket->state() == QTcpSocket::ConnectingState){
+        parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
+        parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
+
+    }
+    //qDebug()<<tcpsocket->state();
 }
 void gefranseven_base_logic::requst_read_value(QString ip, QString address){
     QString url = QString("http://%1/%2").arg(ip).arg(address);
@@ -68,28 +150,31 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
         return ;
     }
     if(temp_data.indexOf("PLC Realtime monitoring")>0){
+        int startpoint = 0;
 
-        qDebug()<<"PLC Realtime monitoring";
-//#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
-//        webpage.mainFrame()->setHtml(temp_data);
-//        documents1 = webpage.mainFrame()->findAllElements("table tr td p i");
-//        documents2 = webpage.mainFrame()->findAllElements("table tr td p b");
-//        for(int i=0;i<documents1.count();i++){
-//            document1 = documents1.at(i);
-//            QString name = document1.toPlainText();
-//            document2 = documents2.at(i);
-//            QString value = document2.toPlainText();
-//            gefranvalue *tempgefdata;
-//            if(!datamap->contains(name)){
-//                tempgefdata = new gefranvalue();
-//                tempgefdata->name = name;
-//                datamap->insert(name,tempgefdata);
-//            }else {
-//                tempgefdata = datamap->value(name);
-//            }
-//            tempgefdata->value = value;
-//        }
-//#endif
+        while(true){
+            int startpointvar = htmldata.indexOf("<i>",startpoint);
+            if(startpointvar<0){
+                break;
+            }
+            startpoint = startpointvar + 3; //numer4 is mean <i> length;
+            int endpointlabel = htmldata.indexOf("</i>",startpoint);
+            QString varname = htmldata.mid(startpoint,endpointlabel-startpoint);
+            int startpoint_value = htmldata.indexOf("[ <b>",endpointlabel);
+            startpoint_value = startpoint_value + 5;
+            int endpoint_value = htmldata.indexOf("</b>  ]",startpoint_value);
+            QString value = htmldata.mid(startpoint_value,endpoint_value-startpoint_value);
+            gefranvalue *tempgefdata;
+            if(!datamap->contains(varname)){
+                 tempgefdata = new gefranvalue();
+                 tempgefdata->name = varname;
+                 datamap->insert(varname,tempgefdata);
+             }else {
+                  tempgefdata = datamap->value(varname);
+             }
+             tempgefdata->value = value;
+        }
+
         waitcondition.wakeAll();
 
     }else if(temp_data.indexOf("Please enter login information")>0){
@@ -140,6 +225,8 @@ void gefranseven_base_logic::url_gefranbaseloop(){
     QSqlQuery mysqlquery1(remotedb);
     bool result;
     result = mysqlquery1.exec("UPDATE `temp_table` SET `temp1_down`=6 WHERE  `machine_name`=\'5호\'");
+//    qDebug()<<"TOTPS = "<<datamap->value("TOTPS")->value;
+//    qDebug()<<"LSTCYC = "<<datamap->value("LSTCYC")->value;
     if(result){
 
     }else {

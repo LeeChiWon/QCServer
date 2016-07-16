@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     modbus-tcp.c \
     es600_modbus_thread.cpp \
     bnr_moudle_thread.cpp \
-    gefranseven_moudle_thread.cpp
+    gefranseven_moudle_thread.cpp \
+    simplecrypt.cpp
 
 HEADERS  += mainwindow.h \
     mslotitem.h \
@@ -52,7 +53,8 @@ HEADERS  += mainwindow.h \
     config.h \
     es600_modbus_thread.h \
     bnr_moudle_thread.h \
-    gefranseven_moudle_thread.h
+    gefranseven_moudle_thread.h \
+    simplecrypt.h
 
 FORMS    += mainwindow.ui \
     serversetform.ui

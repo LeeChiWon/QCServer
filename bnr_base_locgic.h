@@ -13,6 +13,9 @@
 #include <QWaitCondition>
 #include <QMutex>
 #include "bnr_moudle_thread.h"
+#include "simplecrypt.h"
+#include <QMessageAuthenticationCode>
+#include "globalheader.h"
 
 class BNRvalue {
 public:
@@ -46,6 +49,8 @@ public:
     bnr_moudle_thread *moudle_thread;
     void requst_read_value(QString ip, QString address);
     void url_bnrbaseloop();
+    void TA_REC_SAVE();
+    void TA_current_update();
     ~Bnr_base_locgic();
 
 
