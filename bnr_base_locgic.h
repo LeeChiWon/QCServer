@@ -51,6 +51,8 @@ public:
     void url_bnrbaseloop();
     void TA_REC_SAVE();
     void TA_current_update();
+    int before_prod_actpcs;
+    int current_prod_actpcs;
     ~Bnr_base_locgic();
 
 

@@ -8,6 +8,8 @@ Bnr_base_locgic::Bnr_base_locgic(QObject *parentmslot,QObject *parent) :
 {
     this->parentmslot = parentmslot;
     initflag=false;
+    before_prod_actpcs = -1;
+    current_prod_actpcs = -1;
 
 
 }
@@ -129,6 +131,7 @@ void Bnr_base_locgic::url_bnrbaseloop(){
 
     if(typetext.indexOf("TA")>=0){
         TA_current_update();
+        TA_REC_SAVE();
     }else if(typetext.indexOf("TE")>=0){
 
     }
@@ -349,6 +352,9 @@ void Bnr_base_locgic::TA_current_update(){
                        .arg(mancine_name));
 
     mysqlquery1.exec(update_temp);
+
+
+
 //    qDebug()<<mysqlquery1.lastQuery();
 //     qDebug()<<mysqlquery1.lastError().text();
 
@@ -359,8 +365,322 @@ void Bnr_base_locgic::TA_REC_SAVE(){
     QString mancine_name = parent_item->machinename->text();
 
     QSqlQuery mysqlquery1(remotedb);
+    current_prod_actpcs = datamap->value("udTotalProd_actpcs")->value.toInt();
+    if(before_prod_actpcs == -1){
+        before_prod_actpcs = current_prod_actpcs;
+    }else if(before_prod_actpcs != current_prod_actpcs){
+        before_prod_actpcs=current_prod_actpcs;
+
+        QByteArray mold_name;
+        for(int i=0;i<31;i++){
+            unsigned int temp_value = datamap->value(QString("ModbusDspRecipeName[%1]").arg(i))->value.toUInt();
+            if(temp_value == 0){
+                break;
+            }
+            mold_name.append(temp_value);
+        }
+        qDebug()<<"mold_name = "<<mold_name;
+        QString current_date = QDate::currentDate().toString("yyyy-MM-dd");
+        QString current_time = QTime::currentTime().toString("hh:mm:ss");
+
+        mysqlquery1.exec(QString("INSERT INTO [shot_data]"
+                                 "([Machine_Name]"
+                                 ",[Additional_Info_1]"
+                                 ",[Additional_Info_2]"
+                                 ",[TimeStamp]"
+                                 ",[Shot_Number]"
+                                 ",[NGmark]"
+                                 ",[Injection_Time]"
+                                 ",[Filling_Time]"
+                                 ",[Plasticizing_Time]"
+                                 ",[Cycle_Time]"
+                                 ",[Clamp_Close_Time]"
+                                 ",[Cushion_Position]"
+                                 ",[Switch_Over_Position]"
+                                 ",[Plasticizing_Position]"
+                                 ",[Clamp_Open_Position]"
+                                 ",[Max_Injection_Speed]"
+                                 ",[Max_Screw_RPM]"
+                                 ",[Average_Screw_RPM]"
+                                 ",[Max_Injection_Pressure]"
+                                 ",[Max_Switch_Over_Pressure]"
+                                 ",[Max_Back_Pressure]"
+                                 ",[Average_Back_Pressure]"
+                                 ",[Barrel_Temperature_1]"
+                                 ",[Barrel_Temperature_2]"
+                                 ",[Barrel_Temperature_3]"
+                                 ",[Barrel_Temperature_4]"
+                                 ",[Barrel_Temperature_5]"
+                                 ",[Barrel_Temperature_6]"
+                                 ",[Barrel_Temperature_7]"
+                                 ",[Hopper_Temperature]"
+                                 ",[Mold_Temperature_1]"
+                                 ",[Mold_Temperature_2]"
+                                 ",[Mold_Temperature_3]"
+                                 ",[Mold_Temperature_4]"
+                                 ",[Mold_Temperature_5]"
+                                 ",[Mold_Temperature_6]"
+                                 ",[Mold_Temperature_7]"
+                                 ",[Mold_Temperature_8]"
+                                 ",[Mold_Temperature_9]"
+                                 ",[Mold_Temperature_10]"
+                                 ",[Mold_Temperature_11]"
+                                 ",[Mold_Temperature_12])"
+                           "VALUES"
+                                 "('"+mancine_name+"',"
+                                 "'"+QString(mold_name)+"',"
+                                 "' ',"
+                                 "'"+current_date+" "+current_time+"',"
+                                 ""+QString("%1").arg(current_prod_actpcs)+","
+                                 ""+QString("%1").arg(datamap->value("MA_STAT.AbProductGoodBadCheck")->value.toInt())+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[0]")->value.toDouble()/100.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[1]")->value.toDouble()/100.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[2]")->value.toDouble()/100.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[3]")->value.toDouble()/100.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[4]")->value.toDouble()/100.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[5]")->value.toDouble()/100.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[6]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[7]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[8]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[9]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[10]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[11]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[12]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[13]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[14]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[15]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[16]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[17]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[18]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[19]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[20]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[21]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[22]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[23]")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[9].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[10].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[11].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[12].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[13].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[14].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[15].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[16].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[17].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[18].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[19].AT")->value.toDouble()/10.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[20].AT")->value.toDouble()/10.0,0,'f',1)+")"
+                                 )
+                         );
+//        qDebug()<<mysqlquery1.lastQuery();
+//        qDebug()<<mysqlquery1.lastError().text();
+        double SbInjSpeedPercent = 0.0;
+        if(datamap->value("MA_FIX.OPT.SbInjSpeedPercent")->value.compare("1") == 0){
+            SbInjSpeedPercent = datamap->value("IP_FIX.NEG.SvMaxVis")->value.toDouble()/10.0;
+        }else {
+            SbInjSpeedPercent = 1.0;
+        }
+
+
+        QString Inj_Velocity =QString("%1/%2/%3/%4/%5/%6/%7/%8/%9/%10")
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[0]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[1]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[2]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[3]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[4]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[5]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[6]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[7]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[8]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.Sv[9]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                ;
+
+        QString Inj_Pressure = QString("%1/%2/%3/%4/%5/%6/%7/%8/%9/%10")
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[0]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[1]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[2]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[3]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[4]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[5]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[6]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[7]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[8]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Sp[9]")->value.toDouble()/10.0,0,'f',1)
+                                ;
+
+        QString Inj_Position = QString("%1/%2/%3/%4/%5/%6/%7/%8/%9/%10")
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[0]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[1]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[2]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[3]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[4]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[5]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[6]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[7]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[8]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.Ss[9]")->value.toDouble()/10.0,0,'f',1)
+                                ;
+
+        QString SOV_Time = QString("%1").arg(datamap->value("REC_DATA.IP.NEG.StSov")->value.toDouble()/100.0,0,'f',1);
+
+        QString SOV_Position = QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SsSov")->value.toDouble()/10.0,0,'f',1);
 
 
 
+        QString Hld_Pressure = QString("%1/%2/%3/%4/%5")
+                                .arg(datamap->value("REC_DATA.IP.NEG.SpHP[0]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.SpHP[1]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.SpHP[2]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.SpHP[3]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.SpHP[4]")->value.toDouble()/10.0,0,'f',1)
+                                ;
+        QString Hld_Time = QString("%1/%2/%3/%4/%5")
+                                .arg(datamap->value("REC_DATA.IP.NEG.St[0]")->value.toDouble()/100.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.St[1]")->value.toDouble()/100.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.St[2]")->value.toDouble()/100.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.St[3]")->value.toDouble()/100.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.NEG.St[4]")->value.toDouble()/100.0,0,'f',1)
+                                ;
+
+        QString Hld_Vel =QString("%1/%2/%3/%4/%5")
+                                .arg(((datamap->value("REC_DATA.IP.NEG.St[0]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.St[1]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.St[2]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.St[3]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.NEG.St[4]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
+                                ;
+
+        QString Chg_Position = QString("%1/%2/%3")
+                                .arg(datamap->value("REC_DATA.IP.PL.Ss[0]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.PL.Ss[1]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.PL.Ss[2]")->value.toDouble()/10.0,0,'f',1)
+                                ;
+
+        double chgspeedpercent = datamap->value("IP_FIX.PL.SvMaxVis")->value.toDouble()/10.0;
+
+        QString Chg_Speed = QString("%1/%2/%3")
+                                .arg(((datamap->value("REC_DATA.IP.PL.Sv[0]")->value.toDouble()/10.0)/chgspeedpercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.PL.Sv[1]")->value.toDouble()/10.0)/chgspeedpercent)*100.0,0,'f',1)
+                                .arg(((datamap->value("REC_DATA.IP.PL.Sv[2]")->value.toDouble()/10.0)/chgspeedpercent)*100.0,0,'f',1)
+                                ;
+
+        QString BackPressure = QString("%1/%2/%3")
+                                .arg(datamap->value("REC_DATA.IP.PL.SpBP[0]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.PL.SpBP[1]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("REC_DATA.IP.PL.SpBP[2]")->value.toDouble()/10.0,0,'f',1)
+                                ;
+
+        QString Suckback_Position = QString("%1/%2")
+                                    .arg(datamap->value("REC_DATA.IP.NS.SsDB")->value.toDouble()/10.0,0,'f',1)
+                                    .arg(datamap->value("REC_DATA.IP.NS.SsDA")->value.toDouble()/10.0,0,'f',1)
+                                    ;
+
+        double SuckbackSpeedpercent = datamap->value("IP_FIX.NS.SvMaxVis")->value.toDouble()/10.0;
+
+        QString Suckback_Speed = QString("%1/%2")
+                                        .arg(((datamap->value("REC_DATA.IP.NS.SvDB")->value.toDouble()/10.0)/SuckbackSpeedpercent)*100.0,0,'f',1)
+                                        .arg(((datamap->value("REC_DATA.IP.NS.SvDA")->value.toDouble()/10.0)/SuckbackSpeedpercent)*100.0,0,'f',1)
+                                        ;
+
+        double temp[21];
+        int tempsbon[21];
+        for(int i=0;i<=20;i++){
+            int tempdata_sbon = datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value.toInt();
+            if( i == 6 ){  //6번은 오일이라서 항상 켜줌
+                tempdata_sbon = 1;
+            }
+            if(tempdata_sbon){
+                tempsbon[i] = 1;
+                if(i==6){ //6번은 오일이라서 변수가 다름
+                    temp[i] = datamap->value(QString("REC_DATA.HC.Oil.ST").arg(i))->value.toDouble()/10.0;
+                }else {
+                    temp[i] = datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10.0;
+                }
+            }else {
+                tempsbon[i] = 0;
+                temp[i] = 0.0;
+            }
+        }
+
+        QString Barrel_Temperature = QString("%1/%2/%3/%4/%5/%6/%7/%8")
+                                        .arg(temp[0],0,'f',1)
+                                        .arg(temp[1],0,'f',1)
+                                        .arg(temp[2],0,'f',1)
+                                        .arg(temp[3],0,'f',1)
+                                        .arg(temp[4],0,'f',1)
+                                        .arg(temp[5],0,'f',1)
+                                        .arg(temp[6],0,'f',1)
+                                        .arg(temp[7],0,'f',1)
+                                        ;
+        QString Mold_Temperature = QString("%1/%2/%3/%4/%5/%6/%7/%8/%9/%10/%11/%12")
+                                        .arg(temp[9],0,'f',1)
+                                        .arg(temp[10],0,'f',1)
+                                        .arg(temp[11],0,'f',1)
+                                        .arg(temp[12],0,'f',1)
+                                        .arg(temp[13],0,'f',1)
+                                        .arg(temp[14],0,'f',1)
+                                        .arg(temp[15],0,'f',1)
+                                        .arg(temp[16],0,'f',1)
+                                        .arg(temp[17],0,'f',1)
+                                        .arg(temp[18],0,'f',1)
+                                        .arg(temp[19],0,'f',1)
+                                        .arg(temp[20],0,'f',1)
+                                        ;
+        QString Timer = QString("%1/%2/%3/%4")
+                            .arg(datamap->value("REC_DATA.IP.NEG.StSov")->value.toDouble()/100.0)
+                            .arg(datamap->value("REC_DATA.TIM.StCooling")->value.toDouble()/100.0)
+                            .arg(datamap->value("REC_DATA.TIM.StIpDelay")->value.toDouble()/100.0)
+                            .arg(datamap->value("REC_DATA.TIM.StPlDelay")->value.toDouble()/100.0)
+                            ;
+
+
+        mysqlquery1.exec(QString("INSERT INTO [shot_data_rec]"
+                                 "([Machine_Name]"
+                                 ",[Additional_Info_1]"
+                                 ",[Additional_Info_2]"
+                                 ",[TimeStamp]"
+                                 ",[Shot_Number]"
+                                 ",[Inj_Velocity]"
+                                 ",[Inj_Pressure]"
+                                 ",[Inj_Position]"
+                                 ",[SOV_Time]"
+                                 ",[SOV_Position]"
+                                 ",[Hld_Pressure]"
+                                 ",[Hld_Time]"
+                                 ",[Hld_Vel]"
+                                 ",[Chg_Position]"
+                                 ",[Chg_Speed]"
+                                 ",[BackPressure]"
+                                 ",[Suckback_Position]"
+                                 ",[Suckback_Speed]"
+                                 ",[Barrel_Temperature]"
+                                 ",[Mold_Temperature]"
+                                 ",[Timer])"
+                           "VALUES"
+                                 "('"+mancine_name+"',"
+                                 "'"+QString(mold_name)+"',"
+                                 "' ',"
+                                 "'"+current_date+" "+current_time+"',"
+                                 ""+QString("%1").arg(current_prod_actpcs)+","
+                                 "'"+Inj_Velocity+"',"
+                                 "'"+Inj_Pressure+"',"
+                                 "'"+Inj_Position+"',"
+                                 ""+SOV_Time+","
+                                 ""+SOV_Position+","
+                                 "'"+Hld_Pressure+"',"
+                                 "'"+Hld_Time+"',"
+                                 "'"+Hld_Vel+"',"
+                                 "'"+Chg_Position+"',"
+                                 "'"+Chg_Speed+"',"
+                                 "'"+BackPressure+"',"
+                                 "'"+Suckback_Position+"',"
+                                 "'"+Suckback_Speed+"',"
+                                 "'"+Barrel_Temperature+"',"
+                                 "'"+Mold_Temperature+"',"
+                                 "'"+Timer+"')"
+                                 )
+                         );
+            qDebug()<<mysqlquery1.lastQuery();
+            qDebug()<<mysqlquery1.lastError().text();
+    }
 }
 
