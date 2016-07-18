@@ -225,8 +225,8 @@ void gefranseven_base_logic::url_gefranbaseloop(){
     QSqlQuery mysqlquery1(remotedb);
     bool result;
     result = mysqlquery1.exec("UPDATE `temp_table` SET `temp1_down`=6 WHERE  `machine_name`=\'5호\'");
-//    qDebug()<<"TOTPS = "<<datamap->value("TOTPS")->value;
-//    qDebug()<<"LSTCYC = "<<datamap->value("LSTCYC")->value;
+    qDebug()<<"TOTPS = "<<datamap->value("TOTPS")->value;
+    qDebug()<<"LSTCYC = "<<datamap->value("LSTCYC")->value;
     if(result){
 
     }else {

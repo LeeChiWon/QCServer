@@ -823,6 +823,8 @@ void MainWindow::remotesql_init(){
                          "[Mold_Temperature_8] [real] NULL,"
                          "[Mold_Temperature_9] [real] NULL,"
                          "[Mold_Temperature_10] [real] NULL,"
+                         "[Mold_Temperature_11] [real] NULL,"
+                         "[Mold_Temperature_12] [real] NULL,"
                      "PRIMARY KEY CLUSTERED "
                      "("
                      "    [idx] ASC"

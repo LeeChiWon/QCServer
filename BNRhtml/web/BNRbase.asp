@@ -6,16 +6,16 @@
 <!--기계이름-->
 	<div name = Autoendstop ><p>Autoendstop = </P> <p class = "value"><% ReadPLC("Autoendstop"); %></p> </div>
 	<div name = Autoendreset><p>Autoendreset = </P> <p class = "value"><% ReadPLC("Autoendreset"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[0] ><p>MA_FIX.INFO.StrMachineAlias[0]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[0]"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[1] ><p>MA_FIX.INFO.StrMachineAlias[1]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[1]"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[2] ><p>MA_FIX.INFO.StrMachineAlias[2]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[2]"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[3] ><p>MA_FIX.INFO.StrMachineAlias[3]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[3]"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[4] ><p>MA_FIX.INFO.StrMachineAlias[4]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[4]"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[5] ><p>MA_FIX.INFO.StrMachineAlias[5]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[5]"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[6] ><p>MA_FIX.INFO.StrMachineAlias[6]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[6]"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[7] ><p>MA_FIX.INFO.StrMachineAlias[7]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[7]"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[8] ><p>MA_FIX.INFO.StrMachineAlias[8]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[8]"); %></p> </div>
-  <div name = MA_FIX.INFO.StrMachineAlias[9] ><p>MA_FIX.INFO.StrMachineAlias[9]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[9]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[0] ><p>MA_FIX.INFO.StrMachineAlias[0]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[0]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[1] ><p>MA_FIX.INFO.StrMachineAlias[1]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[1]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[2] ><p>MA_FIX.INFO.StrMachineAlias[2]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[2]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[3] ><p>MA_FIX.INFO.StrMachineAlias[3]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[3]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[4] ><p>MA_FIX.INFO.StrMachineAlias[4]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[4]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[5] ><p>MA_FIX.INFO.StrMachineAlias[5]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[5]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[6] ><p>MA_FIX.INFO.StrMachineAlias[6]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[6]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[7] ><p>MA_FIX.INFO.StrMachineAlias[7]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[7]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[8] ><p>MA_FIX.INFO.StrMachineAlias[8]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[8]"); %></p> </div>
+	<div name = MA_FIX.INFO.StrMachineAlias[9] ><p>MA_FIX.INFO.StrMachineAlias[9]=</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[9]"); %></p> </div>
 	<div name = MA_FIX.INFO.StrMachineAlias[10] ><p>MA_FIX.INFO.StrMachineAlias[10] =</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[10]"); %></p> </div> 
 	<div name = MA_FIX.INFO.StrMachineAlias[11] ><p>MA_FIX.INFO.StrMachineAlias[11] =</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[11]"); %></p> </div> 
 	<div name = MA_FIX.INFO.StrMachineAlias[12] ><p>MA_FIX.INFO.StrMachineAlias[12] =</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[12]"); %></p> </div>
@@ -26,8 +26,8 @@
 	<div name = MA_FIX.INFO.StrMachineAlias[17] ><p>MA_FIX.INFO.StrMachineAlias[17] =</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[17]"); %></p> </div>
 	<div name = MA_FIX.INFO.StrMachineAlias[18] ><p>MA_FIX.INFO.StrMachineAlias[18] =</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[18]"); %></p> </div>
 	<div name = MA_FIX.INFO.StrMachineAlias[19] ><p>MA_FIX.INFO.StrMachineAlias[19] =</p> <p class = "value"><% ReadPLC("MA_FIX.INFO.StrMachineAlias[19]"); %></p> </div>
-  <!--금형이름-->
-  <div name = ModbusDspRecipeName[0] ><p>ModbusDspRecipeName[0] =</p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>  
+	<!--금형이름-->
+	<div name = ModbusDspRecipeName[0] ><p>ModbusDspRecipeName[0] =</p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>  
 	<div name = ModbusDspRecipeName[1] ><p>ModbusDspRecipeName[1] =</p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[1]"); %></p> </div>  
 	<div name = ModbusDspRecipeName[2] ><p>ModbusDspRecipeName[2] =</p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[2]"); %></p> </div>  
 	<div name = ModbusDspRecipeName[3] ><p>ModbusDspRecipeName[3] =</p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[3]"); %></p> </div>  
@@ -37,46 +37,52 @@
 	<div name = ModbusDspRecipeName[7] ><p>ModbusDspRecipeName[7] =</p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[7]"); %></p> </div>  
 	<div name = ModbusDspRecipeName[8] ><p>ModbusDspRecipeName[8] =</p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[8]"); %></p> </div>  
 	<div name = ModbusDspRecipeName[9] ><p>ModbusDspRecipeName[9] =</p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[9]"); %></p> </div>  
-  <div name = ModbusDspRecipeName[10] ><p>ModbusDspRecipeName[10] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[11] ><p>ModbusDspRecipeName[11] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[12] ><p>ModbusDspRecipeName[12] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[13] ><p>ModbusDspRecipeName[13] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[14] ><p>ModbusDspRecipeName[14] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[15] ><p>ModbusDspRecipeName[15] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[16] ><p>ModbusDspRecipeName[16] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[17] ><p>ModbusDspRecipeName[17] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[18] ><p>ModbusDspRecipeName[18] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[19] ><p>ModbusDspRecipeName[19] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[20] ><p>ModbusDspRecipeName[20] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[21] ><p>ModbusDspRecipeName[21] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[22] ><p>ModbusDspRecipeName[22] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[23] ><p>ModbusDspRecipeName[23] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[24] ><p>ModbusDspRecipeName[24] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[25] ><p>ModbusDspRecipeName[25] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[26] ><p>ModbusDspRecipeName[26] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[27] ><p>ModbusDspRecipeName[27] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[28] ><p>ModbusDspRecipeName[28] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[29] ><p>ModbusDspRecipeName[29] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[30] ><p>ModbusDspRecipeName[30] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
-	<div name = ModbusDspRecipeName[31] ><p>ModbusDspRecipeName[31] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[0]"); %></p> </div>
+	<div name = ModbusDspRecipeName[10] ><p>ModbusDspRecipeName[10] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[10]"); %></p> </div>
+	<div name = ModbusDspRecipeName[11] ><p>ModbusDspRecipeName[11] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[11]"); %></p> </div>
+	<div name = ModbusDspRecipeName[12] ><p>ModbusDspRecipeName[12] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[12]"); %></p> </div>
+	<div name = ModbusDspRecipeName[13] ><p>ModbusDspRecipeName[13] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[13]"); %></p> </div>
+	<div name = ModbusDspRecipeName[14] ><p>ModbusDspRecipeName[14] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[14]"); %></p> </div>
+	<div name = ModbusDspRecipeName[15] ><p>ModbusDspRecipeName[15] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[15]"); %></p> </div>
+	<div name = ModbusDspRecipeName[16] ><p>ModbusDspRecipeName[16] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[16]"); %></p> </div>
+	<div name = ModbusDspRecipeName[17] ><p>ModbusDspRecipeName[17] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[17]"); %></p> </div>
+	<div name = ModbusDspRecipeName[18] ><p>ModbusDspRecipeName[18] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[18]"); %></p> </div>
+	<div name = ModbusDspRecipeName[19] ><p>ModbusDspRecipeName[19] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[19]"); %></p> </div>
+	<div name = ModbusDspRecipeName[20] ><p>ModbusDspRecipeName[20] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[20]"); %></p> </div>
+	<div name = ModbusDspRecipeName[21] ><p>ModbusDspRecipeName[21] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[21]"); %></p> </div>
+	<div name = ModbusDspRecipeName[22] ><p>ModbusDspRecipeName[22] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[22]"); %></p> </div>
+	<div name = ModbusDspRecipeName[23] ><p>ModbusDspRecipeName[23] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[23]"); %></p> </div>
+	<div name = ModbusDspRecipeName[24] ><p>ModbusDspRecipeName[24] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[24]"); %></p> </div>
+	<div name = ModbusDspRecipeName[25] ><p>ModbusDspRecipeName[25] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[25]"); %></p> </div>
+	<div name = ModbusDspRecipeName[26] ><p>ModbusDspRecipeName[26] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[26]"); %></p> </div>
+	<div name = ModbusDspRecipeName[27] ><p>ModbusDspRecipeName[27] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[27]"); %></p> </div>
+	<div name = ModbusDspRecipeName[28] ><p>ModbusDspRecipeName[28] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[28]"); %></p> </div>
+	<div name = ModbusDspRecipeName[29] ><p>ModbusDspRecipeName[29] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[29]"); %></p> </div>
+	<div name = ModbusDspRecipeName[30] ><p>ModbusDspRecipeName[30] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[30]"); %></p> </div>
+	<div name = ModbusDspRecipeName[31] ><p>ModbusDspRecipeName[31] = </p> <p class = "value"><% ReadPLC("ModbusDspRecipeName[31]"); %></p> </div>
 
- <!--공정횟수-->
+
+
+	<!--공정횟수-->
 	<div name = ACT_DATA.System.ACNoCycles ><p>ACT_DATA.System.ACNoCycles = </p> <p class = "value"><% ReadPLC("ACT_DATA.System.ACNoCycles"); %></p> </div>
- <!--경보플레그-->
-	<div name = MMI_DATA.Alarm.Req > <p>MMI_DATA.Alarm.Req = </p> <p class = "value"><% ReadPLC("MMI_DATA.Alarm.Req"); %></p> </div>
- <!--프로그램 이름-->
-	<div name = ProgVersion ><p>ProgVersion = </p><p class = "value"><% ReadPLC("ProgVersion"); %></p> </div>
- <!--프로그램 구성-->
-	<div name = ConfigName ><p>onfigName = </p> <p class = "value"><% ReadPLC("ConfigName"); %></p> </div>
+	<!--생산횟수-->
+	<div name = udTotalProd_actpcs ><p>udTotalProd_actpcs = </p> <p class = "value"><% ReadPLC("udTotalProd_actpcs"); %></p> </div>
+	<!--캐비티수-->
+	<div name = uiNoOfCavity><p>uiNoOfCavity = </p> <p class = "value"><% ReadPLC("uiNoOfCavity"); %></p> </div>
 
- <!--형체 설정 -->
- <!--형개 속도 -->
+	<!--경보플레그-->
+	<div name = MMI_DATA.Alarm.Req > <p>MMI_DATA.Alarm.Req = </p> <p class = "value"><% ReadPLC("MMI_DATA.Alarm.Req"); %></p> </div>
+	<!--프로그램 이름-->
+	<div name = ProgVersion ><p>ProgVersion = </p><p class = "value"><% ReadPLC("ProgVersion"); %></p> </div>
+	<!--프로그램 구성-->
+	<div name = ConfigName ><p>onfigName = </p> <p class = "value"><% ReadPLC("ConfigName"); %></p> </div>
+	<!--형체 설정 -->
+	<!--형개 속도 -->
 	<div name = REC_DATA.CU.POS.Sv[0] ><p>REC_DATA.CU.POS.Sv[0] = </P> <p class = "value"><% ReadPLC("REC_DATA.CU.POS.Sv[0]"); %></p> </div>
 	<div name = REC_DATA.CU.POS.Sv[1] ><p>REC_DATA.CU.POS.Sv[1] = </P> <p class = "value"><% ReadPLC("REC_DATA.CU.POS.Sv[1]"); %></p> </div>
 	<div name = REC_DATA.CU.POS.Sv[2] ><p>REC_DATA.CU.POS.Sv[2] = </P> <p class = "value"><% ReadPLC("REC_DATA.CU.POS.Sv[2]"); %></p> </div>
 	<div name = REC_DATA.CU.POS.Sv[3] ><p>REC_DATA.CU.POS.Sv[3] = </P> <p class = "value"><% ReadPLC("REC_DATA.CU.POS.Sv[3]"); %></p> </div>
 	<div name = REC_DATA.CU.POS.Sv[4] ><p>REC_DATA.CU.POS.Sv[4] = </P> <p class = "value"><% ReadPLC("REC_DATA.CU.POS.Sv[4]"); %></p> </div>
- <!--형개 압력-->
+	<!--형개 압력-->
 	<div name = REC_DATA.CU.POS.Sp[0] ><p>REC_DATA.CU.POS.Sp[0] = </P> <p class = "value"><% ReadPLC("REC_DATA.CU.POS.Sp[0]"); %></p> </div>
 	<div name = REC_DATA.CU.POS.Sp[1] ><p>REC_DATA.CU.POS.Sp[1] = </P> <p class = "value"><% ReadPLC("REC_DATA.CU.POS.Sp[1]"); %></p> </div>
 	<div name = REC_DATA.CU.POS.Sp[2] ><p>REC_DATA.CU.POS.Sp[2] = </P> <p class = "value"><% ReadPLC("REC_DATA.CU.POS.Sp[2]"); %></p> </div>
@@ -105,7 +111,7 @@
 	<div name = REC_DATA.CU.NEG.Ss[1] ><p>REC_DATA.CU.NEG.Ss[1] = </p><p class = "value"><% ReadPLC("REC_DATA.CU.NEG.Ss[1]"); %></p> </div>
 	<div name = REC_DATA.CU.NEG.SsMP ><p>REC_DATA.CU.NEG.SsMP = </p><p class = "value"><% ReadPLC("REC_DATA.CU.NEG.SsMP"); %></p> </div>
 	<div name = REC_DATA.CU.NEG.SsML ><p>REC_DATA.CU.NEG.SsML = </p><p class = "value"><% ReadPLC("REC_DATA.CU.NEG.SsML"); %></p> </div>
- <!--실시간 온도-->
+	 <!--실시간 온도-->
 	<div name = ACT_DATA.Zone[0].AT ><p>ACT_DATA.Zone[0].AT = </P> <p class = "value"><% ReadPLC("ACT_DATA.Zone[0].AT"); %></p> </div>
 	<div name = ACT_DATA.Zone[1].AT ><p>ACT_DATA.Zone[1].AT = </P> <p class = "value"><% ReadPLC("ACT_DATA.Zone[1].AT"); %></p> </div>
 	<div name = ACT_DATA.Zone[2].AT ><p>ACT_DATA.Zone[2].AT = </P> <p class = "value"><% ReadPLC("ACT_DATA.Zone[2].AT"); %></p> </div>
@@ -219,33 +225,33 @@
 	<div name = REC_DATA.HC.Zone[19].SbOn ><p>REC_DATA.HC.Zone[19].SbOn = </P> <p class = "value"><% ReadPLC("REC_DATA.HC.Zone[19].SbOn"); %></p> </div>
 	<div name = REC_DATA.HC.Zone[20].SbOn ><p>REC_DATA.HC.Zone[20].SbOn = </P> <p class = "value"><% ReadPLC("REC_DATA.HC.Zone[20].SbOn"); %></p> </div>
 	
-<!--생산 관리-->
+	<!--생산 관리-->
 	<div name = udTotalProd_setpcs ><p>udTotalProd_setpcs = </P> <p class = "value"><% ReadPLC("udTotalProd_setpcs"); %></p> </div>
 	<div name = udTotalProd_actpcs ><p>udTotalProd_actpcs = </P> <p class = "value"><% ReadPLC("udTotalProd_actpcs"); %></p> </div>
 	<div name = uiNoOfCavity ><p>uiNoOfCavity = </P> <p class = "value"><% ReadPLC("uiNoOfCavity"); %></p> </div>
-<!--동작 모드-->	
+	<!--동작 모드-->	
 	<div name = MMI_DATA.Mode ><p>MMI_DATA.Mode = </P> <p class = "value"><% ReadPLC("MMI_DATA.Mode"); %></p> </div>
-<!--공정 시간-->	
+	<!--공정 시간-->	
 	<div name = ACT_DATA.System.AtCycleTime ><p>ACT_DATA.System.AtCycleTime = </P> <p class = "value"><% ReadPLC("ACT_DATA.System.AtCycleTime"); %></p> </div>
 
-<!--알람 팬딩-->	
+	<!--알람 팬딩-->	
 	<div name = MA_STAT.AbAlarmPending ><p>MA_STAT.AbAlarmPending = </P> <p class = "value"><% ReadPLC("MA_STAT.AbAlarmPending"); %></p> </div>
-<!--셋팅 정보-->
- <!--사출 정보-->
-  <!--사출 스텝-->
-  <div name = REC_DATA.IP.NrInjectionProfile ><p>REC_DATA.IP.NrInjectionProfile = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NrInjectionProfile"); %></p> </div>
-  <!--보압 스텝-->
-  <div name = REC_DATA.IP.NrHoldonProfile ><p>REC_DATA.IP.NrHoldonProfile = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NrHoldonProfile"); %></p> </div> 
-  <!--보압절환위치-->
-  <div name = REC_DATA.IP.NEG.SsSov ><p>REC_DATA.IP.NEG.SsSov = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.SsSov"); %></p> </div> 
-  <!--보압절환압력-->
-  <div name = REC_DATA.IP.NEG.SpSov ><p>REC_DATA.IP.NEG.SpSov = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.SpSov"); %></p> </div> 
-  <!--사출시간-->
-  <div name = REC_DATA.IP.NEG.StSov ><p>REC_DATA.IP.NEG.StSov = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.StSov"); %></p> </div>
-  <!--사출지연시간-->
-  <div name = REC_DATA.TIM.StIpDelay ><p>REC_DATA.TIM.StIpDelay = </P> <p class = "value"><% ReadPLC("REC_DATA.TIM.StIpDelay"); %></p> </div>
-  <!--사출 속도-->
-  <div name = REC_DATA.IP.NEG.Sv[0] ><p>REC_DATA.IP.NEG.Sv[0] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.Sv[0]"); %></p> </div>
+	<!--셋팅 정보-->
+	<!--사출 정보-->
+	<!--사출 스텝-->
+	<div name = REC_DATA.IP.NrInjectionProfile ><p>REC_DATA.IP.NrInjectionProfile = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NrInjectionProfile"); %></p> </div>
+	<!--보압 스텝-->
+	<div name = REC_DATA.IP.NrHoldonProfile ><p>REC_DATA.IP.NrHoldonProfile = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NrHoldonProfile"); %></p> </div> 
+	<!--보압절환위치-->
+	<div name = REC_DATA.IP.NEG.SsSov ><p>REC_DATA.IP.NEG.SsSov = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.SsSov"); %></p> </div> 
+	<!--보압절환압력-->
+	<div name = REC_DATA.IP.NEG.SpSov ><p>REC_DATA.IP.NEG.SpSov = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.SpSov"); %></p> </div> 
+	<!--사출시간-->
+	<div name = REC_DATA.IP.NEG.StSov ><p>REC_DATA.IP.NEG.StSov = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.StSov"); %></p> </div>
+	<!--사출지연시간-->
+	<div name = REC_DATA.TIM.StIpDelay ><p>REC_DATA.TIM.StIpDelay = </P> <p class = "value"><% ReadPLC("REC_DATA.TIM.StIpDelay"); %></p> </div>
+	<!--사출 속도-->
+	<div name = REC_DATA.IP.NEG.Sv[0] ><p>REC_DATA.IP.NEG.Sv[0] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.Sv[0]"); %></p> </div>
 	<div name = REC_DATA.IP.NEG.Sv[1] ><p>REC_DATA.IP.NEG.Sv[1] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.Sv[1]"); %></p> </div>
 	<div name = REC_DATA.IP.NEG.Sv[2] ><p>REC_DATA.IP.NEG.Sv[2] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.Sv[2]"); %></p> </div>
 	<div name = REC_DATA.IP.NEG.Sv[3] ><p>REC_DATA.IP.NEG.Sv[3] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.Sv[3]"); %></p> </div>
@@ -291,15 +297,18 @@
 	<div name = REC_DATA.IP.NEG.St[2] ><p>REC_DATA.IP.NEG.St[2] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.St[2]"); %></p> </div>
 	<div name = REC_DATA.IP.NEG.St[3] ><p>REC_DATA.IP.NEG.St[3] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.St[3]"); %></p> </div>
 	<div name = REC_DATA.IP.NEG.St[4] ><p>REC_DATA.IP.NEG.St[4] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NEG.St[4]"); %></p> </div>	
- <!--계량 정보-->	
-  <!--냉각 시간-->
-  <div name = REC_DATA.TIM.StCooling ><p>REC_DATA.TIM.StCooling = </P> <p class = "value"><% ReadPLC("REC_DATA.TIM.StCooling"); %></p> </div>
-  <!--계량지연 시간-->
-  <div name = REC_DATA.TIM.StPlDelay ><p>REC_DATA.TIM.StPlDelay = </P> <p class = "value"><% ReadPLC("REC_DATA.TIM.StPlDelay"); %></p> </div>
+	<!--계량 정보-->
+	<!--냉각 시간-->
+	<div name = REC_DATA.TIM.StCooling ><p>REC_DATA.TIM.StCooling = </P> <p class = "value"><% ReadPLC("REC_DATA.TIM.StCooling"); %></p> </div>
+	<!--계량지연 시간-->
+	<div name = REC_DATA.TIM.StPlDelay ><p>REC_DATA.TIM.StPlDelay = </P> <p class = "value"><% ReadPLC("REC_DATA.TIM.StPlDelay"); %></p> </div>
 	<!--계량 속도-->
-  <div name = REC_DATA.IP.PL.Sv[0] ><p>REC_DATA.IP.PL.Sv[0] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.PL.Sv[0]"); %></p> </div>
+	<div name = REC_DATA.IP.PL.Sv[0] ><p>REC_DATA.IP.PL.Sv[0] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.PL.Sv[0]"); %></p> </div>
 	<div name = REC_DATA.IP.PL.Sv[1] ><p>REC_DATA.IP.PL.Sv[1] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.PL.Sv[1]"); %></p> </div>
 	<div name = REC_DATA.IP.PL.Sv[2] ><p>REC_DATA.IP.PL.Sv[2] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.PL.Sv[2]"); %></p> </div>	
+	<!--최대 계량 속도-->
+	<div name = IP_FIX.PL.SvMaxVis ><p>IP_FIX.PL.SvMaxVis = </P> <p class = "value"><% ReadPLC("IP_FIX.PL.SvMaxVis"); %></p> </div>	
+	
 	<!--배압-->                                                                                                                     
 	<div name = REC_DATA.IP.PL.SpBP[0] ><p>REC_DATA.IP.PL.SpBP[0] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.PL.SpBP[0]"); %></p> </div>
 	<div name = REC_DATA.IP.PL.SpBP[1] ><p>REC_DATA.IP.PL.SpBP[1] = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.PL.SpBP[1]"); %></p> </div>
@@ -311,6 +320,8 @@
 	<!--강제후퇴속도-->
 	<div name = REC_DATA.IP.NS.SvDB ><p>REC_DATA.IP.NS.SvDB	= </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SvDB"); %></p> </div>
 	<div name = REC_DATA.IP.NS.SvDA ><p>REC_DATA.IP.NS.SvDA	= </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SvDA"); %></p> </div>
+	<!--강제후퇴최대속도-->
+	<div name = IP_FIX.NS.SvMaxVis ><p>IP_FIX.NS.SvMaxVis	= </P> <p class = "value"><% ReadPLC("IP_FIX.NS.SvMaxVis"); %></p> </div>
 	<!--강제후퇴위치-->
 	<div name = REC_DATA.IP.NS.SsDB ><p>REC_DATA.IP.NS.SsDB	= </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SsDB"); %></p> </div>
 	<div name = REC_DATA.IP.NS.SsDA ><p>REC_DATA.IP.NS.SsDA = </P> <p class = "value"><% ReadPLC("REC_DATA.IP.NS.SsDA"); %></p> </div>
@@ -320,7 +331,8 @@
 	
 	<!--사출최대 속도-->
 	<div name = IP_FIX.NEG.SvMaxVis ><p>IP_FIX.NEG.SvMaxVis = </P> <p class = "value"><% ReadPLC("IP_FIX.NEG.SvMaxVis"); %></p> </div>
-
+	<!--불량 체크-->
+	<div name = MA_STAT.AbProductGoodBadCheck ><p>MA_STAT.AbProductGoodBadCheck = </P> <p class = "value"><% ReadPLC("MA_STAT.AbProductGoodBadCheck"); %></p> </div>
 	<!--SQC 데이터-->
 	<div name = ACT_DATA.SQC.Data[0] ><p>ACT_DATA.SQC.Data[0] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[0]"); %></p> </div>
 	<div name = ACT_DATA.SQC.Data[1] ><p>ACT_DATA.SQC.Data[1] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[1]"); %></p> </div>
@@ -338,6 +350,22 @@
 	<div name = ACT_DATA.SQC.Data[13] ><p>ACT_DATA.SQC.Data[13] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[13]"); %></p> </div>
 	<div name = ACT_DATA.SQC.Data[14] ><p>ACT_DATA.SQC.Data[14] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[14]"); %></p> </div>
 	<div name = ACT_DATA.SQC.Data[15] ><p>ACT_DATA.SQC.Data[15] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[15]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[16] ><p>ACT_DATA.SQC.Data[16] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[16]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[17] ><p>ACT_DATA.SQC.Data[17] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[17]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[18] ><p>ACT_DATA.SQC.Data[18] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[18]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[19] ><p>ACT_DATA.SQC.Data[19] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[19]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[20] ><p>ACT_DATA.SQC.Data[20] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[20]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[21] ><p>ACT_DATA.SQC.Data[21] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[21]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[22] ><p>ACT_DATA.SQC.Data[22] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[22]"); %></p> </div>	
+	<div name = ACT_DATA.SQC.Data[23] ><p>ACT_DATA.SQC.Data[23] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[23]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[24] ><p>ACT_DATA.SQC.Data[24] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[24]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[25] ><p>ACT_DATA.SQC.Data[25] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[25]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[26] ><p>ACT_DATA.SQC.Data[26] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[26]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[27] ><p>ACT_DATA.SQC.Data[27] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[27]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[28] ><p>ACT_DATA.SQC.Data[28] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[28]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[29] ><p>ACT_DATA.SQC.Data[29] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[29]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[30] ><p>ACT_DATA.SQC.Data[30] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[30]"); %></p> </div>
+	<div name = ACT_DATA.SQC.Data[31] ><p>ACT_DATA.SQC.Data[31] = </P> <p class = "value"><% ReadPLC("ACT_DATA.SQC.Data[31]"); %></p> </div>
 	
 	<div name = FINISH> <p>MA_STAT.AbAlarmPending = </P> <p class = "value">0</p> </div>
 
