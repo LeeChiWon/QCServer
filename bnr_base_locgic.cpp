@@ -379,53 +379,53 @@ void Bnr_base_locgic::TA_REC_SAVE(){
             }
             mold_name.append(temp_value);
         }
-        qDebug()<<"mold_name = "<<mold_name;
+        //qDebug()<<"mold_name = "<<mold_name;
         QString current_date = QDate::currentDate().toString("yyyy-MM-dd");
         QString current_time = QTime::currentTime().toString("hh:mm:ss");
 
-        mysqlquery1.exec(QString("INSERT INTO [shot_data]"
-                                 "([Machine_Name]"
-                                 ",[Additional_Info_1]"
-                                 ",[Additional_Info_2]"
-                                 ",[TimeStamp]"
-                                 ",[Shot_Number]"
-                                 ",[NGmark]"
-                                 ",[Injection_Time]"
-                                 ",[Filling_Time]"
-                                 ",[Plasticizing_Time]"
-                                 ",[Cycle_Time]"
-                                 ",[Clamp_Close_Time]"
-                                 ",[Cushion_Position]"
-                                 ",[Switch_Over_Position]"
-                                 ",[Plasticizing_Position]"
-                                 ",[Clamp_Open_Position]"
-                                 ",[Max_Injection_Speed]"
-                                 ",[Max_Screw_RPM]"
-                                 ",[Average_Screw_RPM]"
-                                 ",[Max_Injection_Pressure]"
-                                 ",[Max_Switch_Over_Pressure]"
-                                 ",[Max_Back_Pressure]"
-                                 ",[Average_Back_Pressure]"
-                                 ",[Barrel_Temperature_1]"
-                                 ",[Barrel_Temperature_2]"
-                                 ",[Barrel_Temperature_3]"
-                                 ",[Barrel_Temperature_4]"
-                                 ",[Barrel_Temperature_5]"
-                                 ",[Barrel_Temperature_6]"
-                                 ",[Barrel_Temperature_7]"
-                                 ",[Hopper_Temperature]"
-                                 ",[Mold_Temperature_1]"
-                                 ",[Mold_Temperature_2]"
-                                 ",[Mold_Temperature_3]"
-                                 ",[Mold_Temperature_4]"
-                                 ",[Mold_Temperature_5]"
-                                 ",[Mold_Temperature_6]"
-                                 ",[Mold_Temperature_7]"
-                                 ",[Mold_Temperature_8]"
-                                 ",[Mold_Temperature_9]"
-                                 ",[Mold_Temperature_10]"
-                                 ",[Mold_Temperature_11]"
-                                 ",[Mold_Temperature_12])"
+        mysqlquery1.exec(QString("INSERT INTO shot_data"
+                                 "(Machine_Name"
+                                 ",Additional_Info_1"
+                                 ",Additional_Info_2"
+                                 ",TimeStamp"
+                                 ",Shot_Number"
+                                 ",NGmark"
+                                 ",Injection_Time"
+                                 ",Filling_Time"
+                                 ",Plasticizing_Time"
+                                 ",Cycle_Time"
+                                 ",Clamp_Close_Time"
+                                 ",Cushion_Position"
+                                 ",Switch_Over_Position"
+                                 ",Plasticizing_Position"
+                                 ",Clamp_Open_Position"
+                                 ",Max_Injection_Speed"
+                                 ",Max_Screw_RPM"
+                                 ",Average_Screw_RPM"
+                                 ",Max_Injection_Pressure"
+                                 ",Max_Switch_Over_Pressure"
+                                 ",Max_Back_Pressure"
+                                 ",Average_Back_Pressure"
+                                 ",Barrel_Temperature_1"
+                                 ",Barrel_Temperature_2"
+                                 ",Barrel_Temperature_3"
+                                 ",Barrel_Temperature_4"
+                                 ",Barrel_Temperature_5"
+                                 ",Barrel_Temperature_6"
+                                 ",Barrel_Temperature_7"
+                                 ",Hopper_Temperature"
+                                 ",Mold_Temperature_1"
+                                 ",Mold_Temperature_2"
+                                 ",Mold_Temperature_3"
+                                 ",Mold_Temperature_4"
+                                 ",Mold_Temperature_5"
+                                 ",Mold_Temperature_6"
+                                 ",Mold_Temperature_7"
+                                 ",Mold_Temperature_8"
+                                 ",Mold_Temperature_9"
+                                 ",Mold_Temperature_10"
+                                 ",Mold_Temperature_11"
+                                 ",Mold_Temperature_12)"
                            "VALUES"
                                  "('"+mancine_name+"',"
                                  "'"+QString(mold_name)+"',"
@@ -479,7 +479,6 @@ void Bnr_base_locgic::TA_REC_SAVE(){
         }else {
             SbInjSpeedPercent = 1.0;
         }
-
 
         QString Inj_Velocity =QString("%1/%2/%3/%4/%5/%6/%7/%8/%9/%10")
                                 .arg(((datamap->value("REC_DATA.IP.NEG.Sv[0]")->value.toDouble()/10.0)/SbInjSpeedPercent)*100.0,0,'f',1)
@@ -583,7 +582,7 @@ void Bnr_base_locgic::TA_REC_SAVE(){
 
         double temp[21];
         int tempsbon[21];
-        for(int i=0;i<=20;i++){
+       for(int i=0;i<=20;i++){
             int tempdata_sbon = datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value.toInt();
             if( i == 6 ){  //6번은 오일이라서 항상 켜줌
                 tempdata_sbon = 1;
@@ -591,7 +590,7 @@ void Bnr_base_locgic::TA_REC_SAVE(){
             if(tempdata_sbon){
                 tempsbon[i] = 1;
                 if(i==6){ //6번은 오일이라서 변수가 다름
-                    temp[i] = datamap->value(QString("REC_DATA.HC.Oil.ST").arg(i))->value.toDouble()/10.0;
+                    temp[i] = datamap->value(QString("REC_DATA.HC.Oil.ST"))->value.toDouble()/10.0;
                 }else {
                     temp[i] = datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10.0;
                 }
@@ -633,28 +632,28 @@ void Bnr_base_locgic::TA_REC_SAVE(){
                             ;
 
 
-        mysqlquery1.exec(QString("INSERT INTO [shot_data_rec]"
-                                 "([Machine_Name]"
-                                 ",[Additional_Info_1]"
-                                 ",[Additional_Info_2]"
-                                 ",[TimeStamp]"
-                                 ",[Shot_Number]"
-                                 ",[Inj_Velocity]"
-                                 ",[Inj_Pressure]"
-                                 ",[Inj_Position]"
-                                 ",[SOV_Time]"
-                                 ",[SOV_Position]"
-                                 ",[Hld_Pressure]"
-                                 ",[Hld_Time]"
-                                 ",[Hld_Vel]"
-                                 ",[Chg_Position]"
-                                 ",[Chg_Speed]"
-                                 ",[BackPressure]"
-                                 ",[Suckback_Position]"
-                                 ",[Suckback_Speed]"
-                                 ",[Barrel_Temperature]"
-                                 ",[Mold_Temperature]"
-                                 ",[Timer])"
+        mysqlquery1.exec(QString("INSERT INTO shot_data_rec"
+                                 "(Machine_Name"
+                                 ",Additional_Info_1"
+                                 ",Additional_Info_2"
+                                 ",TimeStamp"
+                                 ",Shot_Number"
+                                 ",Inj_Velocity"
+                                 ",Inj_Pressure"
+                                 ",Inj_Position"
+                                 ",SOV_Time"
+                                 ",SOV_Position"
+                                 ",Hld_Pressure"
+                                 ",Hld_Time"
+                                 ",Hld_Vel"
+                                 ",Chg_Position"
+                                 ",Chg_Speed"
+                                 ",BackPressure"
+                                 ",Suckback_Position"
+                                 ",Suckback_Speed"
+                                 ",Barrel_Temperature"
+                                 ",Mold_Temperature"
+                                 ",Timer)"
                            "VALUES"
                                  "('"+mancine_name+"',"
                                  "'"+QString(mold_name)+"',"
@@ -679,8 +678,6 @@ void Bnr_base_locgic::TA_REC_SAVE(){
                                  "'"+Timer+"')"
                                  )
                          );
-            qDebug()<<mysqlquery1.lastQuery();
-            qDebug()<<mysqlquery1.lastError().text();
     }
 }
 
