@@ -16,6 +16,7 @@
 #include "simplecrypt.h"
 #include <QMessageAuthenticationCode>
 #include "globalheader.h"
+#include <alrammap_data.h>
 
 class BNRvalue {
 public:
@@ -40,6 +41,7 @@ public:
     void loop();
     QObject *parentmslot;
     QMap<QString,BNRvalue *> *datamap; //<name,value>
+    QMap<QString,alrammap_data *> *alrammap;
     QNetworkAccessManager manager;
     QNetworkRequest requast;
     QSqlDatabase litedb;
@@ -51,6 +53,11 @@ public:
     void url_bnrbaseloop();
     void TA_REC_SAVE();
     void TA_current_update();
+    void TE_current_update();
+    void TE_REC_SAVE();
+    void alram_update();
+    int before_prod_actpcs;
+    int current_prod_actpcs;
     ~Bnr_base_locgic();
 
 

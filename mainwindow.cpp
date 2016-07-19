@@ -226,6 +226,7 @@ void MainWindow::remotesql_init(){
                          "`weight` TEXT NULL COLLATE 'utf8_bin',"
                          "`run_mode` TEXT NULL DEFAULT NULL COMMENT '',"
                          "`warning_flag`  TEXT NULL COLLATE 'utf8_bin',"
+                         "`warning_data` TEXT NULL DEFAULT NULL COMMENT '',"
                          "UNIQUE INDEX `machine_name` (`machine_name`)"
                      ")"
                       "COLLATE='utf8_bin'"
@@ -254,6 +255,7 @@ void MainWindow::remotesql_init(){
                              "weight TEXT NULL DEFAULT NULL ,"
                              "run_mode TEXT NULL DEFAULT NULL ,"
                              "warning_flag TEXT NULL DEFAULT NULL,"
+                             "warning_data TEXT NULL DEFAULT NULL ,"
                              "UNIQUE (machine_name)"
                          ")"
                           ""
@@ -779,9 +781,60 @@ void MainWindow::remotesql_init(){
     }
 
     if(type == MYSQL){
+       mysqlquery1.exec("CREATE TABLE `shot_data` ("
+                            "`idx` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,"
+                            "`Machine_Name` TEXT NULL COLLATE 'utf8_bin',"
+                            "`Additional_Info_1` TEXT NULL COLLATE 'utf8_bin',"
+                            "`Additional_Info_2` TEXT NULL COLLATE 'utf8_bin',"
+                            "`TimeStamp` DATETIME NULL DEFAULT NULL,"
+                            "`Shot_Number` INT(11) NULL DEFAULT '0',"
+                            "`NGmark` INT(11) NULL DEFAULT '0',"
+                            "`Injection_Time` DOUBLE NULL DEFAULT '0',"
+                            "`Filling_Time` DOUBLE NULL DEFAULT '0',"
+                            "`Plasticizing_Time` DOUBLE NULL DEFAULT '0',"
+                            "`Cycle_Time` DOUBLE NULL DEFAULT '0',"
+                            "`Clamp_Close_Time` DOUBLE NULL DEFAULT '0',"
+                            "`Cushion_Position` DOUBLE NULL DEFAULT '0',"
+                            "`Switch_Over_Position` DOUBLE NULL DEFAULT '0',"
+                            "`Plasticizing_Position` DOUBLE NULL DEFAULT '0',"
+                            "`Clamp_Open_Position` DOUBLE NULL DEFAULT '0',"
+                            "`Max_Injection_Speed` DOUBLE NULL DEFAULT '0',"
+                            "`Max_Screw_RPM` DOUBLE NULL DEFAULT '0',"
+                            "`Average_Screw_RPM` DOUBLE NULL DEFAULT '0',"
+                            "`Max_Injection_Pressure` DOUBLE NULL DEFAULT '0',"
+                            "`Max_Switch_Over_Pressure` DOUBLE NULL DEFAULT '0',"
+                            "`Max_Back_Pressure` DOUBLE NULL DEFAULT '0',"
+                            "`Average_Back_Pressure` DOUBLE NULL DEFAULT '0',"
+                            "`Barrel_Temperature_1` DOUBLE NULL DEFAULT '0',"
+                            "`Barrel_Temperature_2` DOUBLE NULL DEFAULT '0',"
+                            "`Barrel_Temperature_3` DOUBLE NULL DEFAULT '0',"
+                            "`Barrel_Temperature_4` DOUBLE NULL DEFAULT '0',"
+                            "`Barrel_Temperature_5` DOUBLE NULL DEFAULT '0',"
+                            "`Barrel_Temperature_6` DOUBLE NULL DEFAULT '0',"
+                            "`Barrel_Temperature_7` DOUBLE NULL DEFAULT '0',"
+                            "`Hopper_Temperature` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_1` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_2` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_3` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_4` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_5` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_6` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_7` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_8` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_9` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_10` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_11` DOUBLE NULL DEFAULT '0',"
+                            "`Mold_Temperature_12` DOUBLE NULL DEFAULT '0',"
+                            "PRIMARY KEY (`idx`)"
+                    ")"
+                    "COLLATE='utf8_bin'"
+                    "ENGINE=InnoDB"
+                    ";"
+                   );
+
 
     }else if(type == ODBC){
-        mysqlquery1.exec("CREATE TABLE [dbo].[shot_data]("
+        mysqlquery1.exec("CREATE TABLE [shot_data]("
                          "[idx] [numeric](9, 0) IDENTITY(1,1) NOT NULL,"
                          "[Machine_Name] [varchar](32) NULL,"
                          "[Additional_Info_1] [varchar](32) NULL,"
@@ -823,6 +876,8 @@ void MainWindow::remotesql_init(){
                          "[Mold_Temperature_8] [real] NULL,"
                          "[Mold_Temperature_9] [real] NULL,"
                          "[Mold_Temperature_10] [real] NULL,"
+                         "[Mold_Temperature_11] [real] NULL,"
+                         "[Mold_Temperature_12] [real] NULL,"
                      "PRIMARY KEY CLUSTERED "
                      "("
                      "    [idx] ASC"
@@ -832,9 +887,39 @@ void MainWindow::remotesql_init(){
     }
 
     if(type == MYSQL){
+        mysqlquery1.exec("CREATE TABLE `shot_data_rec` ("
+                             "`rec_idx` INT(11) NOT NULL AUTO_INCREMENT,"
+                             "`Machine_Name` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Additional_Info_1` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Additional_Info_2` TEXT NULL COLLATE 'utf8_bin',"
+                             "`TimeStamp` DATETIME NULL DEFAULT NULL,"
+                             "`Shot_Number` INT(11) NULL DEFAULT NULL,"
+                             "`Inj_Velocity` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Inj_Pressure` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Inj_Position` TEXT NULL COLLATE 'utf8_bin',"
+                             "`SOV_Time` DOUBLE NULL DEFAULT NULL,"
+                             "`SOV_Position` DOUBLE NULL DEFAULT NULL,"
+                             "`Hld_Pressure` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Hld_Time` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Hld_Vel` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Chg_Position` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Chg_Speed` TEXT NULL COLLATE 'utf8_bin',"
+                             "`BackPressure` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Suckback_Position` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Suckback_Speed` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Barrel_Temperature` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Mold_Temperature` TEXT NULL COLLATE 'utf8_bin',"
+                             "`Timer` TEXT NULL COLLATE 'utf8_bin',"
+                             "PRIMARY KEY (`rec_idx`)"
+                     ")"
+                     "COLLATE='utf8_bin'"
+                     "ENGINE=InnoDB"
+                     ";"
+                    );
+
 
     }else if(type == ODBC){
-         mysqlquery1.exec("CREATE TABLE [dbo].[shot_data_rec]("
+         mysqlquery1.exec("CREATE TABLE [shot_data_rec]("
                           "[rec_idx] [numeric](9, 0) IDENTITY(1,1) NOT NULL ,"
                           "[Machine_Name] [varchar](32) NULL,"
                           "[Additional_Info_1] [varchar](32) NULL,"
@@ -866,8 +951,35 @@ void MainWindow::remotesql_init(){
 
     }
 
-
-
+    if(type == MYSQL){
+        mysqlquery1.exec("CREATE TABLE `Alarm_Log` ("
+                         "`idx` INT(11) NOT NULL AUTO_INCREMENT,"
+                         "`Machine_Name` TEXT NULL COLLATE 'utf8_bin',"
+                         "`Controller_Info` TEXT NULL COLLATE 'utf8_bin',"
+                         "`Alarm_Number` INT(11) NULL DEFAULT '0',"
+                         "`Alarm_Start_Time` DATETIME NULL DEFAULT NULL,"
+                         "`Alarm_End_Time` DATETIME NULL DEFAULT NULL,"
+                         "PRIMARY KEY (`idx`)"
+                         ")"
+                         "   COLLATE='utf8_bin'"
+                         "   ENGINE=InnoDB"
+                         ";"
+            );
+    }else if(type == ODBC){
+        mysqlquery1.exec("CREATE TABLE [Alarm_Log]("
+                         "[idx] [numeric](9, 0) IDENTITY(1,1) NOT NULL,"
+                         "[Machine_Name] [varchar](32) NULL,"
+                         "[Controller_Info] [varchar](10) NULL,"
+                         "[Alarm_Number] [int] NULL,"
+                         "[Alarm_Start_Time] [datetime] NULL,"
+                         "[Alarm_End_Time] [datetime] NULL,"
+                         "PRIMARY KEY CLUSTERED "
+                         "("
+                         "           [idx] ASC"
+                         ")WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]"
+                         ") ON [PRIMARY]"
+                );
+    }
 }
 
 void MainWindow::on_deletebtn_clicked()

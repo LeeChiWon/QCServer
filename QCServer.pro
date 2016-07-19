@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network sql
+QT       += core gui network sql serialbus serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 lessThan(QT_VERSION, 5.6): QT += webkit webkitwidgets
@@ -27,14 +27,11 @@ SOURCES += main.cpp\
     bnr_base_locgic.cpp \
     es600_base_locgic.cpp \
     gefranseven_base_logic.cpp \
-    modbus.c \
-    modbus-data.c \
-    modbus-rtu.c \
-    modbus-tcp.c \
     es600_modbus_thread.cpp \
     bnr_moudle_thread.cpp \
     gefranseven_moudle_thread.cpp \
-    simplecrypt.cpp
+    simplecrypt.cpp \
+    alrammap_data.cpp
 
 HEADERS  += mainwindow.h \
     mslotitem.h \
@@ -43,18 +40,11 @@ HEADERS  += mainwindow.h \
     bnr_base_locgic.h \
     es600_base_locgic.h \
     gefranseven_base_logic.h \
-    modbus.h \
-    modbus-private.h \
-    modbus-rtu.h \
-    modbus-rtu-private.h \
-    modbus-tcp.h \
-    modbus-tcp-private.h \
-    modbus-version.h \
-    config.h \
     es600_modbus_thread.h \
     bnr_moudle_thread.h \
     gefranseven_moudle_thread.h \
-    simplecrypt.h
+    simplecrypt.h \
+    alrammap_data.h
 
 FORMS    += mainwindow.ui \
     serversetform.ui

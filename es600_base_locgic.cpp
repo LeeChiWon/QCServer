@@ -6,6 +6,8 @@ es600_base_locgic::es600_base_locgic(QObject *parentmslot,QObject *parent) : QOb
 {
     this->parentmslot = parentmslot;
     initflag=false;
+    before_shotcount =-1;
+    current_shotcount =-1;
 }
 bool es600_base_locgic::init(){
      mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
@@ -17,8 +19,10 @@ bool es600_base_locgic::init(){
      litequery1.next();
      if(litequery1.value("remoteservertype").toString().compare("MYSQL")==0){
          es600db = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
-     }else if("ODBC"){
+         typeDB = MYSQL;
+     }else if(litequery1.value("remoteservertype").toString().compare("ODBC")==0){
          es600db = QSqlDatabase::addDatabase("QODBC",parent_item->iptext);
+         typeDB = ODBC;
      }
      es600db.setHostName(litequery1.value("remoteserverip").toString());
      es600db.setDatabaseName(litequery1.value("remoteserverdbname").toString());
@@ -32,6 +36,20 @@ bool es600_base_locgic::init(){
      }else {
         qDebug()<<"es600 DB open";
      }
+
+     qctx = new QModbusTcpClient(this);
+     qctx->setConnectionParameter(QModbusDevice::NetworkAddressParameter,parent_item->iptext);
+     qctx->setConnectionParameter(QModbusDevice::NetworkPortParameter,502);
+
+     qctx->setTimeout(3000);
+
+     if(!qctx->connectDevice()){
+         qDebug()<<"es600 qctx connect false";
+     }else {
+
+     }
+
+     connect(qctx,&QModbusClient::stateChanged,this,&es600_base_locgic::modbusstatue_change);
 
 
      addrlist.append(mb_object_count);
@@ -283,10 +301,17 @@ bool es600_base_locgic::init(){
 
 }
 void es600_base_locgic::loop(){
-    waitcondition.wakeAll();
+    if(qctx->state()==QModbusDevice::ConnectedState){
+        QModbusReply *reply;
+        for(int i=0;i<addrlist.size();i++){
+            reply = qctx->sendReadRequest(QModbusDataUnit(QModbusDataUnit::HoldingRegisters,addrlist.at(i),1),1);
+            connect(reply,SIGNAL(finished()),this,SLOT(modbudread_ready()));
+        }
+    }
 }
 //es600_modbus_thread 에서 현재 함수를 호출한다.
 void es600_base_locgic::es600_base_loop(){
+
     //example
 /*
     qDebug()<<"temp1_set="<<datamap->value(QString("%1").arg(mb_temp1_set))->value;
@@ -308,12 +333,14 @@ void es600_base_locgic::es600_base_loop(){
  */
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
+//    qDebug()<<"es600 base th id = "<<QThread::currentThreadId();
+
     QSqlQuery mysqlquery1(es600db);
-    QString update_temp = QString("UPDATE `temp_table` SET ");
+    QString update_temp = QString("UPDATE temp_table SET ");
     QString temp_append ;
     for(int i=1;i<=16;i++){
         if(i == 16){
-            temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6 ")
+            temp_append = QString("temp%1_set=%2, temp%1_up=%3, temp%1_down=%4, temp%1_real=%5, temp%1_onoff = %6 ")
                                .arg(i)
                                .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0)
                                .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0)
@@ -322,7 +349,7 @@ void es600_base_locgic::es600_base_loop(){
                                .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0);
 
         }else {
-         temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6, ")
+         temp_append = QString("temp%1_set=%2, temp%1_up=%3, temp%1_down=%4, temp%1_real=%5, temp%1_onoff = %6, ")
                             .arg(i)
                             .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0)
                             .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0)
@@ -333,7 +360,7 @@ void es600_base_locgic::es600_base_loop(){
         }
          update_temp.append(temp_append);
     }
-    temp_append = QString("WHERE  `machine_name`=\'%1\'").arg(mancine_name);
+    temp_append = QString("WHERE machine_name=\'%1\'").arg(mancine_name);
 
     update_temp.append(temp_append);
 
@@ -345,8 +372,525 @@ void es600_base_locgic::es600_base_loop(){
         qDebug()<<"es600 false";
     }
 
+    TB_REC_save();
 
 }
+void es600_base_locgic::TB_REC_save(){
+    mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
+    QString mancine_name = parent_item->machinename->text();
+
+    QSqlQuery mysqlquery1(es600db);
+
+    current_shotcount = datamap->value(QString("%1").arg(mb_SHOTDATA_count))->value.toInt();
+    if(before_shotcount<0){
+        before_shotcount = current_shotcount;
+        //modbus_write_register(ctx,mb_actstatus,0);
+    }
+    if(before_shotcount!=current_shotcount){
+        before_shotcount=current_shotcount;
+    int actstatus = datamap->value(QString("%1").arg(mb_actstatus))->value.toInt();
+    int fooldata =datamap->value(QString("%1").arg(mb_SHOTDATA_fooldata))->value.toInt();
+    double fillingtime = datamap->value(QString("%1").arg(mb_SHOTDATA_fillingtime))->value.toDouble()/100.0;
+    double plasticizing_time = datamap->value(QString("%1").arg(mb_SHOTDATA_plasticizing_time))->value.toDouble()/100.0;
+    double cycle_time = datamap->value(QString("%1").arg(mb_SHOTDATA_cycle_time))->value.toDouble()/100.0;
+    double cushion_position = datamap->value(QString("%1").arg(mb_SHOTDATA_cushion_position))->value.toDouble()/10.0;
+    double plasticizing_position = datamap->value(QString("%1").arg(mb_SHOTDATA_plasticizing_position))->value.toDouble()/10.0;
+    double temp1=datamap->value(QString("%1").arg(mb_SHOTDATA_temp1))->value.toDouble()/10.0;
+    double temp2=datamap->value(QString("%1").arg(mb_SHOTDATA_temp2))->value.toDouble()/10.0;
+    double temp3=datamap->value(QString("%1").arg(mb_SHOTDATA_temp3))->value.toDouble()/10.0;
+    double temp4=datamap->value(QString("%1").arg(mb_SHOTDATA_temp4))->value.toDouble()/10.0;
+    double temp5=datamap->value(QString("%1").arg(mb_SHOTDATA_temp5))->value.toDouble()/10.0;
+    double temp6=datamap->value(QString("%1").arg(mb_SHOTDATA_temp6))->value.toDouble()/10.0;
+    double temp7=datamap->value(QString("%1").arg(mb_SHOTDATA_temp7))->value.toDouble()/10.0;
+    double oil_temp=datamap->value(QString("%1").arg(mb_SHOTDATA_oil_temp))->value.toDouble()/10.0;
+
+    unsigned short moldname1 = datamap->value(QString("%1").arg(mb_moldname1))->value.toShort();
+    unsigned short moldname2 = datamap->value(QString("%1").arg(mb_moldname2))->value.toShort();
+    unsigned short moldname3 = datamap->value(QString("%1").arg(mb_moldname3))->value.toShort();
+    unsigned short moldname4 = datamap->value(QString("%1").arg(mb_moldname4))->value.toShort();
+    unsigned short moldname5 = datamap->value(QString("%1").arg(mb_moldname5))->value.toShort();
+    QByteArray mold_name;
+    mold_name.append((char)(moldname1>>8));
+    mold_name.append((char)(moldname1));
+    mold_name.append((char)(moldname2>>8));
+    mold_name.append((char)(moldname2));
+    mold_name.append((char)(moldname3>>8));
+    mold_name.append((char)(moldname3));
+    mold_name.append((char)(moldname4>>8));
+    mold_name.append((char)(moldname4));
+    mold_name.append((char)(moldname5>>8));
+    mold_name.append((char)(moldname5));
+    QString moldname = mold_name;
+
+
+
+
+    actstatus = datamap->value(QString("%1").arg(mb_actstatus))->value.toInt();
+    if(actstatus == 1 && before_shotcount){
+        current_shotcount = datamap->value(QString("%1").arg(mb_SHOTDATA_count))->value.toInt();
+    }
+
+        QString insertquery = QString("INSERT INTO shot_data "
+                                      "(Machine_Name"
+                                      ",Additional_Info_1"
+                                      ",Additional_Info_2"
+                                      ",TimeStamp"
+                                      ",Shot_Number"
+                                      ",NGmark"
+                                      ",Injection_Time"
+                                      ",Filling_Time"
+                                      ",Plasticizing_Time"
+                                      ",Cycle_Time"
+                                      ",Clamp_Close_Time"
+                                      ",Cushion_Position"
+                                      ",Switch_Over_Position"
+                                      ",Plasticizing_Position"
+                                      ",Clamp_Open_Position"
+                                      ",Max_Injection_Speed"
+                                      ",Max_Screw_RPM"
+                                      ",Average_Screw_RPM"
+                                      ",Max_Injection_Pressure"
+                                      ",Max_Switch_Over_Pressure"
+                                      ",Max_Back_Pressure"
+                                      ",Average_Back_Pressure"
+                                      ",Barrel_Temperature_1"
+                                      ",Barrel_Temperature_2"
+                                      ",Barrel_Temperature_3"
+                                      ",Barrel_Temperature_4"
+                                      ",Barrel_Temperature_5"
+                                      ",Barrel_Temperature_6"
+                                      ",Barrel_Temperature_7"
+                                      ",Hopper_Temperature"
+                                      ",Mold_Temperature_1"
+                                      ",Mold_Temperature_2"
+                                      ",Mold_Temperature_3"
+                                      ",Mold_Temperature_4"
+                                      ",Mold_Temperature_5"
+                                      ",Mold_Temperature_6"
+                                      ",Mold_Temperature_7"
+                                      ",Mold_Temperature_8"
+                                      ",Mold_Temperature_9"
+                                      ",Mold_Temperature_10) "
+                                "VALUES ("
+                                      +QString("'%1'").arg(mancine_name)+","
+                                      +QString("'%1'").arg(moldname)+","
+                                      +"''"+","
+                                      +"\'"+QDate::currentDate().toString("yyyy-MM-dd ")+QTime::currentTime().toString("HH:mm:ss")+"\'"+","
+                                      +QString("%1").arg(current_shotcount)+","
+                                      +QString("%1").arg(fooldata)+","
+                                      +QString("%1").arg(fillingtime)+","
+                                      +QString("%1").arg(fillingtime)+","
+                                      +QString("%1").arg(plasticizing_time)+","
+                                      +QString("%1").arg(cycle_time)+","
+                                      +"0.0"+","
+                                      +QString("%1").arg(cushion_position)+","
+                                      +"0.0"+","
+                                      +QString("%1").arg(plasticizing_position)+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +QString("%1").arg(temp1)+","
+                                      +QString("%1").arg(temp2)+","
+                                      +QString("%1").arg(temp3)+","
+                                      +QString("%1").arg(temp4)+","
+                                      +QString("%1").arg(temp5)+","
+                                      +QString("%1").arg(temp6)+","
+                                      +QString("%1").arg(oil_temp)+","
+                                      +QString("%1").arg(temp7)+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0"+","
+                                      +"0.0)"
+                   );
+        queryresult = mysqlquery1.exec(insertquery);
+
+
+//        qDebug()<<mysqlquery1.lastQuery();
+//        qDebug()<<mysqlquery1.lastError().text();
+
+        QString Inj_Velocitystr;
+        int injstep = datamap->value(QString("%1").arg(mb_injstep))->value.toInt();
+        double injVelocity[6];
+        for(int i=0;i<6;i++){
+            injVelocity[i] = datamap->value(QString("%1").arg(mb_injVelocity1+i*2))->value.toDouble()/100.0;
+        }
+        if(injstep>0){
+            Inj_Velocitystr.append(QString("%1/").arg(injVelocity[0]));
+        }else{
+            Inj_Velocitystr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>1){
+            Inj_Velocitystr.append(QString("%1/").arg(injVelocity[1]));
+        }else{
+            Inj_Velocitystr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>2){
+            Inj_Velocitystr.append(QString("%1/").arg(injVelocity[2]));
+        }else{
+            Inj_Velocitystr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>3){
+            Inj_Velocitystr.append(QString("%1/").arg(injVelocity[3]));
+        }else{
+            Inj_Velocitystr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>4){
+            Inj_Velocitystr.append(QString("%1/").arg(injVelocity[4]));
+        }else{
+            Inj_Velocitystr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>5){
+            Inj_Velocitystr.append(QString("%1").arg(injVelocity[5]));
+        }else{
+            Inj_Velocitystr.append(QString("%1").arg(0.0));
+        }
+        QString injPressurestr;
+        double injPressure[6];
+        for(int i=0;i<6;i++){
+            injPressure[i] = datamap->value(QString("%1").arg(mb_injPressure1+i*2))->value.toDouble();
+        }
+        if(injstep>0){
+            injPressurestr.append(QString("%1/").arg(injPressure[0]));
+        }else{
+            injPressurestr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>1){
+            injPressurestr.append(QString("%1/").arg(injPressure[1]));
+        }else{
+            injPressurestr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>2){
+            injPressurestr.append(QString("%1/").arg(injPressure[2]));
+        }else{
+            injPressurestr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>3){
+            injPressurestr.append(QString("%1/").arg(injPressure[3]));
+        }else{
+            injPressurestr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>4){
+            injPressurestr.append(QString("%1/").arg(injPressure[4]));
+        }else{
+            injPressurestr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>5){
+            injPressurestr.append(QString("%1").arg(injPressure[5]));
+        }else{
+            injPressurestr.append(QString("%1").arg(0.0));
+        }
+        QString injPositionstr;
+        double injPosition[6];
+        for(int i=0;i<6;i++){
+            injPosition[i] = datamap->value(QString("%1").arg(mb_injPosition1+i*2))->value.toDouble()/10.0;
+        }
+        if(injstep>0){
+            injPositionstr.append(QString("%1/").arg(injPosition[0]));
+        }else{
+            injPositionstr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>1){
+            injPositionstr.append(QString("%1/").arg(injPosition[1]));
+        }else{
+            injPositionstr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>2){
+            injPositionstr.append(QString("%1/").arg(injPosition[2]));
+        }else{
+            injPositionstr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>3){
+            injPositionstr.append(QString("%1/").arg(injPosition[3]));
+        }else{
+            injPositionstr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>4){
+            injPositionstr.append(QString("%1/").arg(injPosition[4]));
+        }else{
+            injPositionstr.append(QString("%1/").arg(0.0));
+        }
+        if(injstep>5){
+            injPositionstr.append(QString("%1").arg(injPosition[5]));
+        }else{
+            injPositionstr.append(QString("%1").arg(0.0));
+        }
+
+        int hldstep = datamap->value(QString("%1").arg(mb_hldstep))->value.toInt();
+        QString hldPressurestr;
+        double hldPressure[3];
+        for(int i=0;i<3;i++){
+            hldPressure[i] = datamap->value(QString("%1").arg(mb_hldPressure1+i*2))->value.toDouble();
+        }
+        if(hldstep>0){
+            hldPressurestr.append(QString("%1/").arg(hldPressure[0]));
+        }else{
+            hldPressurestr.append(QString("%1/").arg(0.0));
+        }
+        if(hldstep>1){
+            hldPressurestr.append(QString("%1/").arg(hldPressure[1]));
+        }else{
+            hldPressurestr.append(QString("%1/").arg(0.0));
+        }
+        if(hldstep>2){
+            hldPressurestr.append(QString("%1").arg(hldPressure[2]));
+        }else{
+            hldPressurestr.append(QString("%1").arg(0.0));
+        }
+
+        QString hldTimestr;
+        double hldTime[3];
+        for(int i=0;i<3;i++){
+            hldTime[i] = datamap->value(QString("%1").arg(mb_hldTime1+i*2))->value.toDouble();
+        }
+        if(hldstep>0){
+            hldTimestr.append(QString("%1/").arg(hldTime[0]));
+        }else{
+            hldTimestr.append(QString("%1/").arg(0.0));
+        }
+        if(hldstep>1){
+            hldTimestr.append(QString("%1/").arg(hldTime[1]));
+        }else{
+            hldTimestr.append(QString("%1/").arg(0.0));
+        }
+        if(hldstep>2){
+            hldTimestr.append(QString("%1").arg(hldTime[2]));
+        }else{
+            hldTimestr.append(QString("%1").arg(0.0));
+        }
+
+        QString hldVelstr;
+        double hldVel[3];
+        for(int i=0;i<3;i++){
+            hldVel[i] = datamap->value(QString("%1").arg(mb_hldVel1+i*2))->value.toDouble()/100.0;
+        }
+        if(hldstep>0){
+            hldVelstr.append(QString("%1/").arg(hldVel[0]));
+        }else{
+            hldVelstr.append(QString("%1/").arg(0.0));
+        }
+        if(hldstep>1){
+            hldVelstr.append(QString("%1/").arg(hldVel[1]));
+        }else{
+            hldVelstr.append(QString("%1/").arg(0.0));
+        }
+        if(hldstep>2){
+            hldVelstr.append(QString("%1").arg(hldVel[2]));
+        }else{
+            hldVelstr.append(QString("%1").arg(0.0));
+        }
+
+        QString chgPositionstr;
+        double chgPosition[4];
+        for(int i=0;i<4;i++){
+            chgPosition[i] = datamap->value(QString("%1").arg(mb_chgPosition1+i*2))->value.toDouble()/10.0;
+        }
+        chgPositionstr = QString("%1/%2/%3/%4").arg(chgPosition[0]).arg(chgPosition[1])
+                                               .arg(chgPosition[2]).arg(chgPosition[3]);
+        QString chgSpeedstr;
+        double chgSpeed[4];
+        for(int i=0;i<4;i++){
+            chgSpeed[i] = datamap->value(QString("%1").arg(mb_chgSpeed1+i*2))->value.toDouble()/100.0;
+        }
+        chgSpeedstr = QString("%1/%2/%3/%4").arg(chgSpeed[0]).arg(chgSpeed[1])
+                                               .arg(chgSpeed[2]).arg(chgSpeed[3]);
+        QString backPressurestr;
+        double backPressure[4];
+        for(int i=0;i<4;i++){
+            backPressure[i] = datamap->value(QString("%1").arg(mb_backPressure1+i*2))->value.toDouble();
+        }
+        backPressurestr = QString("%1/%2/%3/%4").arg(backPressure[0]).arg(backPressure[1])
+                                               .arg(backPressure[2]).arg(backPressure[3]);
+
+        QString suckbackPositionstr;
+        double suckbackPosition2 = datamap->value(QString("%1").arg(mb_suckbackPosition2))->value.toDouble()/10.0;;
+        suckbackPositionstr = QString("%1/%2").arg(0.0).arg(suckbackPosition2);
+
+        QString suckbackSpeedstr;
+        double suckbackSpeed1 = datamap->value(QString("%1").arg(mb_suckbackSpeed1))->value.toDouble()/100.0;;
+        double suckbackSpeed2 = datamap->value(QString("%1").arg(mb_suckbackSpeed2))->value.toDouble()/100.0;;
+        suckbackSpeedstr = QString("%1/%2").arg(suckbackSpeed1).arg(suckbackSpeed2);
+
+        double tempues[7];
+        for(int i=0;i<7;i++){
+            tempues[i] = datamap->value(QString("%1").arg(mb_tempues1+i*2))->value.toDouble()/10.0;
+        }
+
+        QString tempsetstr;
+        double tempset[7];
+        for(int i=0;i<7;i++){
+            tempset[i] = datamap->value(QString("%1").arg(mb_tempset1+i*2))->value.toDouble()/10.0;
+        }
+        double oilset = datamap->value(QString("%1").arg(mb_oilset))->value.toDouble()/10.0;
+        if(tempues[0]){
+            tempsetstr.append(QString("%1/").arg(tempset[0]));
+        }else{
+            tempsetstr.append(QString("%1/").arg(0.0));
+        }
+        if(tempues[1]){
+            tempsetstr.append(QString("%1/").arg(tempset[1]));
+        }else{
+            tempsetstr.append(QString("%1/").arg(0.0));
+        }
+        if(tempues[2]){
+            tempsetstr.append(QString("%1/").arg(tempset[2]));
+        }else{
+            tempsetstr.append(QString("%1/").arg(0.0));
+        }
+        if(tempues[3]){
+            tempsetstr.append(QString("%1/").arg(tempset[3]));
+        }else{
+            tempsetstr.append(QString("%1/").arg(0.0));
+        }
+        if(tempues[4]){
+            tempsetstr.append(QString("%1/").arg(tempset[4]));
+        }else{
+            tempsetstr.append(QString("%1/").arg(0.0));
+        }
+        if(tempues[5]){
+            tempsetstr.append(QString("%1/").arg(tempset[5]));
+        }else{
+            tempsetstr.append(QString("%1/").arg(0.0));
+        }
+        if(tempues[6]){
+            tempsetstr.append(QString("%1/").arg(tempset[6]));
+        }else{
+            tempsetstr.append(QString("%1/").arg(0.0));
+        }
+
+        tempsetstr.append(QString("%1").arg(oilset));
+
+
+        double moldtempuse[8];
+        for(int i=0;i<8;i++){
+            moldtempuse[i] = datamap->value(QString("%1").arg(mb_moldtempuse1+i*2))->value.toDouble()/10.0;
+        }
+
+        QString moldtempstr;
+        double moldtempset[8];
+        for(int i=0;i<8;i++){
+            moldtempset[i] = datamap->value(QString("%1").arg(mb_moldtempset1+i*2))->value.toDouble()/10.0;
+        }
+        if(moldtempuse[0]){
+            moldtempstr.append(QString("%1/").arg(moldtempset[0]));
+        }else{
+            moldtempstr.append(QString("%1/").arg(0.0));
+        }
+        if(moldtempuse[1]){
+            moldtempstr.append(QString("%1/").arg(moldtempset[1]));
+        }else{
+            moldtempstr.append(QString("%1/").arg(0.0));
+        }
+        if(moldtempuse[2]){
+            moldtempstr.append(QString("%1/").arg(moldtempset[2]));
+        }else{
+            moldtempstr.append(QString("%1/").arg(0.0));
+        }
+        if(moldtempuse[3]){
+            moldtempstr.append(QString("%1/").arg(moldtempset[3]));
+        }else{
+            moldtempstr.append(QString("%1/").arg(0.0));
+        }
+        if(moldtempuse[4]){
+            moldtempstr.append(QString("%1/").arg(moldtempset[4]));
+        }else{
+            moldtempstr.append(QString("%1/").arg(0.0));
+        }
+        if(moldtempuse[5]){
+            moldtempstr.append(QString("%1/").arg(moldtempset[5]));
+        }else{
+            moldtempstr.append(QString("%1/").arg(0.0));
+        }
+        if(moldtempuse[6]){
+            moldtempstr.append(QString("%1/").arg(moldtempset[6]));
+        }else{
+            moldtempstr.append(QString("%1/").arg(0.0));
+        }
+        if(moldtempuse[7]){
+            moldtempstr.append(QString("%1").arg(moldtempset[7]));
+        }else{
+            moldtempstr.append(QString("%1").arg(0.0));
+        }
+
+        QString timerstr;
+        double injtime = datamap->value(QString("%1").arg(mb_injtime))->value.toDouble()/10.0;
+        double cooltime = datamap->value(QString("%1").arg(mb_cooltime))->value.toDouble()/10.0;
+        double chgtime = datamap->value(QString("%1").arg(mb_chgtime))->value.toDouble()/10.0;
+        timerstr = QString("%1/%2/%3/%4").arg(injtime).arg(cooltime).arg("0.0").arg(chgtime);
+
+
+
+        insertquery =QString("INSERT INTO shot_data_rec"
+                "(Machine_Name"
+                ",Additional_Info_1"
+                ",Additional_Info_2"
+                ",TimeStamp"
+                ",Shot_Number"
+                ",Inj_Velocity"
+                ",Inj_Pressure"
+                ",Inj_Position"
+                ",SOV_Time"
+                ",SOV_Position"
+                ",Hld_Pressure"
+                ",Hld_Time"
+                ",Hld_Vel"
+                ",Chg_Position"
+                ",Chg_Speed"
+                ",BackPressure"
+                ",Suckback_Position"
+                ",Suckback_Speed"
+                ",Barrel_Temperature"
+                ",Mold_Temperature"
+                ",Timer)"
+          "VALUES"
+                "("+QString("'%1'").arg(mancine_name)+","
+                +QString("'%1'").arg(moldname)+","
+                +"''"+","
+                +"\'"+QDate::currentDate().toString("yyyy-MM-dd ")+QTime::currentTime().toString("HH:mm:ss")+"\'"+","
+                +QString("%1").arg(current_shotcount)+","
+                +"\'"+Inj_Velocitystr+"\'"+","
+                +"\'"+injPressurestr+"\'"+","
+                +"\'"+injPositionstr+"\'"+","
+                +"0.0"+","
+                +"0.0"+","
+                +"\'"+hldPressurestr+"\'"+","
+                +"\'"+hldTimestr+"\'"+","
+                +"\'"+hldVelstr+"\'"+","
+                +"\'"+chgPositionstr+"\'"+","
+                +"\'"+chgSpeedstr+"\'"+","
+                +"\'"+backPressurestr+"\'"+","
+                +"\'"+suckbackPositionstr+"\'"+","
+                +"\'"+suckbackSpeedstr+"\'"+","
+                +"\'"+tempsetstr+"\'"+","
+                +"\'"+moldtempstr+"\'"+","
+                +"\'"+timerstr+"\'"+")"
+             );
+
+        queryresult = mysqlquery1.exec(insertquery);
+//        qDebug()<<mysqlquery1.lastQuery();
+//        qDebug()<<mysqlquery1.lastError().text();
+    }
+
+    if(queryresult){
+
+    }else {
+        es600db.open();
+        qDebug()<<"es600 false";
+    }
+
+}
+
+
 void es600_base_locgic::slot_statue_update(bool statue){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     if(statue){
@@ -358,3 +902,37 @@ void es600_base_locgic::slot_statue_update(bool statue){
     }
 }
 
+
+void es600_base_locgic::modbudread_ready(){
+
+    auto reply = qobject_cast<QModbusReply *>(sender());
+    if (!reply)
+            return;
+    const QModbusDataUnit unit = reply->result();
+    if (reply->error() == QModbusDevice::NoError) {
+        int startaddress = unit.startAddress();
+        int value = unit.value(0);
+        QString startaddress_str = QString("%1").arg(startaddress);
+        if(!datamap->contains(startaddress_str)){
+            datamap->insert(startaddress_str,new es600value(startaddress_str,QString("%1").arg(value)));
+        }else {
+            es600value *tempvalue = datamap->value(startaddress_str);
+            tempvalue->value = QString("%1").arg(value);
+        }
+        if(startaddress == addrlist.last()){  //마지막 데이터 가지 받으면 loop 실행
+            waitcondition.wakeAll();
+        }
+    }
+}
+
+void es600_base_locgic::modbusstatue_change(int state){
+
+    if(state == QModbusDevice::ConnectedState){
+        slot_statue_update(true);
+    }else if(state == QModbusDevice::ConnectingState){
+        slot_statue_update(false);
+    }else if(state == QModbusDevice::UnconnectedState){
+        qctx->connectDevice();
+        slot_statue_update(false);
+    }
+}
