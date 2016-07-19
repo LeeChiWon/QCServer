@@ -20,6 +20,7 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
     type->addItem("gefranseven/");
     type->addItem("es600/");
     type->addItem("BNR/TAC1XX11");
+    type->addItem("BNR/TEC1XX01");
     status->setTextFormat(Qt::RichText);
     status->setText(tr("<img src=\":/icon/icon/stop.png\">  STOP"));
     QSqlQuery litequery1(localdb);

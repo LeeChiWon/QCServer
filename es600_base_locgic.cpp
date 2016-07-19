@@ -17,8 +17,10 @@ bool es600_base_locgic::init(){
      litequery1.next();
      if(litequery1.value("remoteservertype").toString().compare("MYSQL")==0){
          es600db = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
-     }else if("ODBC"){
+         typeDB = MYSQL;
+     }else if(litequery1.value("remoteservertype").toString().compare("ODBC")==0){
          es600db = QSqlDatabase::addDatabase("QODBC",parent_item->iptext);
+         typeDB = ODBC;
      }
      es600db.setHostName(litequery1.value("remoteserverip").toString());
      es600db.setDatabaseName(litequery1.value("remoteserverdbname").toString());
@@ -308,12 +310,13 @@ void es600_base_locgic::es600_base_loop(){
  */
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
+
     QSqlQuery mysqlquery1(es600db);
-    QString update_temp = QString("UPDATE `temp_table` SET ");
+    QString update_temp = QString("UPDATE temp_table SET ");
     QString temp_append ;
     for(int i=1;i<=16;i++){
         if(i == 16){
-            temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6 ")
+            temp_append = QString("temp%1_set=%2, temp%1_up=%3, temp%1_down=%4, temp%1_real=%5, temp%1_onoff = %6 ")
                                .arg(i)
                                .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0)
                                .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0)
@@ -322,7 +325,7 @@ void es600_base_locgic::es600_base_loop(){
                                .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0);
 
         }else {
-         temp_append = QString("`temp%1_set`=%2, `temp%1_up`=%3, `temp%1_down`=%4, `temp%1_real`=%5, temp%1_onoff = %6, ")
+         temp_append = QString("temp%1_set=%2, temp%1_up=%3, temp%1_down=%4, temp%1_real=%5, temp%1_onoff = %6, ")
                             .arg(i)
                             .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0)
                             .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0)
@@ -333,7 +336,7 @@ void es600_base_locgic::es600_base_loop(){
         }
          update_temp.append(temp_append);
     }
-    temp_append = QString("WHERE  `machine_name`=\'%1\'").arg(mancine_name);
+    temp_append = QString("WHERE machine_name=\'%1\'").arg(mancine_name);
 
     update_temp.append(temp_append);
 

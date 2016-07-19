@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     es600_modbus_thread.cpp \
     bnr_moudle_thread.cpp \
     gefranseven_moudle_thread.cpp \
-    simplecrypt.cpp
+    simplecrypt.cpp \
+    alrammap_data.cpp
 
 HEADERS  += mainwindow.h \
     mslotitem.h \
@@ -54,7 +55,8 @@ HEADERS  += mainwindow.h \
     es600_modbus_thread.h \
     bnr_moudle_thread.h \
     gefranseven_moudle_thread.h \
-    simplecrypt.h
+    simplecrypt.h \
+    alrammap_data.h
 
 FORMS    += mainwindow.ui \
     serversetform.ui
