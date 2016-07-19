@@ -226,6 +226,7 @@ void MainWindow::remotesql_init(){
                          "`weight` TEXT NULL COLLATE 'utf8_bin',"
                          "`run_mode` TEXT NULL DEFAULT NULL COMMENT '',"
                          "`warning_flag`  TEXT NULL COLLATE 'utf8_bin',"
+                         "`warning_data` TEXT NULL DEFAULT NULL COMMENT '',"
                          "UNIQUE INDEX `machine_name` (`machine_name`)"
                      ")"
                       "COLLATE='utf8_bin'"
@@ -254,6 +255,7 @@ void MainWindow::remotesql_init(){
                              "weight TEXT NULL DEFAULT NULL ,"
                              "run_mode TEXT NULL DEFAULT NULL ,"
                              "warning_flag TEXT NULL DEFAULT NULL,"
+                             "warning_data TEXT NULL DEFAULT NULL ,"
                              "UNIQUE (machine_name)"
                          ")"
                           ""
@@ -913,8 +915,6 @@ void MainWindow::remotesql_init(){
                      "COLLATE='utf8_bin'"
                      "ENGINE=InnoDB"
                      ";"
-
-
                     );
 
 
@@ -951,8 +951,35 @@ void MainWindow::remotesql_init(){
 
     }
 
-
-
+    if(type == MYSQL){
+        mysqlquery1.exec("CREATE TABLE `Alarm_Log` ("
+                         "`idx` INT(11) NOT NULL AUTO_INCREMENT,"
+                         "`Machine_Name` TEXT NULL COLLATE 'utf8_bin',"
+                         "`Controller_Info` TEXT NULL COLLATE 'utf8_bin',"
+                         "`Alarm_Number` INT(11) NULL DEFAULT '0',"
+                         "`Alarm_Start_Time` DATETIME NULL DEFAULT NULL,"
+                         "`Alarm_End_Time` DATETIME NULL DEFAULT NULL,"
+                         "PRIMARY KEY (`idx`)"
+                         ")"
+                         "   COLLATE='utf8_bin'"
+                         "   ENGINE=InnoDB"
+                         ";"
+            );
+    }else if(type == ODBC){
+        mysqlquery1.exec("CREATE TABLE [Alarm_Log]("
+                         "[idx] [numeric](9, 0) IDENTITY(1,1) NOT NULL,"
+                         "[Machine_Name] [varchar](32) NULL,"
+                         "[Controller_Info] [varchar](10) NULL,"
+                         "[Alarm_Number] [int] NULL,"
+                         "[Alarm_Start_Time] [datetime] NULL,"
+                         "[Alarm_End_Time] [datetime] NULL,"
+                         "PRIMARY KEY CLUSTERED "
+                         "("
+                         "           [idx] ASC"
+                         ")WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]"
+                         ") ON [PRIMARY]"
+                );
+    }
 }
 
 void MainWindow::on_deletebtn_clicked()
