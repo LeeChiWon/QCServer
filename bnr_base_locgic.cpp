@@ -59,11 +59,9 @@ void Bnr_base_locgic::loop(){
 
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString ip = parent_item->ip->text();
-    //qDebug()<<ip;
+
     requst_read_value(ip,"BNRbase.asp");
-//    if(parent_item->type->currentText().split("/").at(1).compare("TAC1XX11")==0){
-//        requst_read_value(ip,"TAC1XX11warning.asp");
-//    }
+
 }
 void Bnr_base_locgic::requst_read_value(QString ip,QString address){
     QString url = QString("http://%1/%2").arg(ip).arg(address);
@@ -127,6 +125,7 @@ void Bnr_base_locgic::pageloadfinish(bool result){
 }
 
 void Bnr_base_locgic::url_bnrbaseloop(){
+
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
 

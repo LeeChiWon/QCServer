@@ -18,7 +18,11 @@
 #include <QWaitCondition>
 #include <QMutex>
 #include "es600_modbus_thread.h"
-#include "modbus.h"
+
+#include <QModbusDataUnit>
+#include <QModbusTcpClient>
+
+
 //modbus 주소값 매크로
 #define mb_object_count 1036
 #define mb_production_count 4006
@@ -273,8 +277,9 @@ public:
     int temp_down_atnumber;
     int temp_real_atnumber;
     int temp_onoff_atnumber;
+    QModbusTcpClient *qctx;
 
-    modbus_t *ctx;
+
 
     int typeDB;
     bool queryresult;
@@ -283,14 +288,19 @@ public:
 
 
 
+
     void es600_base_loop();
+
+    void TB_REC_save();
+
+
 
 signals:
 
 public slots:
     void slot_statue_update(bool statue);
-
-
+    void modbudread_ready();
+    void modbusstatue_change(int state);
 };
 
 #endif // ES600_BASE_LOCGIC_H
