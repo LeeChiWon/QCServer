@@ -8,16 +8,12 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QNetworkReply>
-#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
-#include <QWebPage>
-#include <QWebFrame>
-#include <QWebElement>
-#endif
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QWaitCondition>
 #include <QMutex>
 #include "es600_modbus_thread.h"
+#include "simplecrypt.h"
 
 #include <QModbusDataUnit>
 #include <QModbusTcpClient>
@@ -292,6 +288,8 @@ public:
     void es600_base_loop();
 
     void TB_REC_save();
+
+    void TB_current_update();
 
 
 

@@ -312,50 +312,48 @@ void es600_base_locgic::loop(){
 //es600_modbus_thread 에서 현재 함수를 호출한다.
 void es600_base_locgic::es600_base_loop(){
 
-    //example
-/*
-    qDebug()<<"temp1_set="<<datamap->value(QString("%1").arg(mb_temp1_set))->value;
-    qDebug()<<"temp2_set="<<datamap->value(QString("%1").arg(mb_temp2_set))->value;
-    qDebug()<<"temp3_set="<<datamap->value(QString("%1").arg(mb_temp3_set))->value;
-    qDebug()<<"temp4_set="<<datamap->value(QString("%1").arg(mb_temp4_set))->value;
-    qDebug()<<"temp5_set="<<datamap->value(QString("%1").arg(mb_temp5_set))->value;
-    qDebug()<<"temp6_set="<<datamap->value(QString("%1").arg(mb_temp6_set))->value;
-    qDebug()<<"temp7_set="<<datamap->value(QString("%1").arg(mb_temp7_set))->value;
-    qDebug()<<"temp8_set="<<datamap->value(QString("%1").arg(mb_temp8_set))->value;
-    qDebug()<<"temp9_set="<<datamap->value(QString("%1").arg(mb_temp9_set))->value;
-    qDebug()<<"temp10_set="<<datamap->value(QString("%1").arg(mb_temp10_set))->value;
-    qDebug()<<"temp11_set="<<datamap->value(QString("%1").arg(mb_temp11_set))->value;
-    qDebug()<<"temp12_set="<<datamap->value(QString("%1").arg(mb_temp12_set))->value;
-    qDebug()<<"temp13_set="<<datamap->value(QString("%1").arg(mb_temp13_set))->value;
-    qDebug()<<"temp14_set="<<datamap->value(QString("%1").arg(mb_temp14_set))->value;
-    qDebug()<<"temp15_set="<<datamap->value(QString("%1").arg(mb_temp15_set))->value;
-    qDebug()<<"temp16_set="<<datamap->value(QString("%1").arg(mb_temp16_set))->value;
- */
+    TB_current_update();
+
+    TB_REC_save();
+
+}
+void es600_base_locgic::TB_current_update(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
-//    qDebug()<<"es600 base th id = "<<QThread::currentThreadId();
+
+    SimpleCrypt crypto(CRYPTO_NUMBER);
 
     QSqlQuery mysqlquery1(es600db);
     QString update_temp = QString("UPDATE temp_table SET ");
     QString temp_append ;
     for(int i=1;i<=16;i++){
         if(i == 16){
-            temp_append = QString("temp%1_set=%2, temp%1_up=%3, temp%1_down=%4, temp%1_real=%5, temp%1_onoff = %6 ")
+            double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
                                .arg(i)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0)
-                               .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0);
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_down_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value,0,'f',1)));
 
         }else {
-         temp_append = QString("temp%1_set=%2, temp%1_up=%3, temp%1_down=%4, temp%1_real=%5, temp%1_onoff = %6, ")
+            double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
+         temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
                             .arg(i)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0)
-                            .arg(datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0);
+                            .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
+                            .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
+                            .arg(crypto.encryptToString(QString("%1").arg(temp_down_value,0,'f',1)))
+                            .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
+                            .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value,0,'f',1)));
 
         }
          update_temp.append(temp_append);
@@ -371,10 +369,8 @@ void es600_base_locgic::es600_base_loop(){
         es600db.open();
         qDebug()<<"es600 false";
     }
-
-    TB_REC_save();
-
 }
+
 void es600_base_locgic::TB_REC_save(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
@@ -403,6 +399,14 @@ void es600_base_locgic::TB_REC_save(){
     double temp6=datamap->value(QString("%1").arg(mb_SHOTDATA_temp6))->value.toDouble()/10.0;
     double temp7=datamap->value(QString("%1").arg(mb_SHOTDATA_temp7))->value.toDouble()/10.0;
     double oil_temp=datamap->value(QString("%1").arg(mb_SHOTDATA_oil_temp))->value.toDouble()/10.0;
+    double moldtemp1 = datamap->value(QString("%1").arg(mb_temp9_real))->value.toDouble()/10.0;
+    double moldtemp2 = datamap->value(QString("%1").arg(mb_temp10_real))->value.toDouble()/10.0;
+    double moldtemp3 = datamap->value(QString("%1").arg(mb_temp11_real))->value.toDouble()/10.0;
+    double moldtemp4 = datamap->value(QString("%1").arg(mb_temp12_real))->value.toDouble()/10.0;
+    double moldtemp5 = datamap->value(QString("%1").arg(mb_temp13_real))->value.toDouble()/10.0;
+    double moldtemp6 = datamap->value(QString("%1").arg(mb_temp14_real))->value.toDouble()/10.0;
+    double moldtemp7 = datamap->value(QString("%1").arg(mb_temp15_real))->value.toDouble()/10.0;
+    double moldtemp8 = datamap->value(QString("%1").arg(mb_temp16_real))->value.toDouble()/10.0;
 
     unsigned short moldname1 = datamap->value(QString("%1").arg(mb_moldname1))->value.toShort();
     unsigned short moldname2 = datamap->value(QString("%1").arg(mb_moldname2))->value.toShort();
@@ -468,9 +472,7 @@ void es600_base_locgic::TB_REC_save(){
                                       ",Mold_Temperature_5"
                                       ",Mold_Temperature_6"
                                       ",Mold_Temperature_7"
-                                      ",Mold_Temperature_8"
-                                      ",Mold_Temperature_9"
-                                      ",Mold_Temperature_10) "
+                                      ",Mold_Temperature_8)"
                                 "VALUES ("
                                       +QString("'%1'").arg(mancine_name)+","
                                       +QString("'%1'").arg(moldname)+","
@@ -502,16 +504,14 @@ void es600_base_locgic::TB_REC_save(){
                                       +QString("%1").arg(temp6)+","
                                       +QString("%1").arg(oil_temp)+","
                                       +QString("%1").arg(temp7)+","
-                                      +"0.0"+","
-                                      +"0.0"+","
-                                      +"0.0"+","
-                                      +"0.0"+","
-                                      +"0.0"+","
-                                      +"0.0"+","
-                                      +"0.0"+","
-                                      +"0.0"+","
-                                      +"0.0"+","
-                                      +"0.0)"
+                                      +QString("%1").arg(moldtemp1)+","
+                                      +QString("%1").arg(moldtemp2)+","
+                                      +QString("%1").arg(moldtemp3)+","
+                                      +QString("%1").arg(moldtemp4)+","
+                                      +QString("%1").arg(moldtemp5)+","
+                                      +QString("%1").arg(moldtemp6)+","
+                                      +QString("%1").arg(moldtemp7)+","
+                                      +QString("%1").arg(moldtemp8)+")"
                    );
         queryresult = mysqlquery1.exec(insertquery);
 
@@ -827,8 +827,6 @@ void es600_base_locgic::TB_REC_save(){
         double cooltime = datamap->value(QString("%1").arg(mb_cooltime))->value.toDouble()/10.0;
         double chgtime = datamap->value(QString("%1").arg(mb_chgtime))->value.toDouble()/10.0;
         timerstr = QString("%1/%2/%3/%4").arg(injtime).arg(cooltime).arg("0.0").arg(chgtime);
-
-
 
         insertquery =QString("INSERT INTO shot_data_rec"
                 "(Machine_Name"
