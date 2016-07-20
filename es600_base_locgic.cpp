@@ -12,25 +12,29 @@ es600_base_locgic::es600_base_locgic(QObject *parentmslot,QObject *parent) : QOb
 bool es600_base_locgic::init(){
      mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
      datamap = new QMap<QString,es600value *>;
+     alrammap = new QMap<QString,alrammap_data *>;
+     for(int i=0;i<100;i++){
+         alrammap->insert(QString("%1").arg(i),new alrammap_data());
+     }
      ip = parent_item->ip->text();
      litedb = QSqlDatabase::database("localdb");
      QSqlQuery litequery1(litedb);
      litequery1.exec("select * from systemset;");
      litequery1.next();
      if(litequery1.value("remoteservertype").toString().compare("MYSQL")==0){
-         es600db = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
+         remotedb = QSqlDatabase::addDatabase("QMYSQL",parent_item->iptext);
          typeDB = MYSQL;
      }else if(litequery1.value("remoteservertype").toString().compare("ODBC")==0){
-         es600db = QSqlDatabase::addDatabase("QODBC",parent_item->iptext);
+         remotedb = QSqlDatabase::addDatabase("QODBC",parent_item->iptext);
          typeDB = ODBC;
      }
-     es600db.setHostName(litequery1.value("remoteserverip").toString());
-     es600db.setDatabaseName(litequery1.value("remoteserverdbname").toString());
-     es600db.setPort(litequery1.value("remoteserverport").toInt());
-     es600db.setUserName(litequery1.value("remoteserverusername").toString());
-     es600db.setPassword(litequery1.value("remoteserveruserpassword").toString());
+     remotedb.setHostName(litequery1.value("remoteserverip").toString());
+     remotedb.setDatabaseName(litequery1.value("remoteserverdbname").toString());
+     remotedb.setPort(litequery1.value("remoteserverport").toInt());
+     remotedb.setUserName(litequery1.value("remoteserverusername").toString());
+     remotedb.setPassword(litequery1.value("remoteserveruserpassword").toString());
 
-     if(!es600db.open()){
+     if(!remotedb.open()){
          qDebug()<<"es600 DB not open";
 
      }else {
@@ -290,7 +294,16 @@ bool es600_base_locgic::init(){
     addrlist.append(mb_cooltime);
     addrlist.append(mb_chgtime);
 
-
+    addrlist.append(mb_alrammap1);
+    addrlist.append(mb_alrammap2);
+    addrlist.append(mb_alrammap3);
+    addrlist.append(mb_alrammap4);
+    addrlist.append(mb_alrammap5);
+    addrlist.append(mb_alrammap6);
+    addrlist.append(mb_alrammap7);
+    addrlist.append(mb_alrammap8);
+    addrlist.append(mb_alrammap9);
+    addrlist.append(mb_alrammap10);
 
 
      modbus_thread = new es600_modbus_thread(this);
@@ -316,6 +329,8 @@ void es600_base_locgic::es600_base_loop(){
 
     TB_REC_save();
 
+    alram_update();
+
 }
 void es600_base_locgic::TB_current_update(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
@@ -323,7 +338,7 @@ void es600_base_locgic::TB_current_update(){
 
     SimpleCrypt crypto(CRYPTO_NUMBER);
 
-    QSqlQuery mysqlquery1(es600db);
+    QSqlQuery mysqlquery1(remotedb);
     QString update_temp = QString("UPDATE temp_table SET ");
     QString temp_append ;
     for(int i=1;i<=16;i++){
@@ -366,7 +381,7 @@ void es600_base_locgic::TB_current_update(){
     if(result){
 
     }else {
-        es600db.open();
+        remotedb.open();
         qDebug()<<"es600 false";
     }
 }
@@ -375,7 +390,7 @@ void es600_base_locgic::TB_REC_save(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
 
-    QSqlQuery mysqlquery1(es600db);
+    QSqlQuery mysqlquery1(remotedb);
 
     current_shotcount = datamap->value(QString("%1").arg(mb_SHOTDATA_count))->value.toInt();
     if(before_shotcount<0){
@@ -882,7 +897,7 @@ void es600_base_locgic::TB_REC_save(){
     if(queryresult){
 
     }else {
-        es600db.open();
+        remotedb.open();
         qDebug()<<"es600 false";
     }
 
@@ -919,6 +934,62 @@ void es600_base_locgic::modbudread_ready(){
         }
         if(startaddress == addrlist.last()){  //마지막 데이터 가지 받으면 loop 실행
             waitcondition.wakeAll();
+        }
+    }
+}
+
+void es600_base_locgic::alram_update(){
+    mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
+    QString mancine_name = parent_item->machinename->text();
+    QString monitertype = parent_item->type->currentText();
+    int alramflagdata = datamap->value(QString("%1").arg(mb_warning_flag))->value.toInt();
+    QString datetime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+    QSqlQuery mysqlquery1(remotedb);
+    QStringList keylist = alrammap->keys();
+    for(int k=0;k<100;k++){
+         alrammap->value(QString("%1").arg(k))->currentflag = false;
+    }
+    for(int j=0;j<alramflagdata;j++){
+        int temp_alramnumber = datamap->value(QString("%1").arg(mb_alrammap1+(j*2)))->value.toInt();
+        alrammap->value(QString("%1").arg(temp_alramnumber))->currentflag = true;
+    }
+    for(int i=0;i<keylist.size();i++){
+        bool temp_beforeflag = alrammap->value(keylist.at(i))->beforeflag;
+        bool temp_currentflag = alrammap->value(keylist.at(i))->currentflag;
+        if(temp_beforeflag!=temp_currentflag){ //이전 플래그와 비교해서 다를때만 실행
+            alrammap->value(keylist.at(i))->beforeflag = temp_currentflag;
+            QString alramnumber = keylist.at(i);
+            if(temp_currentflag){//알람 발생 시점
+                mysqlquery1.exec("INSERT INTO "
+                                 "Alarm_Log (Machine_Name,"
+                                 "Controller_Info,"
+                                 "Alarm_Number,"
+                                 "Alarm_Start_Time,"
+                                 "Alarm_End_Time) "
+                                 "VALUES "
+                                 "('"+mancine_name+"',"
+                                 "'"+monitertype+"', "
+                                 ""+alramnumber+", "
+                                 "'"+datetime+"', "
+                                 "'1999-01-01 00:00:00')"
+                                 ";"
+                            );
+            }else {//알람 해제 시점
+                mysqlquery1.exec("INSERT INTO "
+                                 "Alarm_Log (Machine_Name,"
+                                 "Controller_Info,"
+                                 "Alarm_Number,"
+                                 "Alarm_Start_Time,"
+                                 "Alarm_End_Time) "
+                                 "VALUES "
+                                 "('"+mancine_name+"',"
+                                 "'"+monitertype+"', "
+                                 ""+alramnumber+", "
+                                 "'1999-01-01 00:00:00', "
+                                 "'"+datetime+"')"
+                                 ";"
+                            );
+            }
         }
     }
 }

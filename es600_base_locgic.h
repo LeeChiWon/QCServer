@@ -14,7 +14,7 @@
 #include <QMutex>
 #include "es600_modbus_thread.h"
 #include "simplecrypt.h"
-
+#include "alrammap_data.h"
 #include <QModbusDataUnit>
 #include <QModbusTcpClient>
 
@@ -235,6 +235,17 @@
 #define mb_cooltime 516
 #define mb_chgtime 518
 
+#define mb_alrammap1 1400
+#define mb_alrammap2 1402
+#define mb_alrammap3 1404
+#define mb_alrammap4 1406
+#define mb_alrammap5 1408
+#define mb_alrammap6 1410
+#define mb_alrammap7 1412
+#define mb_alrammap8 1414
+#define mb_alrammap9 1416
+#define mb_alrammap10 1418
+
 
 class es600value {
     public:
@@ -256,6 +267,7 @@ public:
     explicit es600_base_locgic(QObject *parentmslot,QObject *parent = 0);
     QObject *parentmslot;
     QMap<QString,es600value *> *datamap; //<name,value>
+    QMap<QString,alrammap_data *> *alrammap;
     bool initflag;
     bool init();
     void loop();
@@ -264,7 +276,6 @@ public:
     QWaitCondition waitcondition;
     QMutex mutex;
     QString ip;
-    QSqlDatabase es600db;
     QSqlDatabase litedb;
     QVector<int> addrlist;
 
@@ -290,6 +301,7 @@ public:
     void TB_REC_save();
 
     void TB_current_update();
+    void alram_update();
 
 
 
