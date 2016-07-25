@@ -294,8 +294,6 @@ public:
     int current_shotcount;
 
 
-
-
     void es600_base_loop();
 
     void TB_REC_save();
