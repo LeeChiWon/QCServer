@@ -1218,7 +1218,7 @@ void Bnr_base_locgic::alram_update(){
     QString mancine_name = parent_item->machinename->text();
     QString monitertype = parent_item->type->currentText();
 
-    QString datatime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+    QString datetime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
 
     QSqlQuery mysqlquery1(remotedb);
     QStringList keylist = alrammap->keys();
@@ -1243,7 +1243,7 @@ void Bnr_base_locgic::alram_update(){
                                  "('"+mancine_name+"',"
                                  "'"+monitertype+"', "
                                  ""+alramnumber+", "
-                                 "'"+datatime+"', "
+                                 "'"+datetime+"', "
                                  "'1999-01-01 00:00:00')"
                                  ";"
                             );
@@ -1259,7 +1259,7 @@ void Bnr_base_locgic::alram_update(){
                                  "'"+monitertype+"', "
                                  ""+alramnumber+", "
                                  "'1999-01-01 00:00:00', "
-                                 "'"+datatime+"')"
+                                 "'"+datetime+"')"
                                  ";"
                             );
             }
