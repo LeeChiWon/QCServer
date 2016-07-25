@@ -14,7 +14,7 @@ gefranseven_base_logic::gefranseven_base_logic(QObject *parentmslot,QObject *par
 bool gefranseven_base_logic::init(){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     datamap = new QMap<QString,gefranvalue *>;
-    connect(&manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerfinished(QNetworkReply*)));
+    //connect(&manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerfinished(QNetworkReply*)));
     litedb = QSqlDatabase::database("localdb");
     QSqlQuery litequery1(litedb);
     litequery1.exec("select * from systemset;");
@@ -35,24 +35,198 @@ bool gefranseven_base_logic::init(){
     }else {
        qDebug()<<"gefran DB open";
     }
+    /*
     tcpsocket = new QTcpSocket();
     tcpsocket->connectToHost(parent_item->ip->text(),23);
     connect(tcpsocket,SIGNAL(readyRead()),this,SLOT(telnetreadready()));
     connect(tcpsocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(telnetjoinerror(QAbstractSocket::SocketError)));
+    */
+
+    qctx = new QModbusTcpClient(this);
+    qctx->setConnectionParameter(QModbusDevice::NetworkAddressParameter,parent_item->iptext);
+    qctx->setConnectionParameter(QModbusDevice::NetworkPortParameter,502);
+    qctx->setTimeout(3000);
+
+    if(!qctx->connectDevice()){
+        qDebug()<<"es600 qctx connect false";
+    }else {
+
+    }
+
+    connect(qctx,&QModbusClient::stateChanged,this,&gefranseven_base_logic::modbusstatue_change);
+
+    addrlist.append(gmb_temp1_down);
+    addrlist.append(gmb_temp2_down);
+    addrlist.append(gmb_temp3_down);
+    addrlist.append(gmb_temp4_down);
+    addrlist.append(gmb_temp5_down);
+    addrlist.append(gmb_temp6_down);
+    addrlist.append(gmb_temp7_down);
+
+    addrlist.append(gmb_temp1_up);
+    addrlist.append(gmb_temp2_up);
+    addrlist.append(gmb_temp3_up);
+    addrlist.append(gmb_temp4_up);
+    addrlist.append(gmb_temp5_up);
+    addrlist.append(gmb_temp6_up);
+    addrlist.append(gmb_temp7_up);
+
+    addrlist.append(gmb_tempuse1);
+    addrlist.append(gmb_tempuse2);
+    addrlist.append(gmb_tempuse3);
+    addrlist.append(gmb_tempuse4);
+    addrlist.append(gmb_tempuse5);
+    addrlist.append(gmb_tempuse6);
+    addrlist.append(gmb_tempuse7);
+
+    addrlist.append(gmb_oiluse);
+    addrlist.append(gmb_oil_real);
+
+    addrlist.append(gmb_temp1_real);
+    addrlist.append(gmb_temp2_real);
+    addrlist.append(gmb_temp3_real);
+    addrlist.append(gmb_temp4_real);
+    addrlist.append(gmb_temp5_real);
+    addrlist.append(gmb_temp6_real);
+    addrlist.append(gmb_temp7_real);
+
+    addrlist.append(gmb_moldtempset1);
+    addrlist.append(gmb_moldtempset2);
+    addrlist.append(gmb_moldtempset3);
+    addrlist.append(gmb_moldtempset4);
+    addrlist.append(gmb_moldtempset5);
+    addrlist.append(gmb_moldtempset6);
+    addrlist.append(gmb_moldtempset7);
+    addrlist.append(gmb_moldtempset8);
+
+    addrlist.append(gmb_moldtemp1_down);
+    addrlist.append(gmb_moldtemp2_down);
+    addrlist.append(gmb_moldtemp3_down);
+    addrlist.append(gmb_moldtemp4_down);
+    addrlist.append(gmb_moldtemp5_down);
+    addrlist.append(gmb_moldtemp6_down);
+    addrlist.append(gmb_moldtemp7_down);
+    addrlist.append(gmb_moldtemp8_down);
+
+    addrlist.append(gmb_moldtempuse1);
+    addrlist.append(gmb_moldtempuse2);
+    addrlist.append(gmb_moldtempuse3);
+    addrlist.append(gmb_moldtempuse4);
+    addrlist.append(gmb_moldtempuse5);
+    addrlist.append(gmb_moldtempuse6);
+    addrlist.append(gmb_moldtempuse7);
+    addrlist.append(gmb_moldtempuse8);
+
+    addrlist.append(gmb_moldtemp1_real);
+    addrlist.append(gmb_moldtemp2_real);
+    addrlist.append(gmb_moldtemp3_real);
+    addrlist.append(gmb_moldtemp4_real);
+    addrlist.append(gmb_moldtemp5_real);
+    addrlist.append(gmb_moldtemp6_real);
+    addrlist.append(gmb_moldtemp7_real);
+    addrlist.append(gmb_moldtemp8_real);
+
+    addrlist.append(gmb_TOTPERCENT);
+    addrlist.append(gmb_TOTPR);
+    addrlist.append(gmb_TOTPS);
+    addrlist.append(gmb_CYCLCT);
+    addrlist.append(gmb_CAVITY);
+
+    addrlist.append(gmb_mANUAL);
+    addrlist.append(gmb_lSemiAuto);
+    addrlist.append(gmb_lFullAuto);
+    addrlist.append(gmb_MADJSL);
+
+    addrlist.append(gmb_dfl_Alarm);
+    addrlist.append(gmb_dmt_RunMode);
+    addrlist.append(gmb_dfl_Motor);
+    addrlist.append(gmb_dfl_Heater);
+
+    addrlist.append(gmb_WorkFile_1);
+    addrlist.append(gmb_WorkFile_2);
+    addrlist.append(gmb_WorkFile_3);
+    addrlist.append(gmb_WorkFile_4);
+    addrlist.append(gmb_WorkFile_5);
+    addrlist.append(gmb_WorkFile_6);
+    addrlist.append(gmb_WorkFile_7);
+    addrlist.append(gmb_WorkFile_8);
+    addrlist.append(gmb_WorkFile_9);
+    addrlist.append(gmb_WorkFile_10);
+    addrlist.append(gmb_WorkFile_11);
+    addrlist.append(gmb_WorkFile_12);
+    addrlist.append(gmb_WorkFile_13);
+    addrlist.append(gmb_WorkFile_14);
+    addrlist.append(gmb_WorkFile_15);
+    addrlist.append(gmb_WorkFile_16);
+    addrlist.append(gmb_WorkFile_17);
+    addrlist.append(gmb_WorkFile_18);
+    addrlist.append(gmb_WorkFile_19);
+    addrlist.append(gmb_WorkFile_20);
+    addrlist.append(gmb_WorkFile_21);
+    addrlist.append(gmb_WorkFile_22);
+    addrlist.append(gmb_WorkFile_23);
+    addrlist.append(gmb_WorkFile_24);
+    addrlist.append(gmb_WorkFile_25);
+    addrlist.append(gmb_WorkFile_26);
+    addrlist.append(gmb_WorkFile_27);
+    addrlist.append(gmb_WorkFile_28);
+    addrlist.append(gmb_WorkFile_29);
+
+    addrlist.append(gmb_MCLSTK);
+    addrlist.append(gmb_INJETK);
+    addrlist.append(gmb_CHRGTK);
+    addrlist.append(gmb_CYCLTK);
+    addrlist.append(gmb_MCLSTK);
+    addrlist.append(gmb_CUSPOS);
+    addrlist.append(gmb_HLDPOS);
+    addrlist.append(gmb_CRGPOS);
+    addrlist.append(gmb_MDOPOS);
+    addrlist.append(gmb_MAXINS);
+    addrlist.append(gmb_MAXRPM);
+    addrlist.append(gmb_AVRRPM);
+    addrlist.append(gmb_MAXINP);
+    addrlist.append(gmb_HLDPRS);
+    addrlist.append(gmb_MAXBPR);
+    addrlist.append(gmb_AVRBPR);
+
+    addrlist.append(gmb_shotdata_injectiontime);
+    addrlist.append(gmb_shotdata_ChargeTime);
+    addrlist.append(gmb_shotdata_CycleTime);
+    addrlist.append(gmb_shotdata_MoldCloseTime);
+    addrlist.append(gmb_shotdata_ChargeEndPos);
+    addrlist.append(gmb_shotdata_HoldStartPos);
+    addrlist.append(gmb_shotdata_ChargeEndPos);
+    addrlist.append(gmb_shotdata_MaxInjectSpd);
+    addrlist.append(gmb_shotdata_MaxChargeSpd);
+    addrlist.append(gmb_shotdata_AvgChargeSpd);
+    addrlist.append(gmb_shotdata_MaxInjectPrs);
+    addrlist.append(gmb_shotdata_HoldPrs);
+    addrlist.append(gmb_shotdata_MaxBackPrs);
+    addrlist.append(gmb_shotdata_AvgBackPrs);
+    addrlist.append(gmb_shotdata_Temperature1);
+    addrlist.append(gmb_shotdata_Temperature2);
+    addrlist.append(gmb_shotdata_Temperature3);
+    addrlist.append(gmb_shotdata_Temperature4);
+    addrlist.append(gmb_shotdata_Temperature5);
+    addrlist.append(gmb_shotdata_Temperature6);
+    addrlist.append(gmb_shotdata_Temperature7);
+    addrlist.append(gmb_shotdata_Temperature8);
+    addrlist.append(gmb_shotdata_MoldOpenPos);
+    addrlist.append(gmb_shotdata_CycleCounter);
+
+
+
+
     moudle_thread = new gefranseven_moudle_thread(this);
     moudle_thread->start();
     initflag=true;
     return initflag;
 }
 
-
-
-void gefranseven_base_logic::telnetjoinerror(QAbstractSocket::SocketError number){
-    mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
-
-}
 //금형 이름 받는 로직
+
 void gefranseven_base_logic::telnetreadready(){
+    /*
     QByteArray data;
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     while(true){
@@ -104,13 +278,18 @@ void gefranseven_base_logic::telnetreadready(){
         }
 //        qDebug()<<datastr;
     }
+    */
 }
+
 
 void gefranseven_base_logic::loop(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString ip = parent_item->ip->text();
-    requst_read_value(ip,"cgi-bin/SevenCgiLib.out");
+
+
+    //requst_read_value(ip,"cgi-bin/SevenCgiLib.out");
     //금형 이름을 받기 위함
+    /*
     if(tcpsocket->state() == QTcpSocket::ConnectedState){
         tcpsocket->write("WorkFile\r\n");
         tcpsocket->flush();
@@ -125,16 +304,20 @@ void gefranseven_base_logic::loop(){
         parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
 
     }
+    */
     //qDebug()<<tcpsocket->state();
 }
 void gefranseven_base_logic::requst_read_value(QString ip, QString address){
+    /*
     QString url = QString("http://%1/%2").arg(ip).arg(address);
     requast.setUrl(url);
     manager.get(requast);
+    */
 }
-void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
-    QByteArray temp_data;
 
+void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
+    /*
+    QByteArray temp_data;
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     temp_data = reply->readAll();
     QString htmldata  = QString(temp_data);
@@ -174,7 +357,6 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
              }
              tempgefdata->value = value;
         }
-
         waitcondition.wakeAll();
 
     }else if(temp_data.indexOf("Please enter login information")>0){
@@ -216,10 +398,11 @@ void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
         manager.post(requast,postData);
     }
     delete reply;
+    */
 }
 
-
 void gefranseven_base_logic::url_gefranbaseloop(){
+    /*
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
     QSqlQuery mysqlquery1(remotedb);
@@ -234,4 +417,20 @@ void gefranseven_base_logic::url_gefranbaseloop(){
         qDebug()<<"gefran false";
     }
 //    qDebug()<<datamap->value(QString("sp_Injec_0"))->value;
+*/
+}
+void gefranseven_base_logic::REC_save(){
+
+}
+
+void gefranseven_base_logic::modbusstatue_change(int state){
+
+    if(state == QModbusDevice::ConnectedState){
+        slot_statue_update(true);
+    }else if(state == QModbusDevice::ConnectingState){
+        slot_statue_update(false);
+    }else if(state == QModbusDevice::UnconnectedState){
+        qctx->connectDevice();
+        slot_statue_update(false);
+    }
 }
