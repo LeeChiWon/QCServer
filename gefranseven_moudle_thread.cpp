@@ -10,7 +10,7 @@ void gefranseven_moudle_thread::run(){
     while(playflag){
         parent_logic->mutex.lock();
         parent_logic->waitcondition.wait(&(parent_logic->mutex));
-
+        parent_logic->gefranseven_base_loop();
         //parent_logic->url_gefranbaseloop();
         parent_logic->mutex.unlock();
     }

@@ -152,7 +152,7 @@
 #define gmb_INJETK 3238
 #define gmb_CHRGTK 3240
 #define gmb_CYCLTK 3242
-#define gmb_MCLSTK 3244
+#define gmb_MCLSTK1 3244
 #define gmb_CUSPOS 3246
 #define gmb_HLDPOS 3248
 #define gmb_CRGPOS 3250
@@ -169,7 +169,7 @@
 #define gmb_shotdata_ChargeTime 3270
 #define gmb_shotdata_CycleTime 3272
 #define gmb_shotdata_MoldCloseTime 3274
-#define gmb_shotdata_ChargeEndPos 3276
+#define gmb_shotdata_CushionPos 3276
 #define gmb_shotdata_HoldStartPos 3278
 #define gmb_shotdata_ChargeEndPos 3280
 #define gmb_shotdata_MaxInjectSpd 3282
@@ -219,8 +219,8 @@
 #define gmb_sp_Holdp_2 3360
 
 #define gmb_pr_Holdp_0 3362
-#define gmb_pr_Holdp_1 3362
-#define gmb_pr_Holdp_2 3364
+#define gmb_pr_Holdp_1 3364
+#define gmb_pr_Holdp_2 3366
 
 #define gmb_ts_Holdp_0 3368
 #define gmb_ts_Holdp_1 3370
@@ -249,8 +249,8 @@
 #define gmb_sp_Suckb_0 3406
 #define gmb_sp_Suckb_1 3408
 
-#define gmb_pr_Suckb_0 3410
-#define gmb_pr_Suckb_1 3412
+#define gmb_po_Suckb_0 3410
+#define gmb_po_Suckb_2 3412
 
 #define gmb_SPR2TM 3414
 #define gmb_COOLTM 3416
@@ -266,6 +266,31 @@
 #define gmb_alramnumber7 3434
 #define gmb_alramnumber8 3436
 #define gmb_alramnumber9 3438
+
+#define gmb_duv_TopLineNG_0 3440
+#define gmb_duv_TopLineNG_1 3442
+#define gmb_duv_TopLineNG_2 3444
+#define gmb_duv_TopLineNG_3 3446
+#define gmb_duv_TopLineNG_4 3448
+#define gmb_duv_TopLineNG_5 3450
+
+#define gmb_dts_Holdp_0 3452
+#define gmb_dts_Holdp_1 3454
+#define gmb_dts_Holdp_2 3456
+
+#define gmb_uv_HeatSet_1 3458
+#define gmb_uv_HeatSet_2 3460
+#define gmb_uv_HeatSet_3 3462
+#define gmb_uv_HeatSet_4 3464
+#define gmb_uv_HeatSet_5 3466
+#define gmb_uv_HeatSet_6 3468
+#define gmb_uv_HeatSet_7 3470
+
+#define gmb_uv_OilSet 3472
+
+#define gmb_INJETM 3474
+
+
 class gefranvalue {
 public:
     QString name;
@@ -320,12 +345,17 @@ public:
 
     void requst_read_value(QString ip, QString address);
     void url_gefranbaseloop();
+    // gefran은 리시브를 받지 않고 바로 요청 패킷을 보내면 연결을 해제 한다.
+    int modbuscount;
 signals:
 
 public slots:
     void managerfinished(QNetworkReply *reply);
     void telnetreadready();
     void modbusstatue_change(int state);
+    void modbudread_ready();
+    void gefranseven_base_loop();
+    void slot_statue_update(bool statue);
 
 };
 
