@@ -392,14 +392,14 @@ void es600_base_locgic::TB_REC_save(){
 
     QSqlQuery mysqlquery1(remotedb);
 
-    current_shotcount = datamap->value(QString("%1").arg(mb_SHOTDATA_count))->value.toInt();
+    current_shotcount = datamap->value(QString("%1").arg(mb_production_count))->value.toInt();
     if(before_shotcount<0){
         before_shotcount = current_shotcount;
         //modbus_write_register(ctx,mb_actstatus,0);
     }
     if(before_shotcount!=current_shotcount){
         before_shotcount=current_shotcount;
-    int actstatus = datamap->value(QString("%1").arg(mb_actstatus))->value.toInt();
+//    int actstatus = datamap->value(QString("%1").arg(mb_actstatus))->value.toInt();
     int fooldata =datamap->value(QString("%1").arg(mb_SHOTDATA_fooldata))->value.toInt();
     double fillingtime = datamap->value(QString("%1").arg(mb_SHOTDATA_fillingtime))->value.toDouble()/100.0;
     double plasticizing_time = datamap->value(QString("%1").arg(mb_SHOTDATA_plasticizing_time))->value.toDouble()/100.0;
@@ -440,15 +440,68 @@ void es600_base_locgic::TB_REC_save(){
     mold_name.append((char)(moldname5>>8));
     mold_name.append((char)(moldname5));
     QString moldname = mold_name;
-
-
-
-
-    actstatus = datamap->value(QString("%1").arg(mb_actstatus))->value.toInt();
-    if(actstatus == 1 && before_shotcount){
-        current_shotcount = datamap->value(QString("%1").arg(mb_SHOTDATA_count))->value.toInt();
+    double tempues_act[7];
+    for(int i=0;i<7;i++){
+        tempues_act[i] = datamap->value(QString("%1").arg(mb_tempues1+i*2))->value.toDouble()/10.0;
+    }
+    if(!tempues_act[0]){
+        temp1 = 0.0;
+    }
+    if(!tempues_act[1]){
+        temp2 = 0.0;
+    }
+    if(!tempues_act[2]){
+        temp3 = 0.0;
+    }
+    if(!tempues_act[3]){
+        temp4 = 0.0;
+    }
+    if(!tempues_act[4]){
+        temp5 = 0.0;
+    }
+    if(!tempues_act[5]){
+        temp6 = 0.0;
+    }
+    if(!tempues_act[6]){
+        temp7 = 0.0;
     }
 
+    int moldtempuse_act[8];
+    for(int i=0;i<8;i++){
+        moldtempuse_act[i] = datamap->value(QString("%1").arg(mb_moldtempuse1+i*2))->value.toInt();
+    }
+    if(!moldtempuse_act[0]){
+        moldtemp1 = 0.0;
+    }
+    if(!moldtempuse_act[1]){
+        moldtemp2 = 0.0;
+    }
+    if(!moldtempuse_act[2]){
+        moldtemp3 = 0.0;
+    }
+    if(!moldtempuse_act[3]){
+        moldtemp4 = 0.0;
+    }
+    if(!moldtempuse_act[4]){
+        moldtemp5 = 0.0;
+    }
+    if(!moldtempuse_act[5]){
+        moldtemp6 = 0.0;
+    }
+    if(!moldtempuse_act[6]){
+        moldtemp7 = 0.0;
+    }
+    if(!moldtempuse_act[7]){
+        moldtemp8 = 0.0;
+    }
+
+
+//    actstatus = datamap->value(QString("%1").arg(mb_actstatus))->value.toInt();
+//    if(actstatus == 1 && before_shotcount){
+//        current_shotcount = datamap->value(QString("%1").arg(mb_SHOTDATA_count))->value.toInt();
+//    }
+        QString current_date = QDate::currentDate().toString("yyyy-MM-dd");
+        QString current_time = QTime::currentTime().toString("hh:mm:ss");
         QString insertquery = QString("INSERT INTO shot_data "
                                       "(Machine_Name"
                                       ",Additional_Info_1"
@@ -492,7 +545,7 @@ void es600_base_locgic::TB_REC_save(){
                                       +QString("'%1'").arg(mancine_name)+","
                                       +QString("'%1'").arg(moldname)+","
                                       +"''"+","
-                                      +"\'"+QDate::currentDate().toString("yyyy-MM-dd ")+QTime::currentTime().toString("HH:mm:ss")+"\'"+","
+                                      +"'"+current_date+" "+current_time+"',"
                                       +QString("%1").arg(current_shotcount)+","
                                       +QString("%1").arg(fooldata)+","
                                       +QString("%1").arg(fillingtime)+","
@@ -777,18 +830,21 @@ void es600_base_locgic::TB_REC_save(){
         }else{
             tempsetstr.append(QString("%1/").arg(0.0));
         }
+
+        tempsetstr.append(QString("%1/").arg(oilset));
+
         if(tempues[6]){
-            tempsetstr.append(QString("%1/").arg(tempset[6]));
+            tempsetstr.append(QString("%1").arg(tempset[6]));
         }else{
-            tempsetstr.append(QString("%1/").arg(0.0));
+            tempsetstr.append(QString("%1").arg(0.0));
         }
 
-        tempsetstr.append(QString("%1").arg(oilset));
 
 
-        double moldtempuse[8];
+
+        int moldtempuse[8];
         for(int i=0;i<8;i++){
-            moldtempuse[i] = datamap->value(QString("%1").arg(mb_moldtempuse1+i*2))->value.toDouble()/10.0;
+            moldtempuse[i] = datamap->value(QString("%1").arg(mb_moldtempuse1+i*2))->value.toInt();
         }
 
         QString moldtempstr;
@@ -869,7 +925,7 @@ void es600_base_locgic::TB_REC_save(){
                 "("+QString("'%1'").arg(mancine_name)+","
                 +QString("'%1'").arg(moldname)+","
                 +"''"+","
-                +"\'"+QDate::currentDate().toString("yyyy-MM-dd ")+QTime::currentTime().toString("HH:mm:ss")+"\'"+","
+                +"'"+current_date+" "+current_time+"',"
                 +QString("%1").arg(current_shotcount)+","
                 +"\'"+Inj_Velocitystr+"\'"+","
                 +"\'"+injPressurestr+"\'"+","

@@ -21,6 +21,7 @@
 #include "globalheader.h"
 #include "es600_base_locgic.h"
 #include <QSqlError>
+#include <gefransetup_popup.h>
 
 class mslotitem : public QObject
 {
@@ -42,6 +43,7 @@ public:
     gefranseven_base_logic *gefran_base_logic;
     es600_base_locgic *Es600_base_locgic;
     QWidget *parent_src;
+    gefransetup_popup *gefranset_popup;
     void set_connectlabel_text(QString data);
     void set_status_text(QString data);
 
@@ -52,6 +54,7 @@ signals:
 public slots:
     void typechange(QString data);
     void maintimer_timeout();
+    void setupbtn_click(bool result);
 
 
 };
