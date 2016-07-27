@@ -191,8 +191,11 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
     gefran_base_logic = new gefranseven_base_logic(this);
     Es600_base_locgic = new es600_base_locgic(this);
 
+    gefranset_popup = 0;
+
     connect(type,SIGNAL(currentTextChanged(QString)),this,SLOT(typechange(QString)));
     connect(&maintimer,SIGNAL(timeout()),this,SLOT(maintimer_timeout()));
+    connect(setupbtn,SIGNAL(clicked(bool)),this,SLOT(setupbtn_click(bool)));
 }
 void mslotitem::typechange(QString data){
     QSqlQuery mysqlquery1(remotedb);
@@ -225,7 +228,6 @@ void mslotitem::maintimer_timeout(){
         }
         Es600_base_locgic->loop();
     }
-
 }
 
 void mslotitem::set_connectlabel_text(QString data){
@@ -246,4 +248,14 @@ void mslotitem::set_status_text(QString data){
                                 .arg(data)
                                 .arg(machinenametext);
     mysqlquery1.exec(quertstr2);
+}
+void mslotitem::setupbtn_click(bool result){
+    if(type->currentText().split("/").at(0).compare("gefranseven")==0){
+        if(gefranset_popup == 0){
+            gefranset_popup = new gefransetup_popup(machinenametext);
+            gefranset_popup->show();
+        }else{
+            gefranset_popup->show();
+        }
+    }
 }

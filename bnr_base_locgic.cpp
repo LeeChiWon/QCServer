@@ -399,7 +399,29 @@ void Bnr_base_locgic::TA_REC_SAVE(){
         //qDebug()<<"mold_name = "<<mold_name;
         QString current_date = QDate::currentDate().toString("yyyy-MM-dd");
         QString current_time = QTime::currentTime().toString("hh:mm:ss");
-
+        double temp[21];
+        double temp_act[21];
+        int tempsbon[21];
+       for(int i=0;i<=20;i++){
+            int tempdata_sbon = datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value.toInt();
+            if( i == 6 ){  //6번은 오일이라서 항상 켜줌
+                tempdata_sbon = 1;
+            }
+            if(tempdata_sbon){
+                tempsbon[i] = 1;
+                if(i==6){ //6번은 오일이라서 변수가 다름
+                    temp[i] = datamap->value(QString("REC_DATA.HC.Oil.ST"))->value.toDouble()/10.0;
+                    temp_act[i] = datamap->value(QString("ACT_DATA.System.ATOil"))->value.toDouble()/10.0;
+                }else {
+                    temp[i] = datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10.0;
+                    temp_act[i] = datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i))->value.toDouble()/10.0;
+                }
+            }else {
+                tempsbon[i] = 0;
+                temp[i] = 0.0;
+                temp_act[i] = 0.0;
+            }
+        }
         mysqlquery1.exec(QString("INSERT INTO shot_data"
                                  "(Machine_Name"
                                  ",Additional_Info_1"
@@ -466,26 +488,26 @@ void Bnr_base_locgic::TA_REC_SAVE(){
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[13]")->value.toDouble()/10.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[14]")->value.toDouble()/10.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[15]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[16]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[17]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[18]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[19]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[20]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[21]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[22]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[23]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[9].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[10].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[11].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[12].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[13].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[14].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[15].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[16].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[17].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[18].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[19].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[20].AT")->value.toDouble()/10.0,0,'f',1)+")"
+                                 ""+QString("%1").arg(temp_act[0],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[1],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[2],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[3],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[4],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[5],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[6],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[7],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[9],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[10],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[11],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[12],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[13],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[14],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[15],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[16],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[17],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[18],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[19],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[20],0,'f',1)+")"
                                  )
                          );
 //        qDebug()<<mysqlquery1.lastQuery();
@@ -597,25 +619,7 @@ void Bnr_base_locgic::TA_REC_SAVE(){
                                         .arg(((datamap->value("REC_DATA.IP.NS.SvDA")->value.toDouble()/10.0)/SuckbackSpeedpercent)*100.0,0,'f',1)
                                         ;
 
-        double temp[21];
-        int tempsbon[21];
-       for(int i=0;i<=20;i++){
-            int tempdata_sbon = datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value.toInt();
-            if( i == 6 ){  //6번은 오일이라서 항상 켜줌
-                tempdata_sbon = 1;
-            }
-            if(tempdata_sbon){
-                tempsbon[i] = 1;
-                if(i==6){ //6번은 오일이라서 변수가 다름
-                    temp[i] = datamap->value(QString("REC_DATA.HC.Oil.ST"))->value.toDouble()/10.0;
-                }else {
-                    temp[i] = datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10.0;
-                }
-            }else {
-                tempsbon[i] = 0;
-                temp[i] = 0.0;
-            }
-        }
+
 
         QString Barrel_Temperature = QString("%1/%2/%3/%4/%5/%6/%7/%8")
                                         .arg(temp[0],0,'f',1)
@@ -932,9 +936,26 @@ void Bnr_base_locgic::TE_REC_SAVE(){
             }
             mold_name.append(temp_value);
         }
+
+        double temp[21];
+        double temp_act[21];
+        int tempsbon[21];
+       for(int i=0;i<=20;i++){
+            int tempdata_sbon = datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value.toInt();
+            if(tempdata_sbon){
+                tempsbon[i] = 1;
+                temp[i] = datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10.0;
+                temp_act[i] = datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i))->value.toDouble()/10.0;
+            }else {
+                tempsbon[i] = 0;
+                temp[i] = 0.0;
+                temp_act[i] = 0.0;
+            }
+        }
         //qDebug()<<"mold_name = "<<mold_name;
         QString current_date = QDate::currentDate().toString("yyyy-MM-dd");
         QString current_time = QTime::currentTime().toString("hh:mm:ss");
+
 
         mysqlquery1.exec(QString("INSERT INTO shot_data"
                                  "(Machine_Name"
@@ -1002,26 +1023,26 @@ void Bnr_base_locgic::TE_REC_SAVE(){
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[13]")->value.toDouble()/10.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[14]")->value.toDouble()/10.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[15]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[16]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[17]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[18]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[19]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[20]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[21]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[22]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[23]")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[9].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[10].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[11].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[12].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[13].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[14].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[15].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[16].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[17].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[18].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[19].AT")->value.toDouble()/10.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.Zone[20].AT")->value.toDouble()/10.0,0,'f',1)+")"
+                                 ""+QString("%1").arg(temp_act[0],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[1],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[2],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[3],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[4],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[5],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[6],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[7],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[9],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[10],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[11],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[12],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[13],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[14],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[15],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[16],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[17],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[18],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[19],0,'f',1)+","
+                                 ""+QString("%1").arg(temp_act[20],0,'f',1)+")"
                                  )
                          );
 
@@ -1112,25 +1133,7 @@ void Bnr_base_locgic::TE_REC_SAVE(){
                                         .arg(datamap->value("REC_DATA.IP.NS.SvDB")->value.toDouble()/10.0,0,'f',1)
                                         .arg(datamap->value("REC_DATA.IP.NS.SvDA")->value.toDouble()/10.0,0,'f',1)
                                         ;
-        double temp[21];
-        int tempsbon[21];
-       for(int i=0;i<=20;i++){
-            int tempdata_sbon = datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value.toInt();
-            if( i == 6 ){  //6번은 오일이라서 항상 켜줌
-                tempdata_sbon = 1;
-            }
-            if(tempdata_sbon){
-                tempsbon[i] = 1;
-                if(i==6){ //6번은 오일이라서 변수가 다름
-                    temp[i] = datamap->value(QString("REC_DATA.HC.Oil.ST"))->value.toDouble()/10.0;
-                }else {
-                    temp[i] = datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10.0;
-                }
-            }else {
-                tempsbon[i] = 0;
-                temp[i] = 0.0;
-            }
-        }
+
        QString Barrel_Temperature = QString("%1/%2/%3/%4/%5/%6/%7/%8")
                                        .arg(temp[0],0,'f',1)
                                        .arg(temp[1],0,'f',1)
