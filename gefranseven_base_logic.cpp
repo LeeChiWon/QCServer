@@ -1205,9 +1205,9 @@ void gefranseven_base_logic::current_update(){
     QSqlQuery mysqlquery1(remotedb);
     SimpleCrypt crypto(CRYPTO_NUMBER);
     QString update_temp;
-    int production_count = datamap->value(QString("%1").arg(gmb_TOTPS))->value.toInt();
+    int production_count = datamap->value(QString("%1").arg(gmb_TOTPR))->value.toInt();
     QString mold_name = get_mold_name();
-    int object_count = datamap->value(QString("%1").arg(gmb_TOTPR))->value.toInt();
+    int object_count = datamap->value(QString("%1").arg(gmb_TOTPS))->value.toInt();
     int cabity = datamap->value(QString("%1").arg(gmb_CAVITY))->value.toInt();
     double cycle_time = datamap->value(QString("%1").arg(gmb_CYCLCT))->value.toDouble()/10.0;
     int run_mode =0;
