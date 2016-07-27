@@ -343,8 +343,12 @@ public:
 
     void REC_save();
 
+    void current_update();
+
     void requst_read_value(QString ip, QString address);
     void url_gefranbaseloop();
+
+    QString get_mold_name();
     // gefran은 리시브를 받지 않고 바로 요청 패킷을 보내면 연결을 해제 한다.
     int modbuscount;
 signals:

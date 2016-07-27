@@ -56,6 +56,7 @@ public:
     void TE_current_update();
     void TE_REC_SAVE();
     void alram_update();
+    QString get_mold_name();
     int before_prod_actpcs;
     int current_prod_actpcs;
     ~Bnr_base_locgic();

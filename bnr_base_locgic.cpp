@@ -197,22 +197,22 @@ void Bnr_base_locgic::TA_current_update(){
         achievemen_rate = (production_count/object_count)*100.0;
     }
     int cycle_time = datamap->value("ACT_DATA.System.AtCycleTime")->value.toInt()/100;
-    QTime time;
-    time.setHMS(0,0,0);
-    QTime cycletime;
-    cycletime = time.addSecs(cycle_time);
+//    QTime time;
+//    time.setHMS(0,0,0);
+//    QTime cycletime;
+//    cycletime = time.addSecs(cycle_time);
 
     int mode = datamap->value("MMI_DATA.Mode")->value.toInt();
-    QString modestr;
-    if(mode == 1){
-        modestr=tr("auto");
-    }else if(mode ==2){
-        modestr=tr("helfauto");
-    }else if(mode ==4){
-        modestr=tr("munual");
-    }else if(mode ==5){
-        modestr=tr("mold");
-    }
+//    QString modestr;
+//    if(mode == 1){
+//        modestr=tr("auto");
+//    }else if(mode ==2){
+//        modestr=tr("helfauto");
+//    }else if(mode ==4){
+//        modestr=tr("munual");
+//    }else if(mode ==5){
+//        modestr=tr("mold");
+//    }
     QString warning_data_str = "";
     if(datamap->value("MMI_DATA.Alarm.Req")->value.toInt()==1){
         for(int i=0;i<100;i++){
@@ -224,22 +224,25 @@ void Bnr_base_locgic::TA_current_update(){
     }else {
         warning_data_str = "";
     }
-
+    QString moldname = get_mold_name();
     update_temp = QString("UPDATE Systeminfo SET production_count = '%1',"
-                          "object_count = '%2',"
-                          "cabity = '%3',"
-                          "achievemen_rate = '%4',"
-                          "cycle_time = \'%5\',"
-                          "run_mode = \'%6\',"
-                          "warning_flag = '%7',"
-                          "warning_data = '%8' "
-                          "where machine_name = \'%9\'")
+                          "mold_name = '%2',"
+                          "object_count = '%3',"
+                          "cabity = '%4',"
+                          "achievemen_rate = '%5',"
+                          "cycle_time = \'%6\',"
+                          "run_mode = \'%7\',"
+                          "warning_flag = '%8',"
+                          "warning_data = '%9' "
+                          "where machine_name = \'%10\'")
+
             .arg(crypto.encryptToString(datamap->value("udTotalProd_actpcs")->value))
+            .arg(crypto.encryptToString(moldname))
             .arg(crypto.encryptToString(datamap->value("udTotalProd_setpcs")->value))
             .arg(crypto.encryptToString(datamap->value("uiNoOfCavity")->value))
             .arg(crypto.encryptToString(QString("%1").arg(1,0,'f',achievemen_rate)))
-            .arg(cycletime.toString("hh:mm:ss"))
-            .arg(crypto.encryptToString(modestr))
+            .arg(crypto.encryptToString(QString("%1").arg(cycle_time)))
+            .arg(crypto.encryptToString(QString("%1").arg(mode)))
             .arg(crypto.encryptToString(datamap->value("MMI_DATA.Alarm.Req")->value))
             .arg(crypto.encryptToString(warning_data_str))
             .arg(mancine_name);
@@ -388,14 +391,8 @@ void Bnr_base_locgic::TA_REC_SAVE(){
     }else if(before_prod_actpcs != current_prod_actpcs){
         before_prod_actpcs=current_prod_actpcs;
 
-        QByteArray mold_name;
-        for(int i=0;i<31;i++){
-            unsigned int temp_value = datamap->value(QString("ModbusDspRecipeName[%1]").arg(i))->value.toUInt();
-            if(temp_value == 0){
-                break;
-            }
-            mold_name.append(temp_value);
-        }
+        QString moldname = get_mold_name();
+
         //qDebug()<<"mold_name = "<<mold_name;
         QString current_date = QDate::currentDate().toString("yyyy-MM-dd");
         QString current_time = QTime::currentTime().toString("hh:mm:ss");
@@ -467,13 +464,13 @@ void Bnr_base_locgic::TA_REC_SAVE(){
                                  ",Mold_Temperature_12)"
                            "VALUES"
                                  "('"+mancine_name+"',"
-                                 "'"+QString(mold_name)+"',"
+                                 "'"+moldname+"',"
                                  "' ',"
                                  "'"+current_date+" "+current_time+"',"
                                  ""+QString("%1").arg(current_prod_actpcs)+","
                                  ""+QString("%1").arg(datamap->value("MA_STAT.AbProductGoodBadCheck")->value.toInt())+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[0]")->value.toDouble()/100.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[1]")->value.toDouble()/100.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[1]")->value.toDouble()/1000.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[2]")->value.toDouble()/100.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[3]")->value.toDouble()/100.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[4]")->value.toDouble()/100.0,0,'f',1)+","
@@ -677,7 +674,7 @@ void Bnr_base_locgic::TA_REC_SAVE(){
                                  ",Timer)"
                            "VALUES"
                                  "('"+mancine_name+"',"
-                                 "'"+QString(mold_name)+"',"
+                                 "'"+moldname+"',"
                                  "' ',"
                                  "'"+current_date+" "+current_time+"',"
                                  ""+QString("%1").arg(current_prod_actpcs)+","
@@ -755,22 +752,22 @@ void Bnr_base_locgic::TE_current_update(){
         achievemen_rate = (production_count/object_count)*100.0;
     }
     int cycle_time = datamap->value("ACT_DATA.System.AtCycleTime")->value.toInt()/100;
-    QTime time;
-    time.setHMS(0,0,0);
-    QTime cycletime;
-    cycletime = time.addSecs(cycle_time);
+//    QTime time;
+//    time.setHMS(0,0,0);
+//    QTime cycletime;
+//    cycletime = time.addSecs(cycle_time);
 
     int mode = datamap->value("MMI_DATA.Mode")->value.toInt();
     QString modestr;
-    if(mode == 1){
-        modestr=tr("auto");
-    }else if(mode ==2){
-        modestr=tr("helfauto");
-    }else if(mode ==4){
-        modestr=tr("munual");
-    }else if(mode ==5){
-        modestr=tr("mold");
-    }
+//    if(mode == 1){
+//        modestr=tr("auto");
+//    }else if(mode ==2){
+//        modestr=tr("helfauto");
+//    }else if(mode ==4){
+//        modestr=tr("munual");
+//    }else if(mode ==5){
+//        modestr=tr("mold");
+//    }
 
     QString warning_data_str = "";
     if(datamap->value("MMI_DATA.Alarm.Req")->value.toInt()==1){
@@ -784,21 +781,25 @@ void Bnr_base_locgic::TE_current_update(){
         warning_data_str = "";
     }
 
+    QString moldname = get_mold_name();
     update_temp = QString("UPDATE Systeminfo SET production_count = '%1',"
-                          "object_count = '%2',"
-                          "cabity = '%3',"
-                          "achievemen_rate = '%4',"
-                          "cycle_time = \'%5\',"
-                          "run_mode = \'%6\',"
-                          "warning_flag = '%7',"
-                          "warning_data = '%8' "
-                          "where machine_name = \'%9\'")
+                          "mold_name = '%2',"
+                          "object_count = '%3',"
+                          "cabity = '%4',"
+                          "achievemen_rate = '%5',"
+                          "cycle_time = \'%6\',"
+                          "run_mode = \'%7\',"
+                          "warning_flag = '%8',"
+                          "warning_data = '%9' "
+                          "where machine_name = \'%10\'")
+
             .arg(crypto.encryptToString(datamap->value("udTotalProd_actpcs")->value))
+            .arg(crypto.encryptToString(moldname))
             .arg(crypto.encryptToString(datamap->value("udTotalProd_setpcs")->value))
             .arg(crypto.encryptToString(datamap->value("uiNoOfCavity")->value))
             .arg(crypto.encryptToString(QString("%1").arg(1,0,'f',achievemen_rate)))
-            .arg(cycletime.toString("hh:mm:ss"))
-            .arg(crypto.encryptToString(modestr))
+            .arg(crypto.encryptToString(QString("%1").arg(cycle_time)))
+            .arg(crypto.encryptToString(QString("%1").arg(mode)))
             .arg(crypto.encryptToString(datamap->value("MMI_DATA.Alarm.Req")->value))
             .arg(crypto.encryptToString(warning_data_str))
             .arg(mancine_name);
@@ -928,14 +929,8 @@ void Bnr_base_locgic::TE_REC_SAVE(){
     }else if(before_prod_actpcs != current_prod_actpcs){
         before_prod_actpcs=current_prod_actpcs;
 
-        QByteArray mold_name;
-        for(int i=0;i<31;i++){
-            unsigned int temp_value = datamap->value(QString("ModbusDspRecipeName[%1]").arg(i))->value.toUInt();
-            if(temp_value == 0){
-                break;
-            }
-            mold_name.append(temp_value);
-        }
+         QString moldname = get_mold_name();
+
 
         double temp[21];
         double temp_act[21];
@@ -1002,13 +997,13 @@ void Bnr_base_locgic::TE_REC_SAVE(){
                                  ",Mold_Temperature_12)"
                            "VALUES"
                                  "('"+mancine_name+"',"
-                                 "'"+QString(mold_name)+"',"
+                                 "'"+moldname+"',"
                                  "' ',"
                                  "'"+current_date+" "+current_time+"',"
                                  ""+QString("%1").arg(current_prod_actpcs)+","
                                  ""+QString("%1").arg(datamap->value("MA_STAT.AbProductGoodBadCheck")->value.toInt())+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[0]")->value.toDouble()/100.0,0,'f',1)+","
-                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[1]")->value.toDouble()/100.0,0,'f',1)+","
+                                 ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[1]")->value.toDouble()/1000.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[2]")->value.toDouble()/100.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[3]")->value.toDouble()/100.0,0,'f',1)+","
                                  ""+QString("%1").arg(datamap->value("ACT_DATA.SQC.Data[4]")->value.toDouble()/100.0,0,'f',1)+","
@@ -1190,7 +1185,7 @@ void Bnr_base_locgic::TE_REC_SAVE(){
                                 ",Timer)"
                           "VALUES"
                                 "('"+mancine_name+"',"
-                                "'"+QString(mold_name)+"',"
+                                "'"+moldname+"',"
                                 "' ',"
                                 "'"+current_date+" "+current_time+"',"
                                 ""+QString("%1").arg(current_prod_actpcs)+","
@@ -1268,4 +1263,16 @@ void Bnr_base_locgic::alram_update(){
             }
         }
     }
+}
+QString Bnr_base_locgic::get_mold_name(){
+    QByteArray mold_name;
+    for(int i=0;i<31;i++){
+        unsigned int temp_value = datamap->value(QString("ModbusDspRecipeName[%1]").arg(i))->value.toUInt();
+        if(temp_value == 0){
+            break;
+        }
+        mold_name.append(temp_value);
+    }
+    QString moldname = QString(mold_name);
+    return moldname;
 }
