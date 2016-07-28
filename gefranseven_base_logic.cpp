@@ -8,8 +8,6 @@ gefranseven_base_logic::gefranseven_base_logic(QObject *parentmslot,QObject *par
     modbuscount=0;
     before_shotcount =-1;
     current_shotcount =-1;
-
-
 }
 
 bool gefranseven_base_logic::init(){
@@ -40,8 +38,6 @@ bool gefranseven_base_logic::init(){
     remotequery.exec(QString("select option_data from Systeminfo where machine_name = '%1'").arg(parent_item->machinenametext));
     if(remotequery.next()){
         QString optionvalue = remotequery.value("option_data").toString();
-
-
     }
 
     /*
@@ -328,7 +324,7 @@ bool gefranseven_base_logic::init(){
     //index 를 찾지 못해 나오는 에러를 방지
     for(int i=0;i<addrlist.size();i++){
         datamap->insert(QString("%1").arg(addrlist.at(i))
-                        ,new gefranvalue(QString("%1").arg(addrlist.at(i)),QString("%1").arg(0)));
+                        ,new gefranvalue(QString("%1").arg(addrlist.at(i)),QString("%1").arg(-1)));
     }
     //기본 옵션이 없으면 기본옵션을 update 해줌
     if(parent_item->gefranset_popup == 0){
@@ -447,7 +443,9 @@ void gefranseven_base_logic::loop(){
 
 void gefranseven_base_logic::gefranseven_base_loop(){
 
+    current_update();
     REC_save();
+
 
     //qDebug()<<"baseloop()";
 }
@@ -491,7 +489,7 @@ void gefranseven_base_logic::modbudread_ready(){
 void gefranseven_base_logic::REC_save(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
-
+    QString datetime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
     QSqlQuery remotequery(remotedb);
 
     //옵션 사용 파싱 및 적용
@@ -526,13 +524,8 @@ void gefranseven_base_logic::REC_save(){
     }
     if(before_shotcount!=current_shotcount){
         before_shotcount=current_shotcount;
-        QByteArray mold_name_byte;
-        QString datetime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-        for(int i=0;i<29;i++){
-            int temp_mold_name  = datamap->value(QString("%1").arg(gmb_WorkFile_1+i*2))->value.toInt();
-            mold_name_byte.append(temp_mold_name);
-        }
-        QString mold_name = QString(mold_name_byte);
+
+        QString mold_name = get_mold_name();
 
         int fooldata =0;
         int foolflag[6];
@@ -1205,6 +1198,70 @@ void gefranseven_base_logic::REC_save(){
 
     }
 }
+void gefranseven_base_logic::current_update(){
+    mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
+    QString mancine_name = parent_item->machinename->text();
+
+    QSqlQuery mysqlquery1(remotedb);
+    SimpleCrypt crypto(CRYPTO_NUMBER);
+    QString update_temp;
+    int production_count = datamap->value(QString("%1").arg(gmb_TOTPR))->value.toInt();
+    QString mold_name = get_mold_name();
+    int object_count = datamap->value(QString("%1").arg(gmb_TOTPS))->value.toInt();
+    int cabity = datamap->value(QString("%1").arg(gmb_CAVITY))->value.toInt();
+    double cycle_time = datamap->value(QString("%1").arg(gmb_CYCLCT))->value.toDouble()/10.0;
+    int run_mode =0;
+    int mANUAL = datamap->value(QString("%1").arg(gmb_mANUAL))->value.toInt();
+    int lSemiAuto = datamap->value(QString("%1").arg(gmb_lSemiAuto))->value.toInt();
+    int lFullAuto = datamap->value(QString("%1").arg(gmb_lFullAuto))->value.toInt();
+    int MADJSL = datamap->value(QString("%1").arg(gmb_MADJSL))->value.toInt();
+
+    if(mANUAL >0){
+        run_mode = 4;
+    }else if(lSemiAuto > 0){
+        run_mode = 2;
+    }else if(lFullAuto > 0){
+        run_mode = 1;
+    }else if(MADJSL>0){
+        run_mode = 5;
+    }
+    double achievemen_rate = datamap->value(QString("%1").arg(gmb_TOTPERCENT))->value.toDouble()/10.0;
+    int warning_flag = datamap->value(QString("%1").arg(gmb_dfl_Alarm))->value.toInt();
+    QString warning_data;
+    if(warning_flag == 1){
+        for(int i=0;i<10;i++){
+            short temp_alaram_data = datamap->value(QString("%1").arg(gmb_alramnumber0+(i*2)))->value.toInt();
+            if(temp_alaram_data!=-1){
+                  warning_data.append(QString("%1/").arg(temp_alaram_data));
+            }
+        }
+    }else {
+        warning_data="";
+    }
+
+    update_temp = QString("UPDATE Systeminfo SET production_count = '%1',"
+                          "mold_name = '%2',"
+                          "object_count = '%3',"
+                          "cabity = '%4',"
+                          "achievemen_rate = '%5',"
+                          "cycle_time = \'%6\',"
+                          "run_mode = \'%7\',"
+                          "warning_flag = '%8',"
+                          "warning_data = '%9' "
+                          "where machine_name = \'%10\'")
+                          .arg(crypto.encryptToString(QString("%1").arg(production_count)))
+                          .arg(crypto.encryptToString(mold_name))
+                          .arg(crypto.encryptToString(QString("%1").arg(object_count)))
+                          .arg(crypto.encryptToString(QString("%1").arg(cabity)))
+                          .arg(crypto.encryptToString(QString("%1").arg(achievemen_rate)))
+                          .arg(crypto.encryptToString(QString("%1").arg(cycle_time)))
+                          .arg(crypto.encryptToString(QString("%1").arg(run_mode)))
+                          .arg(crypto.encryptToString(QString("%1").arg(warning_flag)))
+                          .arg(crypto.encryptToString(QString("%1").arg(warning_data)))
+                          .arg(mancine_name);
+    mysqlquery1.exec(update_temp);
+
+}
 
 void gefranseven_base_logic::modbusstatue_change(int state){
 
@@ -1342,4 +1399,13 @@ void gefranseven_base_logic::url_gefranbaseloop(){
     }
 //    qDebug()<<datamap->value(QString("sp_Injec_0"))->value;
 */
+}
+QString gefranseven_base_logic::get_mold_name(){
+    QByteArray mold_name_byte;
+    for(int i=0;i<29;i++){
+        int temp_mold_name  = datamap->value(QString("%1").arg(gmb_WorkFile_1+i*2))->value.toInt();
+        mold_name_byte.append(temp_mold_name);
+    }
+    QString mold_name = QString(mold_name_byte);
+    return mold_name;
 }
