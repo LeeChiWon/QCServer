@@ -233,19 +233,22 @@ void Bnr_base_locgic::TA_current_update(){
                           "cycle_time = \'%6\',"
                           "run_mode = \'%7\',"
                           "warning_flag = '%8',"
-                          "warning_data = '%9' "
-                          "where machine_name = \'%10\'")
+                          "warning_data = '%9', "
+                          "machine_program = '%10' "
+                          "where machine_name = \'%11\'")
 
             .arg(crypto.encryptToString(datamap->value("udTotalProd_actpcs")->value))
             .arg(crypto.encryptToString(moldname))
             .arg(crypto.encryptToString(datamap->value("udTotalProd_setpcs")->value))
             .arg(crypto.encryptToString(datamap->value("uiNoOfCavity")->value))
-            .arg(crypto.encryptToString(QString("%1").arg(1,0,'f',achievemen_rate)))
+            .arg(crypto.encryptToString(QString("%1").arg(achievemen_rate,0,'f')))
             .arg(crypto.encryptToString(QString("%1").arg(cycle_time)))
             .arg(crypto.encryptToString(QString("%1").arg(mode)))
             .arg(crypto.encryptToString(datamap->value("MMI_DATA.Alarm.Req")->value))
             .arg(crypto.encryptToString(warning_data_str))
+            .arg(crypto.encryptToString(datamap->value("ProgVersion")->value))
             .arg(mancine_name);
+    qDebug()<<"programname="<<datamap->value("ProgVersion")->value;
 
     bool result = mysqlquery1.exec(update_temp);
 
@@ -790,18 +793,20 @@ void Bnr_base_locgic::TE_current_update(){
                           "cycle_time = \'%6\',"
                           "run_mode = \'%7\',"
                           "warning_flag = '%8',"
-                          "warning_data = '%9' "
-                          "where machine_name = \'%10\'")
+                          "warning_data = '%9', "
+                          "machine_program = '%10' "
+                          "where machine_name = \'%11\'")
 
             .arg(crypto.encryptToString(datamap->value("udTotalProd_actpcs")->value))
             .arg(crypto.encryptToString(moldname))
             .arg(crypto.encryptToString(datamap->value("udTotalProd_setpcs")->value))
             .arg(crypto.encryptToString(datamap->value("uiNoOfCavity")->value))
-            .arg(crypto.encryptToString(QString("%1").arg(1,0,'f',achievemen_rate)))
+            .arg(crypto.encryptToString(QString("%1").arg(achievemen_rate,0,'f')))
             .arg(crypto.encryptToString(QString("%1").arg(cycle_time)))
             .arg(crypto.encryptToString(QString("%1").arg(mode)))
             .arg(crypto.encryptToString(datamap->value("MMI_DATA.Alarm.Req")->value))
             .arg(crypto.encryptToString(warning_data_str))
+            .arg(crypto.encryptToString(datamap->value("ProgVersion")->value))
             .arg(mancine_name);
 
     bool result = mysqlquery1.exec(update_temp);

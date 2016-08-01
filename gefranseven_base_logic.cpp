@@ -53,7 +53,7 @@ bool gefranseven_base_logic::init(){
     qctx->setTimeout(3000);
 
     if(!qctx->connectDevice()){
-        qDebug()<<"es600 qctx connect false";
+        qDebug()<<"gefran qctx connect false";
     }else {
 
     }
@@ -320,6 +320,27 @@ bool gefranseven_base_logic::init(){
     addrlist.append(gmb_uv_OilSet);
 
     addrlist.append(gmb_INJETM);
+
+    addrlist.append(gmb_program_name_1);
+    addrlist.append(gmb_program_name_2);
+    addrlist.append(gmb_program_name_3);
+    addrlist.append(gmb_program_name_4);
+    addrlist.append(gmb_program_name_5);
+    addrlist.append(gmb_program_name_6);
+    addrlist.append(gmb_program_name_7);
+    addrlist.append(gmb_program_name_8);
+    addrlist.append(gmb_program_name_9);
+    addrlist.append(gmb_program_name_10);
+    addrlist.append(gmb_program_name_11);
+    addrlist.append(gmb_program_name_12);
+    addrlist.append(gmb_program_name_13);
+    addrlist.append(gmb_program_name_14);
+    addrlist.append(gmb_program_name_15);
+    addrlist.append(gmb_program_name_16);
+    addrlist.append(gmb_program_name_17);
+    addrlist.append(gmb_program_name_18);
+    addrlist.append(gmb_program_name_19);
+    addrlist.append(gmb_program_name_20);
 
     //index 를 찾지 못해 나오는 에러를 방지
     for(int i=0;i<addrlist.size();i++){
@@ -1207,6 +1228,7 @@ void gefranseven_base_logic::current_update(){
     QString update_temp;
     int production_count = datamap->value(QString("%1").arg(gmb_TOTPR))->value.toInt();
     QString mold_name = get_mold_name();
+    QString program_name = get_program_name();
     int object_count = datamap->value(QString("%1").arg(gmb_TOTPS))->value.toInt();
     int cabity = datamap->value(QString("%1").arg(gmb_CAVITY))->value.toInt();
     double cycle_time = datamap->value(QString("%1").arg(gmb_CYCLCT))->value.toDouble()/10.0;
@@ -1247,8 +1269,9 @@ void gefranseven_base_logic::current_update(){
                           "cycle_time = \'%6\',"
                           "run_mode = \'%7\',"
                           "warning_flag = '%8',"
-                          "warning_data = '%9' "
-                          "where machine_name = \'%10\'")
+                          "warning_data = '%9', "
+                          "machine_program = '%10' "
+                          "where machine_name = \'%11\'")
                           .arg(crypto.encryptToString(QString("%1").arg(production_count)))
                           .arg(crypto.encryptToString(mold_name))
                           .arg(crypto.encryptToString(QString("%1").arg(object_count)))
@@ -1258,6 +1281,7 @@ void gefranseven_base_logic::current_update(){
                           .arg(crypto.encryptToString(QString("%1").arg(run_mode)))
                           .arg(crypto.encryptToString(QString("%1").arg(warning_flag)))
                           .arg(crypto.encryptToString(QString("%1").arg(warning_data)))
+                          .arg(crypto.encryptToString(QString("%1").arg(program_name)))
                           .arg(mancine_name);
     mysqlquery1.exec(update_temp);
 
@@ -1409,3 +1433,13 @@ QString gefranseven_base_logic::get_mold_name(){
     QString mold_name = QString(mold_name_byte);
     return mold_name;
 }
+QString gefranseven_base_logic::get_program_name(){
+    QByteArray program_name_byte;
+    for(int i=0;i<20;i++){
+        int temp_program_name  = datamap->value(QString("%1").arg(gmb_WorkFile_1+i*2))->value.toInt();
+        program_name_byte.append(temp_program_name);
+    }
+    QString program_name = QString(program_name_byte);
+    return program_name;
+}
+
