@@ -290,6 +290,27 @@
 
 #define gmb_INJETM 3474
 
+#define gmb_program_name_1 3476
+#define gmb_program_name_2 3478
+#define gmb_program_name_3 3480
+#define gmb_program_name_4 3482
+#define gmb_program_name_5 3484
+#define gmb_program_name_6 3486
+#define gmb_program_name_7 3488
+#define gmb_program_name_8 3490
+#define gmb_program_name_9 3492
+#define gmb_program_name_10 3494
+#define gmb_program_name_11 3496
+#define gmb_program_name_12 3498
+#define gmb_program_name_13 3500
+#define gmb_program_name_14 3502
+#define gmb_program_name_15 3504
+#define gmb_program_name_16 3506
+#define gmb_program_name_17 3508
+#define gmb_program_name_18 3510
+#define gmb_program_name_19 3512
+#define gmb_program_name_20 3514
+
 
 class gefranvalue {
 public:
@@ -349,6 +370,7 @@ public:
     void url_gefranbaseloop();
 
     QString get_mold_name();
+    QString get_program_name();
     // gefran은 리시브를 받지 않고 바로 요청 패킷을 보내면 연결을 해제 한다.
     int modbuscount;
 signals:
