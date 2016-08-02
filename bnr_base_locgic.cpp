@@ -21,7 +21,7 @@ bool Bnr_base_locgic::init(){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     datamap = new QMap<QString,BNRvalue *>;
     alrammap = new QMap<QString,alrammap_data *>;
-    for(int i=0;i<100;i++){
+    for(int i=0;i<ALRAM_MAX;i++){
         alrammap->insert(QString("%1").arg(i),new alrammap_data());
     }
 
@@ -49,6 +49,7 @@ bool Bnr_base_locgic::init(){
     }else {
        qDebug()<<"bnr DB open";
     }
+    connect(this,SIGNAL(sig_requst_read_value(QString,QString)),this,SLOT(requst_read_value(QString,QString)));
     moudle_thread = new bnr_moudle_thread(this);
     moudle_thread->start();
 
@@ -59,8 +60,10 @@ void Bnr_base_locgic::loop(){
 
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString ip = parent_item->ip->text();
+    //qDebug()<<"bnrreadtime start = "<<QDateTime::currentDateTime().toString("hh:mm:ss");
 
     requst_read_value(ip,"BNRbase.asp");
+
 
 }
 void Bnr_base_locgic::requst_read_value(QString ip,QString address){
@@ -72,8 +75,15 @@ void Bnr_base_locgic::requst_read_value(QString ip,QString address){
 void Bnr_base_locgic::managerfinished(QNetworkReply *reply){
     QByteArray temp_data;
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
+    QString ip = parent_item->ip->text();
     temp_data = reply->readAll();
+    if(temp_data.indexOf("Error Occured")>0){
+        qDebug()<<"page error ";
+        delete reply;
+        return ;
+    }
     QString htmldata = QString(temp_data);
+    //qDebug()<<"bnrreadtime end = "<<QDateTime::currentDateTime().toString("hh:mm:ss");
     int startpoint = 0;
     if(temp_data.size()>0){
     while(true){
@@ -103,8 +113,9 @@ void Bnr_base_locgic::managerfinished(QNetworkReply *reply){
         }
         if(reply->url().toString().indexOf("BNRbase.asp")>0){
                 waitcondition.wakeAll();
-        }else if(reply->url().toString().indexOf("TAC1XX11warning.asp")>0){
-
+                requst_read_value(ip,"BNRwarning.asp");
+        }else if(reply->url().toString().indexOf("BNRwarning.asp")>0){
+                waitcondition.wakeAll();
         }
         if(parent_item->connectlabel->text().indexOf("play-button")<0){
            parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
@@ -139,12 +150,16 @@ void Bnr_base_locgic::url_bnrbaseloop(){
         TE_current_update();
         TE_REC_SAVE();
     }
-    alram_update();
+    //int alram_flag = datamap->value("MMI_DATA.Alarm.Req")->value.toInt();
+    if(datamap->contains("MMI_DATA.Alarm.Gen.Alm[0]")){
+        alram_update();
+    }
 }
 
 void Bnr_base_locgic::TA_current_update(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
+    QString ip = parent_item->ip->text();
 
     QSqlQuery mysqlquery1(remotedb);
     SimpleCrypt crypto(CRYPTO_NUMBER);
@@ -171,7 +186,7 @@ void Bnr_base_locgic::TA_current_update(){
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value.toDouble()/10,0,'f',1)))
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i-1))->value)));
 
-        }else {
+        }else if(i<=8){
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
                     .arg(i)
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i-1))->value.toDouble()/10,0,'f',1)))
@@ -179,6 +194,15 @@ void Bnr_base_locgic::TA_current_update(){
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i-1))->value.toDouble()/10,0,'f',1)))
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value.toDouble()/10,0,'f',1)))
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i-1))->value)));
+
+        }else if(i>=9){
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
+                    .arg(i)
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value)));
         }
         update_temp.append(temp_append);
     }
@@ -213,17 +237,6 @@ void Bnr_base_locgic::TA_current_update(){
 //    }else if(mode ==5){
 //        modestr=tr("mold");
 //    }
-    QString warning_data_str = "";
-    if(datamap->value("MMI_DATA.Alarm.Req")->value.toInt()==1){
-        for(int i=0;i<100;i++){
-            int result = datamap->value(QString("MMI_DATA.Alarm.Gen.Alm[%1]").arg(i))->value.toInt();
-            if(result == 1){
-                warning_data_str.append(QString("%1/").arg(i));
-            }
-        }
-    }else {
-        warning_data_str = "";
-    }
     QString moldname = get_mold_name();
     update_temp = QString("UPDATE Systeminfo SET production_count = '%1',"
                           "mold_name = '%2',"
@@ -232,10 +245,8 @@ void Bnr_base_locgic::TA_current_update(){
                           "achievemen_rate = '%5',"
                           "cycle_time = \'%6\',"
                           "run_mode = \'%7\',"
-                          "warning_flag = '%8',"
-                          "warning_data = '%9', "
-                          "machine_program = '%10' "
-                          "where machine_name = \'%11\'")
+                          "machine_program = '%8' "
+                          "where machine_name = \'%9\'")
 
             .arg(crypto.encryptToString(datamap->value("udTotalProd_actpcs")->value))
             .arg(crypto.encryptToString(moldname))
@@ -244,11 +255,9 @@ void Bnr_base_locgic::TA_current_update(){
             .arg(crypto.encryptToString(QString("%1").arg(achievemen_rate,0,'f')))
             .arg(crypto.encryptToString(QString("%1").arg(cycle_time)))
             .arg(crypto.encryptToString(QString("%1").arg(mode)))
-            .arg(crypto.encryptToString(datamap->value("MMI_DATA.Alarm.Req")->value))
-            .arg(crypto.encryptToString(warning_data_str))
             .arg(crypto.encryptToString(datamap->value("ProgVersion")->value))
             .arg(mancine_name);
-    qDebug()<<"programname="<<datamap->value("ProgVersion")->value;
+    //qDebug()<<"programname="<<datamap->value("ProgVersion")->value;
 
     bool result = mysqlquery1.exec(update_temp);
 
@@ -331,12 +340,19 @@ void Bnr_base_locgic::TA_current_update(){
                 }
             }
 
-            if(j<3)
+            if(j<4)
             {
-                MapValue.sprintf("%.1f",datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value.toFloat()/10);
-                //MapValue=datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value;
-                SqlValue=QString("%1_%2='%3', ").arg(SQLValues.at(i+6)).arg(j+1).arg(crypto.encryptToString(MapValue));
-                Charge[i].append(SqlValue);
+                if(j==3){
+                    MapValue.sprintf("%.1f",0);
+                    //MapValue=datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value;
+                    SqlValue=QString("%1_%2='%3', ").arg(SQLValues.at(i+6)).arg(j+1).arg(crypto.encryptToString(MapValue));
+                    Charge[i].append(SqlValue);
+                }else {
+                    MapValue.sprintf("%.1f",datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value.toFloat()/10);
+                    //MapValue=datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value;
+                    SqlValue=QString("%1_%2='%3', ").arg(SQLValues.at(i+6)).arg(j+1).arg(crypto.encryptToString(MapValue));
+                    Charge[i].append(SqlValue);
+                }
             }
         }
     }
@@ -705,6 +721,7 @@ void Bnr_base_locgic::TA_REC_SAVE(){
 void Bnr_base_locgic::TE_current_update(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
     QString mancine_name = parent_item->machinename->text();
+    QString ip = parent_item->ip->text();
 
     QSqlQuery mysqlquery1(remotedb);
     SimpleCrypt crypto(CRYPTO_NUMBER);
@@ -730,7 +747,7 @@ void Bnr_base_locgic::TE_current_update(){
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value.toDouble()/10,0,'f',1)))
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i-1))->value)));
 
-        }else {
+        }else if(i<=8){
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
                     .arg(i)
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i-1))->value.toDouble()/10,0,'f',1)))
@@ -738,6 +755,15 @@ void Bnr_base_locgic::TE_current_update(){
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i-1))->value.toDouble()/10,0,'f',1)))
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value.toDouble()/10,0,'f',1)))
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i-1))->value)));
+
+        }else if(i>=9){
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
+                    .arg(i)
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value)));
         }
         update_temp.append(temp_append);
     }
@@ -771,19 +797,6 @@ void Bnr_base_locgic::TE_current_update(){
 //    }else if(mode ==5){
 //        modestr=tr("mold");
 //    }
-
-    QString warning_data_str = "";
-    if(datamap->value("MMI_DATA.Alarm.Req")->value.toInt()==1){
-        for(int i=0;i<100;i++){
-            int result = datamap->value(QString("MMI_DATA.Alarm.Gen.Alm[%1]").arg(i))->value.toInt();
-            if(result == 1){
-                warning_data_str.append(QString("%1/").arg(i));
-            }
-        }
-    }else {
-        warning_data_str = "";
-    }
-
     QString moldname = get_mold_name();
     update_temp = QString("UPDATE Systeminfo SET production_count = '%1',"
                           "mold_name = '%2',"
@@ -792,10 +805,8 @@ void Bnr_base_locgic::TE_current_update(){
                           "achievemen_rate = '%5',"
                           "cycle_time = \'%6\',"
                           "run_mode = \'%7\',"
-                          "warning_flag = '%8',"
-                          "warning_data = '%9', "
-                          "machine_program = '%10' "
-                          "where machine_name = \'%11\'")
+                          "machine_program = '%8' "
+                          "where machine_name = \'%9\'")
 
             .arg(crypto.encryptToString(datamap->value("udTotalProd_actpcs")->value))
             .arg(crypto.encryptToString(moldname))
@@ -804,8 +815,6 @@ void Bnr_base_locgic::TE_current_update(){
             .arg(crypto.encryptToString(QString("%1").arg(achievemen_rate,0,'f')))
             .arg(crypto.encryptToString(QString("%1").arg(cycle_time)))
             .arg(crypto.encryptToString(QString("%1").arg(mode)))
-            .arg(crypto.encryptToString(datamap->value("MMI_DATA.Alarm.Req")->value))
-            .arg(crypto.encryptToString(warning_data_str))
             .arg(crypto.encryptToString(datamap->value("ProgVersion")->value))
             .arg(mancine_name);
 
@@ -873,12 +882,19 @@ void Bnr_base_locgic::TE_current_update(){
                 }
             }
 
-            if(j<3)
+            if(j<4)
             {
-                MapValue.sprintf("%.1f",datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value.toFloat()/10);
-                //MapValue=datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value;
-                SqlValue=QString("%1_%2='%3', ").arg(SQLValues.at(i+6)).arg(j+1).arg(crypto.encryptToString(MapValue));
-                Charge[i].append(SqlValue);
+                if(j==3){
+                    MapValue.sprintf("%.1f",0);
+                    //MapValue=datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value;
+                    SqlValue=QString("%1_%2='%3', ").arg(SQLValues.at(i+6)).arg(j+1).arg(crypto.encryptToString(MapValue));
+                    Charge[i].append(SqlValue);
+                }else {
+                    MapValue.sprintf("%.1f",datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value.toFloat()/10);
+                    //MapValue=datamap->value(QString("%1[%2]").arg(ValueNames.at(i+6)).arg(j))->value;
+                    SqlValue=QString("%1_%2='%3', ").arg(SQLValues.at(i+6)).arg(j+1).arg(crypto.encryptToString(MapValue));
+                    Charge[i].append(SqlValue);
+                }
             }
         }
     }
@@ -896,9 +912,17 @@ void Bnr_base_locgic::TE_current_update(){
     update_temp.append(QString("%1%2%3%4%5").arg(HoldPrs[HOLDPRS].at(0),HoldPrs[HOLDPRS].at(1),HoldPrs[HOLDPRS].at(2),HoldPrs[HOLDPRS].at(3),HoldPrs[HOLDPRS].at(4)));
     update_temp.append(QString("%1%2%3%4%5").arg(HoldPrs[HOLDTIME].at(0),HoldPrs[HOLDTIME].at(1),HoldPrs[HOLDTIME].at(2),HoldPrs[HOLDTIME].at(3),HoldPrs[HOLDTIME].at(4)));
 
-    update_temp.append(QString("%1%2%3").arg(Charge[CHGSPD].at(0),Charge[CHGSPD].at(1),Charge[CHGSPD].at(2)));
-    update_temp.append(QString("%1%2%3").arg(Charge[CHGBPS].at(0),Charge[CHGBPS].at(1),Charge[CHGBPS].at(2)));
-    update_temp.append(QString("%1%2%3").arg(Charge[CHGPOS].at(0),Charge[CHGPOS].at(1),Charge[CHGPOS].at(2)));
+    update_temp.append(QString("%1%2%3%4").arg(Charge[CHGSPD].at(0),Charge[CHGSPD].at(1),Charge[CHGSPD].at(2),Charge[CHGSPD].at(3)));
+    update_temp.append(QString("%1%2%3%4").arg(Charge[CHGBPS].at(0),Charge[CHGBPS].at(1),Charge[CHGBPS].at(2),Charge[CHGBPS].at(3)));
+    update_temp.append(QString("%1%2%3%4").arg(Charge[CHGPOS].at(0),Charge[CHGPOS].at(1),Charge[CHGPOS].at(2),Charge[CHGPOS].at(3)));
+
+    update_temp.append(QString("sovtime = '%1',")
+                       .arg(crypto.encryptToString(QString("%1").arg(datamap->value("REC_DATA.IP.NEG.StSov")->value.toFloat()/1000,0,'f',1)))
+                       );
+
+    update_temp.append(QString("ITEM_TYPE = '%1',")
+                       .arg(crypto.encryptToString(QString("%1").arg(parent_item->type->currentText())))
+                       );
 
     update_temp.append(QString("suckbspd_1='%1', suckbspd_2='%2', suckbpos_1='%3', suckbpos_2='%4',")
                        .arg(crypto.encryptToString(QString("%1").arg(datamap->value("REC_DATA.IP.NS.SvDB")->value.toFloat()/10,0,'f',1)))
@@ -1222,13 +1246,82 @@ void Bnr_base_locgic::alram_update(){
     QString monitertype = parent_item->type->currentText();
 
     QString datetime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-
+    SimpleCrypt crypto(CRYPTO_NUMBER);
     QSqlQuery mysqlquery1(remotedb);
     QStringList keylist = alrammap->keys();
-    for(int k=0;k<100;k++){
+    QString warning_data="";
+
+    for(int k=0;k<GEN_ALRAM_MAX-1;k++){
          int result = datamap->value(QString("MMI_DATA.Alarm.Gen.Alm[%1]").arg(k))->value.toInt();
-         alrammap->value(QString("%1").arg(k))->currentflag = result;
+         alrammap->value(QString("%1").arg(k+1))->currentflag = result;
+         if(result){
+            warning_data.append(QString("%1/").arg(k+1));
+         }
     }
+
+    for(int a=0;a<4;a++){
+        for(int b=0;b<10;b++){
+            int number = (a*10)+b+HtGr_ALRAM_START;
+            int result = 0;
+//            if(datamap->contains(QString("MMI_DATA.Alarm.HtGr[%1].Alm[%1]").arg(a).arg(b))){
+               result = datamap->value(QString("MMI_DATA.Alarm.HtGr[%1].Alm[%2]").arg(a).arg(b))->value.toInt();
+//            }
+
+           alrammap->value(QString("%1").arg(number))->currentflag = result;
+           if(result){
+               warning_data.append(QString("%1/").arg(number));
+           }
+        }
+    }
+
+    for(int a=0;a<33;a++){
+        for(int b=0;b<10;b++){
+            int number = (a*10)+b+Htzo_ALRAM_START;
+            int result = 0;
+//            if(datamap->contains(QString("MMI_DATA.Alarm.HtZo[%1].Alm[%1]").arg(a).arg(b))){
+                result = datamap->value(QString("MMI_DATA.Alarm.HtZo[%1].Alm[%2]").arg(a).arg(b))->value.toInt();
+//            }
+           alrammap->value(QString("%1").arg(number))->currentflag = result;
+           if(result){
+               warning_data.append(QString("%1/").arg(number));
+           }
+        }
+    }
+
+    for(int a=1;a<21;a++){
+        for(int b=0;b<10;b++){
+            int number = (a*10)+b+Ax_ALRAM_START;
+            int result =0;
+            result = datamap->value(QString("MMI_DATA.Alarm.HtZo[%1].Alm[%2]").arg(a).arg(b))->value.toInt();
+           alrammap->value(QString("%1").arg(number))->currentflag = result;
+           if(result){
+               warning_data.append(QString("%1/").arg(number));
+           }
+        }
+    }
+
+    if(datamap->value("MMI_DATA.Alarm.Req")->value.toInt()==1){
+        mysqlquery1.exec(QString("UPDATE Systeminfo SET warning_flag = '%1', "
+                                 "warning_data = '%2' "
+                                 "where machine_name = '%3'"
+                                 ).arg(crypto.encryptToString(QString("1")))
+                                  .arg(crypto.encryptToString(QString(warning_data)))
+                                  .arg(mancine_name)
+                         );
+
+    }else {
+        mysqlquery1.exec(QString("UPDATE Systeminfo SET warning_flag = '%1', "
+                              "warning_data = '%2' "
+                              "where machine_name = '%3'"
+                              ).arg(crypto.encryptToString(QString("0")))
+                               .arg(crypto.encryptToString(QString(" ")))
+                               .arg(mancine_name)
+                         );
+    }
+
+
+
+
     for(int i=0;i<keylist.size();i++){
         bool temp_beforeflag = alrammap->value(keylist.at(i))->beforeflag;
         bool temp_currentflag = alrammap->value(keylist.at(i))->currentflag;

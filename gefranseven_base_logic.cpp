@@ -474,8 +474,10 @@ void gefranseven_base_logic::gefranseven_base_loop(){
 
 void gefranseven_base_logic::modbudread_ready(){
     auto reply = qobject_cast<QModbusReply *>(sender());
-    if (!reply)
+    if (!reply){
+            reply->deleteLater();
             return;
+    }
     const QModbusDataUnit unit = reply->result();
     if (reply->error() == QModbusDevice::NoError) {
         int startaddress = unit.startAddress();
@@ -505,6 +507,7 @@ void gefranseven_base_logic::modbudread_ready(){
             modbuscount++;
         }
     }
+    reply->deleteLater();
 }
 
 void gefranseven_base_logic::REC_save(){
@@ -1284,6 +1287,7 @@ void gefranseven_base_logic::current_update(){
                           .arg(crypto.encryptToString(QString("%1").arg(program_name)))
                           .arg(mancine_name);
     mysqlquery1.exec(update_temp);
+
 
 }
 
