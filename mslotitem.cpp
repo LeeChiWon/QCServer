@@ -185,6 +185,8 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
                       "INSERT INTO Recipe_Info(machine_name) values('%1')"
                       ).arg(machinenametext);
     mysqlquery1.exec(quertstr2);
+//    qDebug()<<mysqlquery1.lastQuery();
+//    qDebug()<<mysqlquery1.lastError().text();
     }
     maintimer.setInterval(MAINTIMERTIME);
     bnr_base_logic = new Bnr_base_locgic(this);
@@ -213,6 +215,7 @@ void mslotitem::maintimer_timeout(){
     if(type->currentText().split("/").at(0).compare("BNR")==0){
         if(!bnr_base_logic->initflag){
             bnr_base_logic->init();
+            maintimer.setInterval(5000);//BNR의 경우 스캔 웹페이지 로딩시간이 걸려 5초로 해준다.
         }
         //loop logic
         bnr_base_logic->loop();

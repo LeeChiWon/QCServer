@@ -1,0 +1,37 @@
+cd "/ata0a"
+
+routeAdd "0","192.168.11.1"
+
+setResolution("800x600")
+
+screenSaverDelay = 900;
+
+#New font load method (CP2)
+ld<fonts/ufgulim12.o
+installFont_ufgulim12
+ld<fonts/ufgulim14.o
+installFont_ufgulim14
+ld<fonts/ufgulim24.o
+installFont_ufgulim24
+
+ld<fonts/ufgulim12b.o
+installFont_ufgulim12b
+ld<fonts/ufgulim14b.o
+installFont_ufgulim14b
+ld<fonts/ufgulim24b.o
+installFont_ufgulim24b
+
+gld "seven.out"
+alternate_keyaction = 0;
+
+gld "NE_02_SIM_VER_01.out"
+
+gld "cmsprogram.out"
+
+#Timeout for Save Mould Data (CP3)
+gqt_WdogFnTimeout = 40
+
+##Euromap 63 module. Light version or full version
+gld "EM63Seven.out"
+
+webserverstart
