@@ -87,6 +87,8 @@ bool gefranseven_base_logic::init(){
 
     addrlist.append(gmb_oiluse);
     addrlist.append(gmb_oil_real);
+    addrlist.append(gmb_oil_down);
+    addrlist.append(gmb_oil_up);
 
     addrlist.append(gmb_temp1_real);
     addrlist.append(gmb_temp2_real);
@@ -113,6 +115,15 @@ bool gefranseven_base_logic::init(){
     addrlist.append(gmb_moldtemp6_down);
     addrlist.append(gmb_moldtemp7_down);
     addrlist.append(gmb_moldtemp8_down);
+
+    addrlist.append(gmb_moldtemp1_up);
+    addrlist.append(gmb_moldtemp2_up);
+    addrlist.append(gmb_moldtemp3_up);
+    addrlist.append(gmb_moldtemp4_up);
+    addrlist.append(gmb_moldtemp5_up);
+    addrlist.append(gmb_moldtemp6_up);
+    addrlist.append(gmb_moldtemp7_up);
+    addrlist.append(gmb_moldtemp8_up);
 
     addrlist.append(gmb_moldtempuse1);
     addrlist.append(gmb_moldtempuse2);
@@ -1068,16 +1079,21 @@ void gefranseven_base_logic::REC_save(){
                 set_temperature_2 = set_barrel_temperature_3;
             }
             if(tempuse4 == 0){
+                set_temperature_3 = 0.0;
+            }else {
+                set_temperature_3 = set_barrel_temperature_4;
+            }
+            if(tempuse5 == 0){
                 set_temperature_4 = 0.0;
             }else {
                 set_temperature_4 = set_barrel_temperature_5;
             }
-            if(tempuse5 == 0){
+            if(tempuse6 == 0){
                 set_temperature_5 = 0.0;
             }else {
                 set_temperature_5 = set_barrel_temperature_6;
             }
-            if(tempuse6 == 0){
+            if(tempuse7 == 0){
                 set_temperature_6 = 0.0;
             }else {
                 set_temperature_6 = set_barrel_temperature_7;
@@ -1195,10 +1211,10 @@ void gefranseven_base_logic::REC_save(){
         }
 
         QString timerstr;
-        double injdelaytime = datamap->value(QString("%1").arg(gmb_SPR2TM))->value.toDouble()/10.0;
-        double cooltime = datamap->value(QString("%1").arg(gmb_COOLTM))->value.toDouble()/10.0;
-        double chgdelaytime = datamap->value(QString("%1").arg(gmb_CHDLTM))->value.toDouble()/10.0;
-        double injtime = datamap->value(QString("%1").arg(gmb_INJETM))->value.toDouble()/10.0;
+        double injdelaytime = datamap->value(QString("%1").arg(gmb_SPR2TM))->value.toDouble()/100.0;
+        double cooltime = datamap->value(QString("%1").arg(gmb_COOLTM))->value.toDouble()/100.0;
+        double chgdelaytime = datamap->value(QString("%1").arg(gmb_CHDLTM))->value.toDouble()/100.0;
+        double injtime = datamap->value(QString("%1").arg(gmb_INJETM))->value.toDouble()/100.0;
         timerstr = QString("%1/%2/%3/%4").arg(injtime).arg(cooltime).arg(injdelaytime).arg(chgdelaytime);
 
         insertquery =QString("INSERT INTO shot_data_rec"
@@ -1333,7 +1349,6 @@ void gefranseven_base_logic::REC_save(){
                          ",Barrel_Temperature_5"
                          ",Barrel_Temperature_6"
                          ",Barrel_Temperature_7"
-                         ",Barrel_Temperature_oil"
                          ",Barrel_Temperature_hopper"
                          ",Mold_Temperature_1"
                          ",Mold_Temperature_2"
@@ -1429,7 +1444,6 @@ void gefranseven_base_logic::REC_save(){
                          ""+QString("%1").arg(set_temperature_4,0,'f',1)+","
                          ""+QString("%1").arg(set_temperature_5,0,'f',1)+","
                          ""+QString("%1").arg(set_temperature_6,0,'f',1)+","
-                         ""+QString("%1").arg(0.0,0,'f',1)+","
                          ""+QString("%1").arg(set_oil_temp,0,'f',1)+","
                          ""+QString("%1").arg(set_hoper_temp,0,'f',1)+","
                          ""+QString("%1").arg(moldtempset[0],0,'f',1)+","
@@ -1444,10 +1458,10 @@ void gefranseven_base_logic::REC_save(){
                          ""+QString("%1").arg(0.0,0,'f',1)+","
                          ""+QString("%1").arg(0.0,0,'f',1)+","
                          ""+QString("%1").arg(0.0,0,'f',1)+","
-                         ""+QString("%1").arg(injdelaytime,0,'f',1)+","
+                         ""+QString("%1").arg(injtime,0,'f',1)+","
                          ""+QString("%1").arg(cooltime,0,'f',1)+","
-                         ""+QString("%1").arg(chgdelaytime,0,'f',1)+","
-                         ""+QString("%1").arg(injtime,0,'f',1)+")"
+                         ""+QString("%1").arg(injdelaytime,0,'f',1)+","
+                         ""+QString("%1").arg(chgdelaytime,0,'f',1)+")"
                );
 
     }
@@ -1517,6 +1531,421 @@ void gefranseven_base_logic::current_update(){
                           .arg(crypto.encryptToString(QString("%1").arg(program_name)))
                           .arg(mancine_name);
     mysqlquery1.exec(update_temp);
+
+    //옵션 사용 파싱 및 적용
+    bool hoperuse = true;
+    mysqlquery1.exec(QString("select option_data from Systeminfo where machine_name = '%1'").arg(mancine_name));
+    if(mysqlquery1.next()){
+        QString option_data = mysqlquery1.value("option_data").toString();
+        QStringList option_data_list = option_data.split(',');
+        //size가 1이면 기존에 update가 된것이 없기 때문에 기본 으로 해줌.
+        if(option_data_list.size()==1){
+
+        }else {
+            for(int i=0;i<option_data_list.size()-1;i++){
+                QString list_data = option_data_list.at(i);
+                QString list_valuename = list_data.split('=').at(0);
+                QString list_valueresult = list_data.split('=').at(1);
+                if(list_valuename.compare("hoperuse")==0){
+                    if(list_valueresult.compare("YES") == 0){
+                        hoperuse = true;
+                    }else{
+                        hoperuse = false;
+                    }
+                }
+            }
+        }
+    }
+
+    double barrel_temperature_1 = datamap->value(QString("%1").arg(gmb_shotdata_Temperature1))->value.toDouble()/10.0;
+    double barrel_temperature_2 = datamap->value(QString("%1").arg(gmb_shotdata_Temperature2))->value.toDouble()/10.0;
+    double barrel_temperature_3 = datamap->value(QString("%1").arg(gmb_shotdata_Temperature3))->value.toDouble()/10.0;
+    double barrel_temperature_4 = datamap->value(QString("%1").arg(gmb_shotdata_Temperature4))->value.toDouble()/10.0;
+    double barrel_temperature_5 = datamap->value(QString("%1").arg(gmb_shotdata_Temperature5))->value.toDouble()/10.0;
+    double barrel_temperature_6 = datamap->value(QString("%1").arg(gmb_shotdata_Temperature6))->value.toDouble()/10.0;
+    double barrel_temperature_7 = datamap->value(QString("%1").arg(gmb_shotdata_Temperature7))->value.toDouble()/10.0;
+    double barrel_temperature_8 = datamap->value(QString("%1").arg(gmb_shotdata_Temperature8))->value.toDouble()/10.0;
+    double oil_temp = barrel_temperature_1;
+    double hoper_temp;
+    double temperature_1;
+    double temperature_2;
+    double temperature_3;
+    double temperature_4;
+    double temperature_5;
+    double temperature_6;
+    double temperature_7;
+    double temperature_real[9];
+    int temperatureuse[9];
+    //호퍼 사용시 tempuse1 이 호퍼 tempuse2 가 히터 1
+    //호퍼 사용 안할 경우 에는 tempuse1 이 히터1
+    int tempuse1 = datamap->value(QString("%1").arg(gmb_tempuse1))->value.toInt();
+    int tempuse2 = datamap->value(QString("%1").arg(gmb_tempuse2))->value.toInt();
+    int tempuse3 = datamap->value(QString("%1").arg(gmb_tempuse3))->value.toInt();
+    int tempuse4 = datamap->value(QString("%1").arg(gmb_tempuse4))->value.toInt();
+    int tempuse5 = datamap->value(QString("%1").arg(gmb_tempuse5))->value.toInt();
+    int tempuse6 = datamap->value(QString("%1").arg(gmb_tempuse6))->value.toInt();
+    int tempuse7 = datamap->value(QString("%1").arg(gmb_tempuse7))->value.toInt();
+    int oiluse = datamap->value(QString("%1").arg(gmb_oiluse))->value.toInt();
+    if(hoperuse){
+        if(tempuse2 == 0){
+            temperature_1 = 0.0;
+            temperature_real[1] = barrel_temperature_3;
+            temperatureuse[1] = 0;
+        }else {
+            temperature_1 = barrel_temperature_3;
+            temperature_real[1] = barrel_temperature_3;
+            temperatureuse[1] = barrel_temperature_3;
+            temperatureuse[1] = 1;
+        }
+        if(tempuse3 == 0){
+            temperature_2 = 0.0;
+            temperature_real[2] = barrel_temperature_4;
+            temperatureuse[2] = 0;
+        }else {
+           temperature_2 = barrel_temperature_4;
+           temperature_real[2] = barrel_temperature_4;
+           temperatureuse[2] = 1;
+        }
+        if(tempuse4 == 0){
+            temperature_3 = 0.0;
+            temperature_real[3] = barrel_temperature_5;
+            temperatureuse[3] = 0;
+        }else {
+            temperature_3 = barrel_temperature_5;
+            temperature_real[3] = barrel_temperature_5;
+            temperatureuse[3] = 0;
+        }
+        if(tempuse5 == 0){
+            temperature_4 = 0.0;
+            temperature_real[4] = barrel_temperature_6;
+            temperatureuse[4] = 0;
+        }else {
+            temperature_4 = barrel_temperature_6;
+            temperature_real[4] = barrel_temperature_6;
+            temperatureuse[4] = 1;
+        }
+        if(tempuse6  == 0){
+            temperature_5 = 0.0;
+            temperature_real[5] = barrel_temperature_7;
+            temperatureuse[5] = 0;
+        }else {
+            temperature_5 = barrel_temperature_7;
+            temperature_real[5] = barrel_temperature_7;
+            temperatureuse[5] = 1;
+        }
+        if(tempuse7  == 0){
+            temperature_6 = 0.0;
+            temperature_real[6] = barrel_temperature_8;
+            temperatureuse[6] = 0;
+        }else {
+            temperature_6 = barrel_temperature_8;
+            temperature_real[6] = barrel_temperature_8;
+            temperatureuse[6] = 1;
+        }
+
+        temperature_7 = oil_temp;
+        temperature_real[7] = oil_temp;
+        temperatureuse[7] = 1;
+
+        if(tempuse1 == 0){
+            hoper_temp = 0.0;
+            temperature_real[8] = barrel_temperature_2;
+            temperatureuse[8] = 0;
+        }else {
+            hoper_temp = barrel_temperature_2;
+            temperature_real[8] = barrel_temperature_2;
+            temperatureuse[8] = 1;
+        }
+    }else {
+        if(tempuse1 == 0){
+            temperature_1 = 0.0;
+            temperature_real[1] = barrel_temperature_2;
+            temperatureuse[1] = 0;
+        }else{
+            temperature_1 = barrel_temperature_2;
+            temperature_real[1] = barrel_temperature_2;
+            temperatureuse[1] = 1;
+        }
+        if(tempuse2 == 0){
+            temperature_2 = 0.0;
+            temperature_real[2] = barrel_temperature_3;
+            temperatureuse[2] = 0;
+        }else{
+            temperature_2 = barrel_temperature_3;
+            temperature_real[2]= barrel_temperature_3;
+            temperatureuse[2] = 1;
+        }
+        if(tempuse3 == 0){
+            temperature_3 = 0.0;
+            temperature_real[3] = barrel_temperature_4;
+            temperatureuse[3] = 0;
+        }else{
+            temperature_3 = barrel_temperature_4;
+            temperature_real[3]= barrel_temperature_4;
+            temperatureuse[3] = 1;
+        }
+        if(tempuse4 == 0){
+            temperature_4 = 0.0;
+            temperature_real[4] = barrel_temperature_5;
+            temperatureuse[4] = 0;
+        }else{
+            temperature_4 = barrel_temperature_5;
+            temperature_real[4]= barrel_temperature_5;
+            temperatureuse[4] = 1;
+        }
+        if(tempuse5 == 0){
+            temperature_5 = 0.0;
+            temperature_real[5] = barrel_temperature_6;
+            temperatureuse[5] = 0;
+        }else{
+            temperature_5 = barrel_temperature_6;
+            temperature_real[5] = barrel_temperature_6;
+            temperatureuse[5] = 1;
+        }
+        if(tempuse6 == 0){
+            temperature_6 = 0.0;
+            temperature_real[6] = barrel_temperature_7;
+            temperatureuse[6] = 0;
+        }else{
+            temperature_6 = barrel_temperature_7;
+            temperature_real[6] = barrel_temperature_7;
+            temperatureuse[6] = 1;
+        }
+
+        temperature_7 = oil_temp;
+        temperatureuse[7] = 1;
+
+        if(tempuse7 == 0){
+            hoper_temp = 0.0;
+            temperature_real[8] = barrel_temperature_8;
+            temperatureuse[8] = 0;
+        }else{
+            hoper_temp = barrel_temperature_8;
+            temperature_real[8] = barrel_temperature_8;
+            temperatureuse[8] = 1;
+        }
+    }
+
+    double set_barrel_temperature_1 = datamap->value(QString("%1").arg(gmb_uv_HeatSet_1))->value.toDouble()/10.0;
+    double set_barrel_temperature_2 = datamap->value(QString("%1").arg(gmb_uv_HeatSet_2))->value.toDouble()/10.0;
+    double set_barrel_temperature_3 = datamap->value(QString("%1").arg(gmb_uv_HeatSet_3))->value.toDouble()/10.0;
+    double set_barrel_temperature_4 = datamap->value(QString("%1").arg(gmb_uv_HeatSet_4))->value.toDouble()/10.0;
+    double set_barrel_temperature_5 = datamap->value(QString("%1").arg(gmb_uv_HeatSet_5))->value.toDouble()/10.0;
+    double set_barrel_temperature_6 = datamap->value(QString("%1").arg(gmb_uv_HeatSet_6))->value.toDouble()/10.0;
+    double set_barrel_temperature_7 = datamap->value(QString("%1").arg(gmb_uv_HeatSet_7))->value.toDouble()/10.0;
+
+    double set_temperature_1;
+    double set_temperature_2;
+    double set_temperature_3;
+    double set_temperature_4;
+    double set_temperature_5;
+    double set_temperature_6;
+    double set_oil_temp = datamap->value(QString("%1").arg(gmb_uv_OilSet))->value.toDouble()/10.0;
+    double set_hoper_temp;
+    double temperature_set[9];
+    double temperature_up_set[9];
+    double temperature_down_set[9];
+
+    if(hoperuse){
+        if(tempuse2 == 0){
+            set_temperature_1 = 0.0;
+            temperature_set[1] = set_barrel_temperature_2;
+        }else {
+            set_temperature_1 = set_barrel_temperature_2;
+            temperature_set[1] = set_barrel_temperature_2;
+        }
+        temperature_up_set[1] = datamap->value(QString("%1").arg(gmb_temp2_up))->value.toDouble()/10.0;
+        temperature_down_set[1] = datamap->value(QString("%1").arg(gmb_temp2_down))->value.toDouble()/10.0;
+        if(tempuse3 == 0){
+            set_temperature_2 = 0.0;
+            temperature_set[2] = set_barrel_temperature_3;
+        }else {
+            set_temperature_2 = set_barrel_temperature_3;
+            temperature_set[2] = set_barrel_temperature_3;
+        }
+        temperature_up_set[2] = datamap->value(QString("%1").arg(gmb_temp3_up))->value.toDouble()/10.0;
+        temperature_down_set[2] = datamap->value(QString("%1").arg(gmb_temp3_down))->value.toDouble()/10.0;
+        if(tempuse4 == 0){
+            set_temperature_3 = 0.0;
+            temperature_set[3] = set_barrel_temperature_4;
+        }else {
+            set_temperature_3 = set_barrel_temperature_4;
+            temperature_set[3] = set_barrel_temperature_4;
+        }
+        temperature_up_set[3] = datamap->value(QString("%1").arg(gmb_temp4_up))->value.toDouble()/10.0;
+        temperature_down_set[3] = datamap->value(QString("%1").arg(gmb_temp4_down))->value.toDouble()/10.0;
+        if(tempuse5 == 0){
+            set_temperature_4 = 0.0;
+            temperature_set[4] = set_barrel_temperature_5;
+        }else {
+            set_temperature_4 = set_barrel_temperature_5;
+            temperature_set[4] = set_barrel_temperature_5;
+        }
+        temperature_up_set[4] = datamap->value(QString("%1").arg(gmb_temp5_up))->value.toDouble()/10.0;
+        temperature_down_set[4] = datamap->value(QString("%1").arg(gmb_temp5_down))->value.toDouble()/10.0;
+        if(tempuse6 == 0){
+            set_temperature_5 = 0.0;
+            temperature_set[5] = set_barrel_temperature_6;
+        }else {
+            set_temperature_5 = set_barrel_temperature_6;
+            temperature_set[5] = set_barrel_temperature_6;
+        }
+        temperature_up_set[5] = datamap->value(QString("%1").arg(gmb_temp6_up))->value.toDouble()/10.0;
+        temperature_down_set[5] = datamap->value(QString("%1").arg(gmb_temp6_down))->value.toDouble()/10.0;
+        if(tempuse7 == 0){
+            set_temperature_6 = 0.0;
+            temperature_set[6] = set_barrel_temperature_7;
+        }else {
+            set_temperature_6 = set_barrel_temperature_7;
+            temperature_set[6] = set_barrel_temperature_7;
+        }
+        temperature_up_set[6] = datamap->value(QString("%1").arg(gmb_temp7_up))->value.toDouble()/10.0;
+        temperature_down_set[6] = datamap->value(QString("%1").arg(gmb_temp7_down))->value.toDouble()/10.0;
+
+        temperature_set[7] = set_oil_temp;
+        temperature_up_set[7] = datamap->value(QString("%1").arg(gmb_oil_up))->value.toDouble()/10.0;
+        temperature_down_set[7] = datamap->value(QString("%1").arg(gmb_oil_down))->value.toDouble()/10.0;
+        if(tempuse1 == 0){
+            set_hoper_temp = 0.0;
+            temperature_set[8] = set_barrel_temperature_1;
+        }else {
+            set_hoper_temp = set_barrel_temperature_1;
+            temperature_set[8] = set_barrel_temperature_1;
+        }
+        temperature_up_set[8] = datamap->value(QString("%1").arg(gmb_temp1_up))->value.toDouble()/10.0;
+        temperature_down_set[8] = datamap->value(QString("%1").arg(gmb_temp1_down))->value.toDouble()/10.0;
+    }else {
+        if(tempuse1 == 0){
+            set_temperature_1 = 0.0;
+            temperature_set[1] = set_barrel_temperature_1;
+        }else {
+            set_temperature_1 = set_barrel_temperature_1;
+            temperature_set[1] = set_barrel_temperature_1;
+        }
+        temperature_up_set[1] = datamap->value(QString("%1").arg(gmb_temp1_up))->value.toDouble()/10.0;
+        temperature_down_set[1] = datamap->value(QString("%1").arg(gmb_temp1_down))->value.toDouble()/10.0;
+        if(tempuse2 == 0){
+            set_temperature_2 = 0.0;
+            temperature_set[2] = set_barrel_temperature_2;
+        }else {
+            set_temperature_2 = set_barrel_temperature_2;
+            temperature_set[2] = set_barrel_temperature_2;
+        }
+        temperature_up_set[2] = datamap->value(QString("%1").arg(gmb_temp2_up))->value.toDouble()/10.0;
+        temperature_down_set[2] = datamap->value(QString("%1").arg(gmb_temp2_down))->value.toDouble()/10.0;
+        if(tempuse3 == 0){
+            set_temperature_3 = 0.0;
+            temperature_set[3] = set_barrel_temperature_3;
+        }else {
+            set_temperature_3 = set_barrel_temperature_3;
+            temperature_set[3] = set_barrel_temperature_3;
+        }
+        temperature_up_set[3] = datamap->value(QString("%1").arg(gmb_temp3_up))->value.toDouble()/10.0;
+        temperature_down_set[3] = datamap->value(QString("%1").arg(gmb_temp3_down))->value.toDouble()/10.0;
+        if(tempuse4 == 0){
+            set_temperature_4 = 0.0;
+            temperature_set[4] = set_barrel_temperature_4;
+        }else {
+            set_temperature_4 = set_barrel_temperature_4;
+            temperature_set[4] = set_barrel_temperature_4;
+        }
+        temperature_up_set[4] = datamap->value(QString("%1").arg(gmb_temp4_up))->value.toDouble()/10.0;
+        temperature_down_set[4] = datamap->value(QString("%1").arg(gmb_temp4_down))->value.toDouble()/10.0;
+        if(tempuse5 == 0){
+            set_temperature_5 = 0.0;
+            temperature_set[5] = set_barrel_temperature_5;
+        }else {
+            set_temperature_5 = set_barrel_temperature_5;
+            temperature_set[5] = set_barrel_temperature_5;
+        }
+        temperature_up_set[5] = datamap->value(QString("%1").arg(gmb_temp5_up))->value.toDouble()/10.0;
+        temperature_down_set[5] = datamap->value(QString("%1").arg(gmb_temp5_down))->value.toDouble()/10.0;
+        if(tempuse6 == 0){
+            set_temperature_6 = 0.0;
+            temperature_set[6] = set_barrel_temperature_6;
+        }else {
+            set_temperature_6 = set_barrel_temperature_6;
+            temperature_set[6] = set_barrel_temperature_6;
+        }
+        temperature_up_set[6] = datamap->value(QString("%1").arg(gmb_temp6_up))->value.toDouble()/10.0;
+        temperature_down_set[6] = datamap->value(QString("%1").arg(gmb_temp6_down))->value.toDouble()/10.0;
+
+        temperature_set[7] = set_oil_temp;
+        temperature_up_set[7] = datamap->value(QString("%1").arg(gmb_oil_up))->value.toDouble()/10.0;
+        temperature_down_set[7] = datamap->value(QString("%1").arg(gmb_oil_down))->value.toDouble()/10.0;
+
+        if(tempuse7 == 0){
+            set_hoper_temp = 0.0;
+            temperature_set[8] = set_barrel_temperature_7;
+        }else {
+            set_hoper_temp = set_barrel_temperature_7;
+            temperature_set[8] = set_barrel_temperature_7;
+        }
+        temperature_up_set[8] = datamap->value(QString("%1").arg(gmb_temp7_up))->value.toDouble()/10.0;
+        temperature_down_set[8] = datamap->value(QString("%1").arg(gmb_temp7_down))->value.toDouble()/10.0;
+    }
+
+    int moldtempuse_use[8];
+    for(int i=0;i<8;i++){
+        moldtempuse_use[i] = datamap->value(QString("%1").arg(gmb_moldtempuse1+i*2))->value.toInt();
+    }
+    double moldtemp_set[8];
+    for(int i=0;i<8;i++){
+        moldtemp_set[i] = datamap->value(QString("%1").arg(gmb_moldtempset1+i*2))->value.toDouble()/10.0;
+    }
+    double moldtempuse_temp[8];
+    for(int i=0;i<8;i++){
+        moldtempuse_temp[i] = datamap->value(QString("%1").arg(gmb_moldtemp1_real+i*2))->value.toDouble()/10.0;
+    }
+    double moldtempuse_up_set[8];
+    for(int i=0;i<8;i++){
+        moldtempuse_up_set[i] = datamap->value(QString("%1").arg(gmb_moldtemp1_up+i*2))->value.toDouble()/10.0;
+    }
+    double moldtempuse_down_set[8];
+    for(int i=0;i<8;i++){
+        moldtempuse_down_set[i] = datamap->value(QString("%1").arg(gmb_moldtemp1_down+i*2))->value.toDouble()/10.0;
+    }
+    update_temp = QString("UPDATE temp_table SET ");
+    QString temp_append ;
+    for(int i=1;i<=16;i++){
+        if(i == 16){
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
+                                .arg(i)
+                                .arg(crypto.encryptToString(QString("%1").arg(moldtemp_set[i-9],0,'f',1)))
+                                .arg(crypto.encryptToString(QString("%1").arg(moldtempuse_up_set[i-9],0,'f',1)))
+                                .arg(crypto.encryptToString(QString("%1").arg(moldtempuse_down_set[i-9],0,'f',1)))
+                                .arg(crypto.encryptToString(QString("%1").arg(moldtempuse_temp[i-9],0,'f',1)))
+                                .arg(crypto.encryptToString(QString("%1").arg(moldtempuse_use[i-9])));
+        }else if(i<=8){
+         temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
+                               .arg(i)
+                               .arg(crypto.encryptToString(QString("%1").arg(temperature_set[i],0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temperature_up_set[i],0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temperature_down_set[i],0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temperature_real[i],0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temperatureuse[i])));
+
+        }else if(i>=9){
+         temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
+                            .arg(i)
+                            .arg(crypto.encryptToString(QString("%1").arg(moldtemp_set[i-9],0,'f',1)))
+                            .arg(crypto.encryptToString(QString("%1").arg(moldtempuse_up_set[i-9],0,'f',1)))
+                            .arg(crypto.encryptToString(QString("%1").arg(moldtempuse_down_set[i-9],0,'f',1)))
+                            .arg(crypto.encryptToString(QString("%1").arg(moldtempuse_temp[i-9],0,'f',1)))
+                            .arg(crypto.encryptToString(QString("%1").arg(moldtempuse_use[i-9])));
+
+        }
+         update_temp.append(temp_append);
+    }
+
+
+    temp_append = QString("WHERE machine_name=\'%1\'").arg(mancine_name);
+
+    update_temp.append(temp_append);
+
+    bool result = mysqlquery1.exec(update_temp);
+
+
 
 
 }
