@@ -166,7 +166,7 @@ void Bnr_base_locgic::TA_current_update(){
 
 
     QString update_temp = QString("UPDATE temp_table SET ");
-    for(int i=1;i<=21;i++){
+    for(int i=1;i<=20;i++){
         QString temp_append;
         if(i == 7){
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
@@ -177,14 +177,14 @@ void Bnr_base_locgic::TA_current_update(){
                     .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.System.ATOil"))->value.toDouble()/10,0,'f',1)))
                     .arg(crypto.encryptToString(QString("%1").arg(1)));
 
-        }else if(i == 21){
+        }else if(i == 20){
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
                     .arg(i)
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i-1))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i-1))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i-1))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i-1))->value)));
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value)));
 
         }else if(i<=8){
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
@@ -662,7 +662,7 @@ void Bnr_base_locgic::TA_REC_SAVE(){
                                         .arg(temp[20],0,'f',1)
                                         ;
         QString Timer = QString("%1/%2/%3/%4")
-                            .arg(datamap->value("REC_DATA.IP.NEG.StSov")->value.toDouble()/100.0)
+                            .arg(0.0)
                             .arg(datamap->value("REC_DATA.TIM.StCooling")->value.toDouble()/100.0)
                             .arg(datamap->value("REC_DATA.TIM.StIpDelay")->value.toDouble()/100.0)
                             .arg(datamap->value("REC_DATA.TIM.StPlDelay")->value.toDouble()/100.0)
@@ -715,6 +715,200 @@ void Bnr_base_locgic::TA_REC_SAVE(){
                                  "'"+Timer+"')"
                                  )
                          );
+
+        mysqlquery1.exec("INSERT INTO shot_data_rec2"
+                         "(Machine_Name"
+                         ",Additional_Info_1"
+                         ",Additional_Info_2"
+                         ",TimeStamp"
+                         ",Shot_Number"
+                         ",inj_step"
+                         ",hold_step"
+                         ",Inj_Velocity_1"
+                         ",Inj_Velocity_2"
+                         ",Inj_Velocity_3"
+                         ",Inj_Velocity_4"
+                         ",Inj_Velocity_5"
+                         ",Inj_Velocity_6"
+                         ",Inj_Velocity_7"
+                         ",Inj_Velocity_8"
+                         ",Inj_Velocity_9"
+                         ",Inj_Velocity_10"
+                         ",Inj_Pressure_1"
+                         ",Inj_Pressure_2"
+                         ",Inj_Pressure_3"
+                         ",Inj_Pressure_4"
+                         ",Inj_Pressure_5"
+                         ",Inj_Pressure_6"
+                         ",Inj_Pressure_7"
+                         ",Inj_Pressure_8"
+                         ",Inj_Pressure_9"
+                         ",Inj_Pressure_10"
+                         ",Inj_Position_1"
+                         ",Inj_Position_2"
+                         ",Inj_Position_3"
+                         ",Inj_Position_4"
+                         ",Inj_Position_5"
+                         ",Inj_Position_6"
+                         ",Inj_Position_7"
+                         ",Inj_Position_8"
+                         ",Inj_Position_9"
+                         ",Inj_Position_10"
+                         ",SOV_Time"
+                         ",SOV_Position"
+                         ",Hld_Pressure_1"
+                         ",Hld_Pressure_2"
+                         ",Hld_Pressure_3"
+                         ",Hld_Pressure_4"
+                         ",Hld_Pressure_5"
+                         ",Hld_Time_1"
+                         ",Hld_Time_2"
+                         ",Hld_Time_3"
+                         ",Hld_Time_4"
+                         ",Hld_Time_5"
+                         ",Hld_Vel_1"
+                         ",Hld_Vel_2"
+                         ",Hld_Vel_3"
+                         ",Hld_Vel_4"
+                         ",Hld_Vel_5"
+                         ",Chg_Position_1"
+                         ",Chg_Position_2"
+                         ",Chg_Position_3"
+                         ",Chg_Position_4"
+                         ",Chg_Speed_1"
+                         ",Chg_Speed_2"
+                         ",Chg_Speed_3"
+                         ",Chg_Speed_4"
+                         ",BackPressure_1"
+                         ",BackPressure_2"
+                         ",BackPressure_3"
+                         ",BackPressure_4"
+                         ",Suckback_Position_1"
+                         ",Suckback_Position_2"
+                         ",Suckback_Speed_1"
+                         ",Suckback_Speed_2"
+                         ",Barrel_Temperature_1"
+                         ",Barrel_Temperature_2"
+                         ",Barrel_Temperature_3"
+                         ",Barrel_Temperature_4"
+                         ",Barrel_Temperature_5"
+                         ",Barrel_Temperature_6"
+                         ",Barrel_Temperature_7"
+                         ",Barrel_Temperature_hopper"
+                         ",Mold_Temperature_1"
+                         ",Mold_Temperature_2"
+                         ",Mold_Temperature_3"
+                         ",Mold_Temperature_4"
+                         ",Mold_Temperature_5"
+                         ",Mold_Temperature_6"
+                         ",Mold_Temperature_7"
+                         ",Mold_Temperature_8"
+                         ",Mold_Temperature_9"
+                         ",Mold_Temperature_10"
+                         ",Mold_Temperature_11"
+                         ",Mold_Temperature_12"
+                         ",set_injtime"
+                         ",set_cooltime"
+                         ",set_injdelaytime"
+                         ",set_chgdelaytime)"
+                   "VALUES"
+                         "("
+                         "'"+mancine_name+"',"
+                         "'"+moldname+"',"
+                         "' ',"
+                         "'"+current_date+" "+current_time+"',"
+                         ""+QString("%1").arg(current_prod_actpcs)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NrInjectionProfile")->value.toInt())+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NrHoldonProfile")->value.toInt())+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[0]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[1]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[2]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[3]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[4]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[5]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[6]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[7]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[8]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[9]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[0]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[1]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[2]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[3]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[4]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[5]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[6]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[7]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[8]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[9]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[0]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[1]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[2]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[3]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[4]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[5]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[6]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[7]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[8]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[9]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.StSov")->value.toDouble()/1000.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SsSov")->value.toDouble()/100.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[0]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[1]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[2]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[3]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[4]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[0]")->value.toDouble()/100.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[1]")->value.toDouble()/100.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[2]")->value.toDouble()/100.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[3]")->value.toDouble()/100.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[4]")->value.toDouble()/100.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Ss[0]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Ss[1]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Ss[2]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Sv[0]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Sv[1]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Sv[2]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.SpBP[0]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.SpBP[1]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.SpBP[2]")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NS.SsDB")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NS.SsDA")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NS.SvDB")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.IP.NS.SvDA")->value.toDouble()/10.0,0,'f',1)+","
+                         ""+QString("%1").arg(temp[0],0,'f',1)+","
+                         ""+QString("%1").arg(temp[1],0,'f',1)+","
+                         ""+QString("%1").arg(temp[2],0,'f',1)+","
+                         ""+QString("%1").arg(temp[3],0,'f',1)+","
+                         ""+QString("%1").arg(temp[4],0,'f',1)+","
+                         ""+QString("%1").arg(temp[5],0,'f',1)+","
+                         ""+QString("%1").arg(temp[6],0,'f',1)+","
+                         ""+QString("%1").arg(temp[7],0,'f',1)+","
+                         ""+QString("%1").arg(temp[9],0,'f',1)+","
+                         ""+QString("%1").arg(temp[10],0,'f',1)+","
+                         ""+QString("%1").arg(temp[11],0,'f',1)+","
+                         ""+QString("%1").arg(temp[12],0,'f',1)+","
+                         ""+QString("%1").arg(temp[13],0,'f',1)+","
+                         ""+QString("%1").arg(temp[14],0,'f',1)+","
+                         ""+QString("%1").arg(temp[15],0,'f',1)+","
+                         ""+QString("%1").arg(temp[16],0,'f',1)+","
+                         ""+QString("%1").arg(temp[17],0,'f',1)+","
+                         ""+QString("%1").arg(temp[18],0,'f',1)+","
+                         ""+QString("%1").arg(temp[19],0,'f',1)+","
+                         ""+QString("%1").arg(temp[20],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.TIM.StCooling")->value.toDouble()/100.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.TIM.StIpDelay")->value.toDouble()/100.0,0,'f',1)+","
+                         ""+QString("%1").arg(datamap->value("REC_DATA.TIM.StPlDelay")->value.toDouble()/100.0,0,'f',1)+")"
+               );
+
     }
 }
 
@@ -727,25 +921,16 @@ void Bnr_base_locgic::TE_current_update(){
     SimpleCrypt crypto(CRYPTO_NUMBER);
 
     QString update_temp = QString("UPDATE temp_table SET ");
-    for(int i=1;i<=21;i++){
+    for(int i=1;i<=20;i++){
         QString temp_append;
-        if(i == 7){
-            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
-                    .arg(i)
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Oil.ST"))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(0)))
-                    .arg(crypto.encryptToString(QString("%1").arg(0)))
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.System.ATOil"))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(1)));
-
-        }else if(i == 21){
+         if(i == 20){
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
                     .arg(i)
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i-1))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i-1))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i-1))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i-1))->value.toDouble()/10,0,'f',1)))
-                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i-1))->value)));
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].ST").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STpTol").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].STnTol").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("ACT_DATA.Zone[%1].AT").arg(i))->value.toDouble()/10,0,'f',1)))
+                    .arg(crypto.encryptToString(QString("%1").arg(datamap->value(QString("REC_DATA.HC.Zone[%1].SbOn").arg(i))->value)));
 
         }else if(i<=8){
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
@@ -1126,11 +1311,11 @@ void Bnr_base_locgic::TE_REC_SAVE(){
                                 ;
 
         QString Hld_Vel =QString("%1/%2/%3/%4/%5")
-                                .arg(datamap->value("REC_DATA.IP.NEG.St[0]")->value.toDouble()/10.0,0,'f',1)
-                                .arg(datamap->value("REC_DATA.IP.NEG.St[1]")->value.toDouble()/10.0,0,'f',1)
-                                .arg(datamap->value("REC_DATA.IP.NEG.St[2]")->value.toDouble()/10.0,0,'f',1)
-                                .arg(datamap->value("REC_DATA.IP.NEG.St[3]")->value.toDouble()/10.0,0,'f',1)
-                                .arg(datamap->value("REC_DATA.IP.NEG.St[4]")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)
+                                .arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)
                                 ;
 
         QString Chg_Position = QString("%1/%2/%3")
@@ -1236,6 +1421,200 @@ void Bnr_base_locgic::TE_REC_SAVE(){
                                 "'"+Timer+"')"
                                 )
                         );
+       mysqlquery1.exec("INSERT INTO shot_data_rec2"
+                        "(Machine_Name"
+                        ",Additional_Info_1"
+                        ",Additional_Info_2"
+                        ",TimeStamp"
+                        ",Shot_Number"
+                        ",inj_step"
+                        ",hold_step"
+                        ",Inj_Velocity_1"
+                        ",Inj_Velocity_2"
+                        ",Inj_Velocity_3"
+                        ",Inj_Velocity_4"
+                        ",Inj_Velocity_5"
+                        ",Inj_Velocity_6"
+                        ",Inj_Velocity_7"
+                        ",Inj_Velocity_8"
+                        ",Inj_Velocity_9"
+                        ",Inj_Velocity_10"
+                        ",Inj_Pressure_1"
+                        ",Inj_Pressure_2"
+                        ",Inj_Pressure_3"
+                        ",Inj_Pressure_4"
+                        ",Inj_Pressure_5"
+                        ",Inj_Pressure_6"
+                        ",Inj_Pressure_7"
+                        ",Inj_Pressure_8"
+                        ",Inj_Pressure_9"
+                        ",Inj_Pressure_10"
+                        ",Inj_Position_1"
+                        ",Inj_Position_2"
+                        ",Inj_Position_3"
+                        ",Inj_Position_4"
+                        ",Inj_Position_5"
+                        ",Inj_Position_6"
+                        ",Inj_Position_7"
+                        ",Inj_Position_8"
+                        ",Inj_Position_9"
+                        ",Inj_Position_10"
+                        ",SOV_Time"
+                        ",SOV_Position"
+                        ",Hld_Pressure_1"
+                        ",Hld_Pressure_2"
+                        ",Hld_Pressure_3"
+                        ",Hld_Pressure_4"
+                        ",Hld_Pressure_5"
+                        ",Hld_Time_1"
+                        ",Hld_Time_2"
+                        ",Hld_Time_3"
+                        ",Hld_Time_4"
+                        ",Hld_Time_5"
+                        ",Hld_Vel_1"
+                        ",Hld_Vel_2"
+                        ",Hld_Vel_3"
+                        ",Hld_Vel_4"
+                        ",Hld_Vel_5"
+                        ",Chg_Position_1"
+                        ",Chg_Position_2"
+                        ",Chg_Position_3"
+                        ",Chg_Position_4"
+                        ",Chg_Speed_1"
+                        ",Chg_Speed_2"
+                        ",Chg_Speed_3"
+                        ",Chg_Speed_4"
+                        ",BackPressure_1"
+                        ",BackPressure_2"
+                        ",BackPressure_3"
+                        ",BackPressure_4"
+                        ",Suckback_Position_1"
+                        ",Suckback_Position_2"
+                        ",Suckback_Speed_1"
+                        ",Suckback_Speed_2"
+                        ",Barrel_Temperature_1"
+                        ",Barrel_Temperature_2"
+                        ",Barrel_Temperature_3"
+                        ",Barrel_Temperature_4"
+                        ",Barrel_Temperature_5"
+                        ",Barrel_Temperature_6"
+                        ",Barrel_Temperature_7"
+                        ",Barrel_Temperature_hopper"
+                        ",Mold_Temperature_1"
+                        ",Mold_Temperature_2"
+                        ",Mold_Temperature_3"
+                        ",Mold_Temperature_4"
+                        ",Mold_Temperature_5"
+                        ",Mold_Temperature_6"
+                        ",Mold_Temperature_7"
+                        ",Mold_Temperature_8"
+                        ",Mold_Temperature_9"
+                        ",Mold_Temperature_10"
+                        ",Mold_Temperature_11"
+                        ",Mold_Temperature_12"
+                        ",set_injtime"
+                        ",set_cooltime"
+                        ",set_injdelaytime"
+                        ",set_chgdelaytime)"
+                  "VALUES"
+                        "("
+                        "'"+mancine_name+"',"
+                        "'"+moldname+"',"
+                        "' ',"
+                        "'"+current_date+" "+current_time+"',"
+                        ""+QString("%1").arg(current_prod_actpcs)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NrInjectionProfile")->value.toInt())+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NrHoldonProfile")->value.toInt())+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[0]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[1]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[2]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[3]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[4]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[5]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[6]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[7]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[8]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sv[9]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[0]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[1]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[2]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[3]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[4]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[5]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[6]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[7]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[8]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Sp[9]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[0]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[1]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[2]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[3]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[4]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[5]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[6]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[7]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[8]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.Ss[9]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.StSov")->value.toDouble()/1000.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SsSov")->value.toDouble()/100.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[0]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[1]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[2]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[3]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.SpHP[4]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[0]")->value.toDouble()/100.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[1]")->value.toDouble()/100.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[2]")->value.toDouble()/100.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[3]")->value.toDouble()/100.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NEG.St[4]")->value.toDouble()/100.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("IP_FIX.NEG.SvFixHP")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Ss[0]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Ss[1]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Ss[2]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(0.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Sv[0]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Sv[1]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.Sv[2]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(0.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.SpBP[0]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.SpBP[1]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.PL.SpBP[2]")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(0.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NS.SsDB")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NS.SsDA")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NS.SvDB")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.IP.NS.SvDA")->value.toDouble()/10.0,0,'f',1)+","
+                        ""+QString("%1").arg(temp[0],0,'f',1)+","
+                        ""+QString("%1").arg(temp[1],0,'f',1)+","
+                        ""+QString("%1").arg(temp[2],0,'f',1)+","
+                        ""+QString("%1").arg(temp[3],0,'f',1)+","
+                        ""+QString("%1").arg(temp[4],0,'f',1)+","
+                        ""+QString("%1").arg(temp[5],0,'f',1)+","
+                        ""+QString("%1").arg(temp[6],0,'f',1)+","
+                        ""+QString("%1").arg(temp[7],0,'f',1)+","
+                        ""+QString("%1").arg(temp[9],0,'f',1)+","
+                        ""+QString("%1").arg(temp[10],0,'f',1)+","
+                        ""+QString("%1").arg(temp[11],0,'f',1)+","
+                        ""+QString("%1").arg(temp[12],0,'f',1)+","
+                        ""+QString("%1").arg(temp[13],0,'f',1)+","
+                        ""+QString("%1").arg(temp[14],0,'f',1)+","
+                        ""+QString("%1").arg(temp[15],0,'f',1)+","
+                        ""+QString("%1").arg(temp[16],0,'f',1)+","
+                        ""+QString("%1").arg(temp[17],0,'f',1)+","
+                        ""+QString("%1").arg(temp[18],0,'f',1)+","
+                        ""+QString("%1").arg(temp[19],0,'f',1)+","
+                        ""+QString("%1").arg(temp[20],0,'f',1)+","
+                        ""+QString("%1").arg(0.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.TIM.StCooling")->value.toDouble()/100.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.TIM.StIpDelay")->value.toDouble()/100.0,0,'f',1)+","
+                        ""+QString("%1").arg(datamap->value("REC_DATA.TIM.StPlDelay")->value.toDouble()/100.0,0,'f',1)+")"
+              );
+//       qDebug()<<mysqlquery1.lastQuery();
+//       qDebug()<<mysqlquery1.lastError().text();
     }
 
 }

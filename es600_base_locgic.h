@@ -301,6 +301,8 @@ public:
     void TB_current_update();
     void alram_update();
 
+    QString get_moldname();
+
 
 
 signals:

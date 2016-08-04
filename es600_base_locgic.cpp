@@ -356,13 +356,41 @@ void es600_base_locgic::TB_current_update(){
                                .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value,0,'f',1)));
 
+        }else if(i=7){
+            double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
+                               .arg(8)
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_down_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(1)));
+
+        }else if(i=8){
+            double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
+                               .arg(7)
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_down_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value,0,'f',1)));
+
         }else {
             double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
-         temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
                             .arg(i)
                             .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
                             .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
@@ -384,6 +412,49 @@ void es600_base_locgic::TB_current_update(){
         remotedb.open();
         qDebug()<<"es600 false";
     }
+    int run_mode =datamap->value(QString("%1").arg(addrlist.at(mb_run_mode)))->value.toInt();
+    int object_count = datamap->value(QString("%1").arg(addrlist.at(mb_object_count)))->value.toInt();
+    int production_count = datamap->value(QString("%1").arg(addrlist.at(mb_production_count)))->value.toInt();
+    double achievemen_rate = (double)object_count/(double)production_count;
+    int cabity = datamap->value(QString("%1").arg(addrlist.at(mb_cabity)))->value.toInt();
+    int warning_flag = datamap->value(QString("%1").arg(addrlist.at(mb_warning_flag)))->value.toInt();
+    double cycle_time = datamap->value(QString("%1").arg(mb_SHOTDATA_cycle_time))->value.toDouble()/100.0;
+    QString mold_name = get_moldname();
+    QString program_name = "";
+    QString warning_data;
+    if(warning_flag>0){
+        for(int i=0;i<10;i++){
+            short temp_alaram_data = datamap->value(QString("%1").arg(mb_alrammap1+(i*2)))->value.toInt();
+            if(temp_alaram_data > 0){
+                warning_data.append(QString("%1/").arg(temp_alaram_data));
+            }
+        }
+    }else {
+        warning_data="";
+    }
+    update_temp = QString("UPDATE Systeminfo SET production_count = '%1',"
+                          "mold_name = '%2',"
+                          "object_count = '%3',"
+                          "cabity = '%4',"
+                          "achievemen_rate = '%5',"
+                          "cycle_time = \'%6\',"
+                          "run_mode = \'%7\',"
+                          "warning_flag = '%8',"
+                          "warning_data = '%9', "
+                          "machine_program = '%10' "
+                          "where machine_name = \'%11\'")
+                          .arg(crypto.encryptToString(QString("%1").arg(production_count)))
+                          .arg(crypto.encryptToString(mold_name))
+                          .arg(crypto.encryptToString(QString("%1").arg(object_count)))
+                          .arg(crypto.encryptToString(QString("%1").arg(cabity)))
+                          .arg(crypto.encryptToString(QString("%1").arg(achievemen_rate)))
+                          .arg(crypto.encryptToString(QString("%1").arg(cycle_time,0,'f',1)))
+                          .arg(crypto.encryptToString(QString("%1").arg(run_mode)))
+                          .arg(crypto.encryptToString(QString("%1").arg(warning_flag)))
+                          .arg(crypto.encryptToString(QString("%1").arg(warning_data)))
+                          .arg(crypto.encryptToString(QString("%1").arg(program_name)))
+                          .arg(mancine_name);
+    mysqlquery1.exec(update_temp);
 }
 
 void es600_base_locgic::TB_REC_save(){
@@ -423,23 +494,8 @@ void es600_base_locgic::TB_REC_save(){
     double moldtemp7 = datamap->value(QString("%1").arg(mb_temp15_real))->value.toDouble()/10.0;
     double moldtemp8 = datamap->value(QString("%1").arg(mb_temp16_real))->value.toDouble()/10.0;
 
-    unsigned short moldname1 = datamap->value(QString("%1").arg(mb_moldname1))->value.toShort();
-    unsigned short moldname2 = datamap->value(QString("%1").arg(mb_moldname2))->value.toShort();
-    unsigned short moldname3 = datamap->value(QString("%1").arg(mb_moldname3))->value.toShort();
-    unsigned short moldname4 = datamap->value(QString("%1").arg(mb_moldname4))->value.toShort();
-    unsigned short moldname5 = datamap->value(QString("%1").arg(mb_moldname5))->value.toShort();
-    QByteArray mold_name;
-    mold_name.append((char)(moldname1>>8));
-    mold_name.append((char)(moldname1));
-    mold_name.append((char)(moldname2>>8));
-    mold_name.append((char)(moldname2));
-    mold_name.append((char)(moldname3>>8));
-    mold_name.append((char)(moldname3));
-    mold_name.append((char)(moldname4>>8));
-    mold_name.append((char)(moldname4));
-    mold_name.append((char)(moldname5>>8));
-    mold_name.append((char)(moldname5));
-    QString moldname = mold_name;
+
+    QString moldname = get_moldname();
     double tempues_act[7];
     for(int i=0;i<7;i++){
         tempues_act[i] = datamap->value(QString("%1").arg(mb_tempues1+i*2))->value.toDouble()/10.0;
@@ -597,31 +653,37 @@ void es600_base_locgic::TB_REC_save(){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[0]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[0] = 0.0;
         }
         if(injstep>1){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[1]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[1] = 0.0;
         }
         if(injstep>2){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[2]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[2] = 0.0;
         }
         if(injstep>3){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[3]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[3] = 0.0;
         }
         if(injstep>4){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[4]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[4] = 0.0;
         }
         if(injstep>5){
             Inj_Velocitystr.append(QString("%1").arg(injVelocity[5]));
         }else{
             Inj_Velocitystr.append(QString("%1").arg(0.0));
+            injVelocity[5] = 0.0;
         }
         QString injPressurestr;
         double injPressure[6];
@@ -632,31 +694,37 @@ void es600_base_locgic::TB_REC_save(){
             injPressurestr.append(QString("%1/").arg(injPressure[0]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[0] = 0.0;
         }
         if(injstep>1){
             injPressurestr.append(QString("%1/").arg(injPressure[1]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[1] = 0.0;
         }
         if(injstep>2){
             injPressurestr.append(QString("%1/").arg(injPressure[2]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[2] = 0.0;
         }
         if(injstep>3){
             injPressurestr.append(QString("%1/").arg(injPressure[3]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[3] = 0.0;
         }
         if(injstep>4){
             injPressurestr.append(QString("%1/").arg(injPressure[4]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[4] = 0.0;
         }
         if(injstep>5){
             injPressurestr.append(QString("%1").arg(injPressure[5]));
         }else{
             injPressurestr.append(QString("%1").arg(0.0));
+            injPressure[5] = 0.0;
         }
         QString injPositionstr;
         double injPosition[6];
@@ -667,31 +735,37 @@ void es600_base_locgic::TB_REC_save(){
             injPositionstr.append(QString("%1/").arg(injPosition[0]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[0] = 0.0;
         }
         if(injstep>1){
             injPositionstr.append(QString("%1/").arg(injPosition[1]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[1] = 0.0;
         }
         if(injstep>2){
             injPositionstr.append(QString("%1/").arg(injPosition[2]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[2] = 0.0;
         }
         if(injstep>3){
             injPositionstr.append(QString("%1/").arg(injPosition[3]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[3] = 0.0;
         }
         if(injstep>4){
             injPositionstr.append(QString("%1/").arg(injPosition[4]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[4] = 0.0;
         }
         if(injstep>5){
             injPositionstr.append(QString("%1").arg(injPosition[5]));
         }else{
             injPositionstr.append(QString("%1").arg(0.0));
+            injPosition[5] = 0.0;
         }
 
         int hldstep = datamap->value(QString("%1").arg(mb_hldstep))->value.toInt();
@@ -704,16 +778,19 @@ void es600_base_locgic::TB_REC_save(){
             hldPressurestr.append(QString("%1/").arg(hldPressure[0]));
         }else{
             hldPressurestr.append(QString("%1/").arg(0.0));
+            hldPressure[0] = 0.0;
         }
         if(hldstep>1){
             hldPressurestr.append(QString("%1/").arg(hldPressure[1]));
         }else{
             hldPressurestr.append(QString("%1/").arg(0.0));
+            hldPressure[1] = 0.0;
         }
         if(hldstep>2){
             hldPressurestr.append(QString("%1").arg(hldPressure[2]));
         }else{
             hldPressurestr.append(QString("%1").arg(0.0));
+            hldPressure[2] = 0.0;
         }
 
         QString hldTimestr;
@@ -725,16 +802,19 @@ void es600_base_locgic::TB_REC_save(){
             hldTimestr.append(QString("%1/").arg(hldTime[0]));
         }else{
             hldTimestr.append(QString("%1/").arg(0.0));
+            hldTime[0] = 0.0;
         }
         if(hldstep>1){
             hldTimestr.append(QString("%1/").arg(hldTime[1]));
         }else{
             hldTimestr.append(QString("%1/").arg(0.0));
+            hldTime[1] = 0.0;
         }
         if(hldstep>2){
             hldTimestr.append(QString("%1").arg(hldTime[2]));
         }else{
             hldTimestr.append(QString("%1").arg(0.0));
+            hldTime[2] = 0.0;
         }
 
         QString hldVelstr;
@@ -804,31 +884,37 @@ void es600_base_locgic::TB_REC_save(){
             tempsetstr.append(QString("%1/").arg(tempset[0]));
         }else{
             tempsetstr.append(QString("%1/").arg(0.0));
+            tempset[0] = 0.0;
         }
         if(tempues[1]){
             tempsetstr.append(QString("%1/").arg(tempset[1]));
         }else{
             tempsetstr.append(QString("%1/").arg(0.0));
+            tempset[1] = 0.0;
         }
         if(tempues[2]){
             tempsetstr.append(QString("%1/").arg(tempset[2]));
         }else{
             tempsetstr.append(QString("%1/").arg(0.0));
+            tempset[2] = 0.0;
         }
         if(tempues[3]){
             tempsetstr.append(QString("%1/").arg(tempset[3]));
         }else{
             tempsetstr.append(QString("%1/").arg(0.0));
+            tempset[3] = 0.0;
         }
         if(tempues[4]){
             tempsetstr.append(QString("%1/").arg(tempset[4]));
         }else{
             tempsetstr.append(QString("%1/").arg(0.0));
+            tempset[4] = 0.0;
         }
         if(tempues[5]){
             tempsetstr.append(QString("%1/").arg(tempset[5]));
         }else{
             tempsetstr.append(QString("%1/").arg(0.0));
+            tempset[5] = 0.0;
         }
 
         tempsetstr.append(QString("%1/").arg(oilset));
@@ -837,9 +923,8 @@ void es600_base_locgic::TB_REC_save(){
             tempsetstr.append(QString("%1").arg(tempset[6]));
         }else{
             tempsetstr.append(QString("%1").arg(0.0));
+            tempset[6] = 0.0;
         }
-
-
 
 
         int moldtempuse[8];
@@ -856,41 +941,49 @@ void es600_base_locgic::TB_REC_save(){
             moldtempstr.append(QString("%1/").arg(moldtempset[0]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[0] = 0.0;
         }
         if(moldtempuse[1]){
             moldtempstr.append(QString("%1/").arg(moldtempset[1]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[1] = 0.0;
         }
         if(moldtempuse[2]){
             moldtempstr.append(QString("%1/").arg(moldtempset[2]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[2] = 0.0;
         }
         if(moldtempuse[3]){
             moldtempstr.append(QString("%1/").arg(moldtempset[3]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[3] = 0.0;
         }
         if(moldtempuse[4]){
             moldtempstr.append(QString("%1/").arg(moldtempset[4]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[4] = 0.0;
         }
         if(moldtempuse[5]){
             moldtempstr.append(QString("%1/").arg(moldtempset[5]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[5] = 0.0;
         }
         if(moldtempuse[6]){
             moldtempstr.append(QString("%1/").arg(moldtempset[6]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[6] = 0.0;
         }
         if(moldtempuse[7]){
             moldtempstr.append(QString("%1").arg(moldtempset[7]));
         }else{
             moldtempstr.append(QString("%1").arg(0.0));
+            moldtempset[7] = 0.0;
         }
 
         QString timerstr;
@@ -948,6 +1041,199 @@ void es600_base_locgic::TB_REC_save(){
         queryresult = mysqlquery1.exec(insertquery);
 //        qDebug()<<mysqlquery1.lastQuery();
 //        qDebug()<<mysqlquery1.lastError().text();
+
+        mysqlquery1.exec("INSERT INTO shot_data_rec2"
+                         "(Machine_Name"
+                         ",Additional_Info_1"
+                         ",Additional_Info_2"
+                         ",TimeStamp"
+                         ",Shot_Number"
+                         ",inj_step"
+                         ",hold_step"
+                         ",Inj_Velocity_1"
+                         ",Inj_Velocity_2"
+                         ",Inj_Velocity_3"
+                         ",Inj_Velocity_4"
+                         ",Inj_Velocity_5"
+                         ",Inj_Velocity_6"
+                         ",Inj_Velocity_7"
+                         ",Inj_Velocity_8"
+                         ",Inj_Velocity_9"
+                         ",Inj_Velocity_10"
+                         ",Inj_Pressure_1"
+                         ",Inj_Pressure_2"
+                         ",Inj_Pressure_3"
+                         ",Inj_Pressure_4"
+                         ",Inj_Pressure_5"
+                         ",Inj_Pressure_6"
+                         ",Inj_Pressure_7"
+                         ",Inj_Pressure_8"
+                         ",Inj_Pressure_9"
+                         ",Inj_Pressure_10"
+                         ",Inj_Position_1"
+                         ",Inj_Position_2"
+                         ",Inj_Position_3"
+                         ",Inj_Position_4"
+                         ",Inj_Position_5"
+                         ",Inj_Position_6"
+                         ",Inj_Position_7"
+                         ",Inj_Position_8"
+                         ",Inj_Position_9"
+                         ",Inj_Position_10"
+                         ",SOV_Time"
+                         ",SOV_Position"
+                         ",Hld_Pressure_1"
+                         ",Hld_Pressure_2"
+                         ",Hld_Pressure_3"
+                         ",Hld_Pressure_4"
+                         ",Hld_Pressure_5"
+                         ",Hld_Time_1"
+                         ",Hld_Time_2"
+                         ",Hld_Time_3"
+                         ",Hld_Time_4"
+                         ",Hld_Time_5"
+                         ",Hld_Vel_1"
+                         ",Hld_Vel_2"
+                         ",Hld_Vel_3"
+                         ",Hld_Vel_4"
+                         ",Hld_Vel_5"
+                         ",Chg_Position_1"
+                         ",Chg_Position_2"
+                         ",Chg_Position_3"
+                         ",Chg_Position_4"
+                         ",Chg_Speed_1"
+                         ",Chg_Speed_2"
+                         ",Chg_Speed_3"
+                         ",Chg_Speed_4"
+                         ",BackPressure_1"
+                         ",BackPressure_2"
+                         ",BackPressure_3"
+                         ",BackPressure_4"
+                         ",Suckback_Position_1"
+                         ",Suckback_Position_2"
+                         ",Suckback_Speed_1"
+                         ",Suckback_Speed_2"
+                         ",Barrel_Temperature_1"
+                         ",Barrel_Temperature_2"
+                         ",Barrel_Temperature_3"
+                         ",Barrel_Temperature_4"
+                         ",Barrel_Temperature_5"
+                         ",Barrel_Temperature_6"
+                         ",Barrel_Temperature_7"
+                         ",Barrel_Temperature_hopper"
+                         ",Mold_Temperature_1"
+                         ",Mold_Temperature_2"
+                         ",Mold_Temperature_3"
+                         ",Mold_Temperature_4"
+                         ",Mold_Temperature_5"
+                         ",Mold_Temperature_6"
+                         ",Mold_Temperature_7"
+                         ",Mold_Temperature_8"
+                         ",Mold_Temperature_9"
+                         ",Mold_Temperature_10"
+                         ",Mold_Temperature_11"
+                         ",Mold_Temperature_12"
+                         ",set_injtime"
+                         ",set_cooltime"
+                         ",set_injdelaytime"
+                         ",set_chgdelaytime)"
+                   "VALUES"
+                         "("
+                         "("+QString("'%1'").arg(mancine_name)+","
+                         ""+QString("'%1'").arg(moldname)+","
+                         ""+"''"+","
+                         ""+"'"+current_date+" "+current_time+"',"
+                         ""+QString("%1").arg(current_shotcount)+","
+                         ""+QString("%1").arg(injstep)+","
+                         ""+QString("%1").arg(hldstep)+","
+                         ""+QString("%1").arg(injVelocity[0],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[1],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[2],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[3],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[4],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[5],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[0],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[1],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[2],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[3],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[4],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[5],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[0],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[1],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[2],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[3],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[4],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[5],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(hldPressure[0],0,'f',1)+","
+                         ""+QString("%1").arg(hldPressure[1],0,'f',1)+","
+                         ""+QString("%1").arg(hldPressure[2],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(hldTime[0],0,'f',1)+","
+                         ""+QString("%1").arg(hldTime[1],0,'f',1)+","
+                         ""+QString("%1").arg(hldTime[2],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(hldVel[0],0,'f',1)+","
+                         ""+QString("%1").arg(hldVel[1],0,'f',1)+","
+                         ""+QString("%1").arg(hldVel[2],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[0],0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[1],0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[2],0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[3],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[0],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[1],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[2],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[3],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[0],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[1],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[2],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[3],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(suckbackPosition2,0,'f',1)+","
+                         ""+QString("%1").arg(suckbackSpeed1,0,'f',1)+","
+                         ""+QString("%1").arg(suckbackSpeed2,0,'f',1)+","
+                         ""+QString("%1").arg(tempset[0],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[1],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[2],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[3],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[4],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[5],0,'f',1)+","
+                         ""+QString("%1").arg(oilset,0,'f',1)+","
+                         ""+QString("%1").arg(tempset[6],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[0],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[1],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[2],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[3],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[4],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[5],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[6],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[7],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(injtime,0,'f',1)+","
+                         ""+QString("%1").arg(cooltime,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(chgtime,0,'f',1)+")"
+               );
     }
 
     if(queryresult){
@@ -956,6 +1242,9 @@ void es600_base_locgic::TB_REC_save(){
         remotedb.open();
         qDebug()<<"es600 false";
     }
+
+
+
 
 }
 
@@ -1060,4 +1349,24 @@ void es600_base_locgic::modbusstatue_change(int state){
         qctx->connectDevice();
         slot_statue_update(false);
     }
+}
+QString es600_base_locgic::get_moldname(){
+    unsigned short moldname1 = datamap->value(QString("%1").arg(mb_moldname1))->value.toShort();
+    unsigned short moldname2 = datamap->value(QString("%1").arg(mb_moldname2))->value.toShort();
+    unsigned short moldname3 = datamap->value(QString("%1").arg(mb_moldname3))->value.toShort();
+    unsigned short moldname4 = datamap->value(QString("%1").arg(mb_moldname4))->value.toShort();
+    unsigned short moldname5 = datamap->value(QString("%1").arg(mb_moldname5))->value.toShort();
+    QByteArray mold_name;
+    mold_name.append((char)(moldname1>>8));
+    mold_name.append((char)(moldname1));
+    mold_name.append((char)(moldname2>>8));
+    mold_name.append((char)(moldname2));
+    mold_name.append((char)(moldname3>>8));
+    mold_name.append((char)(moldname3));
+    mold_name.append((char)(moldname4>>8));
+    mold_name.append((char)(moldname4));
+    mold_name.append((char)(moldname5>>8));
+    mold_name.append((char)(moldname5));
+    QString moldname = mold_name;
+    return moldname;
 }
