@@ -53,7 +53,7 @@ bool gefranseven_base_logic::init(){
     qctx->setTimeout(3000);
 
     if(!qctx->connectDevice()){
-        qDebug()<<"es600 qctx connect false";
+        qDebug()<<"gefran qctx connect false";
     }else {
 
     }
@@ -321,6 +321,27 @@ bool gefranseven_base_logic::init(){
 
     addrlist.append(gmb_INJETM);
 
+    addrlist.append(gmb_program_name_1);
+    addrlist.append(gmb_program_name_2);
+    addrlist.append(gmb_program_name_3);
+    addrlist.append(gmb_program_name_4);
+    addrlist.append(gmb_program_name_5);
+    addrlist.append(gmb_program_name_6);
+    addrlist.append(gmb_program_name_7);
+    addrlist.append(gmb_program_name_8);
+    addrlist.append(gmb_program_name_9);
+    addrlist.append(gmb_program_name_10);
+    addrlist.append(gmb_program_name_11);
+    addrlist.append(gmb_program_name_12);
+    addrlist.append(gmb_program_name_13);
+    addrlist.append(gmb_program_name_14);
+    addrlist.append(gmb_program_name_15);
+    addrlist.append(gmb_program_name_16);
+    addrlist.append(gmb_program_name_17);
+    addrlist.append(gmb_program_name_18);
+    addrlist.append(gmb_program_name_19);
+    addrlist.append(gmb_program_name_20);
+
     //index 를 찾지 못해 나오는 에러를 방지
     for(int i=0;i<addrlist.size();i++){
         datamap->insert(QString("%1").arg(addrlist.at(i))
@@ -453,8 +474,10 @@ void gefranseven_base_logic::gefranseven_base_loop(){
 
 void gefranseven_base_logic::modbudread_ready(){
     auto reply = qobject_cast<QModbusReply *>(sender());
-    if (!reply)
+    if (!reply){
+            reply->deleteLater();
             return;
+    }
     const QModbusDataUnit unit = reply->result();
     if (reply->error() == QModbusDevice::NoError) {
         int startaddress = unit.startAddress();
@@ -484,6 +507,7 @@ void gefranseven_base_logic::modbudread_ready(){
             modbuscount++;
         }
     }
+    reply->deleteLater();
 }
 
 void gefranseven_base_logic::REC_save(){
@@ -797,31 +821,37 @@ void gefranseven_base_logic::REC_save(){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[0]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[0] = 0.0;
         }
         if(injstep>1){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[1]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[1] = 0.0;
         }
         if(injstep>2){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[2]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[2] = 0.0;
         }
         if(injstep>3){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[3]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[3] = 0.0;
         }
         if(injstep>4){
             Inj_Velocitystr.append(QString("%1/").arg(injVelocity[4]));
         }else{
             Inj_Velocitystr.append(QString("%1/").arg(0.0));
+            injVelocity[4] = 0.0;
         }
         if(injstep>5){
             Inj_Velocitystr.append(QString("%1").arg(injVelocity[5]));
         }else{
             Inj_Velocitystr.append(QString("%1").arg(0.0));
+            injVelocity[5] = 0.0;
         }
 
         QString injPressurestr;
@@ -833,31 +863,37 @@ void gefranseven_base_logic::REC_save(){
             injPressurestr.append(QString("%1/").arg(injPressure[0]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[0] = 0.0;
         }
         if(injstep>1){
             injPressurestr.append(QString("%1/").arg(injPressure[1]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[1] = 0.0;
         }
         if(injstep>2){
             injPressurestr.append(QString("%1/").arg(injPressure[2]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[2] = 0.0;
         }
         if(injstep>3){
             injPressurestr.append(QString("%1/").arg(injPressure[3]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[3] = 0.0;
         }
         if(injstep>4){
             injPressurestr.append(QString("%1/").arg(injPressure[4]));
         }else{
             injPressurestr.append(QString("%1/").arg(0.0));
+            injPressure[4] = 0.0;
         }
         if(injstep>5){
             injPressurestr.append(QString("%1").arg(injPressure[5]));
         }else{
             injPressurestr.append(QString("%1").arg(0.0));
+            injPressure[5] = 0.0;
         }
         QString injPositionstr;
         double injPosition[6];
@@ -868,31 +904,37 @@ void gefranseven_base_logic::REC_save(){
             injPositionstr.append(QString("%1/").arg(injPosition[0]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[0] = 0.0;
         }
         if(injstep>1){
             injPositionstr.append(QString("%1/").arg(injPosition[1]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[1] = 0.0;
         }
         if(injstep>2){
             injPositionstr.append(QString("%1/").arg(injPosition[2]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[2] = 0.0;
         }
         if(injstep>3){
             injPositionstr.append(QString("%1/").arg(injPosition[3]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[3] = 0.0;
         }
         if(injstep>4){
             injPositionstr.append(QString("%1/").arg(injPosition[4]));
         }else{
             injPositionstr.append(QString("%1/").arg(0.0));
+            injPosition[4] = 0.0;
         }
         if(injstep>5){
             injPositionstr.append(QString("%1").arg(injPosition[5]));
         }else{
             injPositionstr.append(QString("%1").arg(0.0));
+            injPosition[5] = 0.0;
         }
         int hldstep = datamap->value(QString("%1").arg(gmb_SetHoldingStep))->value.toInt();
         QString hldPressurestr;
@@ -904,16 +946,19 @@ void gefranseven_base_logic::REC_save(){
             hldPressurestr.append(QString("%1/").arg(hldPressure[0]));
         }else{
             hldPressurestr.append(QString("%1/").arg(0.0));
+            hldPressure[0] = 0.0;
         }
         if(hldstep>1){
             hldPressurestr.append(QString("%1/").arg(hldPressure[1]));
         }else{
             hldPressurestr.append(QString("%1/").arg(0.0));
+            hldPressure[1] = 0.0;
         }
         if(hldstep>2){
             hldPressurestr.append(QString("%1").arg(hldPressure[2]));
         }else{
             hldPressurestr.append(QString("%1").arg(0.0));
+            hldPressure[2] = 0.0;
         }
 
         QString hldTimestr;
@@ -925,16 +970,19 @@ void gefranseven_base_logic::REC_save(){
             hldTimestr.append(QString("%1/").arg(hldTime[0]));
         }else{
             hldTimestr.append(QString("%1/").arg(0.0));
+            hldTime[0] = 0.0;
         }
         if(hldstep>1){
             hldTimestr.append(QString("%1/").arg(hldTime[1]));
         }else{
             hldTimestr.append(QString("%1/").arg(0.0));
+            hldTime[1] = 0.0;
         }
         if(hldstep>2){
             hldTimestr.append(QString("%1").arg(hldTime[2]));
         }else{
             hldTimestr.append(QString("%1").arg(0.0));
+            hldTime[2] = 0.0;
         }
         QString hldVelstr;
         double hldVel[3];
@@ -945,16 +993,19 @@ void gefranseven_base_logic::REC_save(){
             hldVelstr.append(QString("%1/").arg(hldVel[0]));
         }else{
             hldVelstr.append(QString("%1/").arg(0.0));
+            hldVel[0] = 0.0;
         }
         if(hldstep>1){
             hldVelstr.append(QString("%1/").arg(hldVel[1]));
         }else{
             hldVelstr.append(QString("%1/").arg(0.0));
+            hldVel[1] = 0.0;
         }
         if(hldstep>2){
             hldVelstr.append(QString("%1").arg(hldVel[2]));
         }else{
             hldVelstr.append(QString("%1").arg(0.0));
+            hldVel[2] = 0.0;
         }
         QString chgPositionstr;
         double chgPosition[4];
@@ -1098,41 +1149,49 @@ void gefranseven_base_logic::REC_save(){
             moldtempstr.append(QString("%1/").arg(moldtempset[0]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[0] = 0.0;
         }
         if(moldtempuse[1]){
             moldtempstr.append(QString("%1/").arg(moldtempset[1]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[1] = 0.0;
         }
         if(moldtempuse[2]){
             moldtempstr.append(QString("%1/").arg(moldtempset[2]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[2] = 0.0;
         }
         if(moldtempuse[3]){
             moldtempstr.append(QString("%1/").arg(moldtempset[3]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[3] = 0.0;
         }
         if(moldtempuse[4]){
             moldtempstr.append(QString("%1/").arg(moldtempset[4]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[4] = 0.0;
         }
         if(moldtempuse[5]){
             moldtempstr.append(QString("%1/").arg(moldtempset[5]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[5] = 0.0;
         }
         if(moldtempuse[6]){
             moldtempstr.append(QString("%1/").arg(moldtempset[6]));
         }else{
             moldtempstr.append(QString("%1/").arg(0.0));
+            moldtempset[6] = 0.0;
         }
         if(moldtempuse[7]){
             moldtempstr.append(QString("%1").arg(moldtempset[7]));
         }else{
             moldtempstr.append(QString("%1").arg(0.0));
+            moldtempset[7] = 0.0;
         }
 
         QString timerstr;
@@ -1196,6 +1255,201 @@ void gefranseven_base_logic::REC_save(){
             qDebug()<<"gefran false";
         }
 
+        remotequery.exec("INSERT INTO shot_data_rec2"
+                         "(Machine_Name"
+                         ",Additional_Info_1"
+                         ",Additional_Info_2"
+                         ",TimeStamp"
+                         ",Shot_Number"
+                         ",inj_step"
+                         ",hold_step"
+                         ",Inj_Velocity_1"
+                         ",Inj_Velocity_2"
+                         ",Inj_Velocity_3"
+                         ",Inj_Velocity_4"
+                         ",Inj_Velocity_5"
+                         ",Inj_Velocity_6"
+                         ",Inj_Velocity_7"
+                         ",Inj_Velocity_8"
+                         ",Inj_Velocity_9"
+                         ",Inj_Velocity_10"
+                         ",Inj_Pressure_1"
+                         ",Inj_Pressure_2"
+                         ",Inj_Pressure_3"
+                         ",Inj_Pressure_4"
+                         ",Inj_Pressure_5"
+                         ",Inj_Pressure_6"
+                         ",Inj_Pressure_7"
+                         ",Inj_Pressure_8"
+                         ",Inj_Pressure_9"
+                         ",Inj_Pressure_10"
+                         ",Inj_Position_1"
+                         ",Inj_Position_2"
+                         ",Inj_Position_3"
+                         ",Inj_Position_4"
+                         ",Inj_Position_5"
+                         ",Inj_Position_6"
+                         ",Inj_Position_7"
+                         ",Inj_Position_8"
+                         ",Inj_Position_9"
+                         ",Inj_Position_10"
+                         ",SOV_Time"
+                         ",SOV_Position"
+                         ",Hld_Pressure_1"
+                         ",Hld_Pressure_2"
+                         ",Hld_Pressure_3"
+                         ",Hld_Pressure_4"
+                         ",Hld_Pressure_5"
+                         ",Hld_Time_1"
+                         ",Hld_Time_2"
+                         ",Hld_Time_3"
+                         ",Hld_Time_4"
+                         ",Hld_Time_5"
+                         ",Hld_Vel_1"
+                         ",Hld_Vel_2"
+                         ",Hld_Vel_3"
+                         ",Hld_Vel_4"
+                         ",Hld_Vel_5"
+                         ",Chg_Position_1"
+                         ",Chg_Position_2"
+                         ",Chg_Position_3"
+                         ",Chg_Position_4"
+                         ",Chg_Speed_1"
+                         ",Chg_Speed_2"
+                         ",Chg_Speed_3"
+                         ",Chg_Speed_4"
+                         ",BackPressure_1"
+                         ",BackPressure_2"
+                         ",BackPressure_3"
+                         ",BackPressure_4"
+                         ",Suckback_Position_1"
+                         ",Suckback_Position_2"
+                         ",Suckback_Speed_1"
+                         ",Suckback_Speed_2"
+                         ",Barrel_Temperature_1"
+                         ",Barrel_Temperature_2"
+                         ",Barrel_Temperature_3"
+                         ",Barrel_Temperature_4"
+                         ",Barrel_Temperature_5"
+                         ",Barrel_Temperature_6"
+                         ",Barrel_Temperature_7"
+                         ",Barrel_Temperature_oil"
+                         ",Barrel_Temperature_hopper"
+                         ",Mold_Temperature_1"
+                         ",Mold_Temperature_2"
+                         ",Mold_Temperature_3"
+                         ",Mold_Temperature_4"
+                         ",Mold_Temperature_5"
+                         ",Mold_Temperature_6"
+                         ",Mold_Temperature_7"
+                         ",Mold_Temperature_8"
+                         ",Mold_Temperature_9"
+                         ",Mold_Temperature_10"
+                         ",Mold_Temperature_11"
+                         ",Mold_Temperature_12"
+                         ",set_injtime"
+                         ",set_cooltime"
+                         ",set_injdelaytime"
+                         ",set_chgdelaytime)"
+                   "VALUES"
+                         "("
+                         ""+QString("'%1'").arg(mancine_name)+","
+                         ""+QString("'%1'").arg(mold_name)+","
+                         "' ',"
+                         "'"+datetime+"',"
+                         ""+QString("%1").arg(current_shotcount)+","
+                         ""+QString("%1").arg(injstep)+","
+                         ""+QString("%1").arg(hldstep)+","
+                         ""+QString("%1").arg(injVelocity[0],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[1],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[2],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[3],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[4],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[5],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[0],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[1],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[2],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[3],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[4],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[5],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[0],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[1],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[2],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[3],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[4],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[5],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(hldPressure[0],0,'f',1)+","
+                         ""+QString("%1").arg(hldPressure[1],0,'f',1)+","
+                         ""+QString("%1").arg(hldPressure[2],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(hldTime[0],0,'f',1)+","
+                         ""+QString("%1").arg(hldTime[1],0,'f',1)+","
+                         ""+QString("%1").arg(hldTime[2],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(hldVel[0],0,'f',1)+","
+                         ""+QString("%1").arg(hldVel[1],0,'f',1)+","
+                         ""+QString("%1").arg(hldVel[2],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[0],0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[1],0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[2],0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[3],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[0],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[1],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[2],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[3],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[0],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[1],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[2],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[3],0,'f',1)+","
+                         ""+QString("%1").arg(suckbackPosition0,0,'f',1)+","
+                         ""+QString("%1").arg(suckbackPosition2,0,'f',1)+","
+                         ""+QString("%1").arg(suckbackSpeed1,0,'f',1)+","
+                         ""+QString("%1").arg(suckbackSpeed2,0,'f',1)+","
+                         ""+QString("%1").arg(set_temperature_1,0,'f',1)+","
+                         ""+QString("%1").arg(set_temperature_2,0,'f',1)+","
+                         ""+QString("%1").arg(set_temperature_3,0,'f',1)+","
+                         ""+QString("%1").arg(set_temperature_4,0,'f',1)+","
+                         ""+QString("%1").arg(set_temperature_5,0,'f',1)+","
+                         ""+QString("%1").arg(set_temperature_6,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(set_oil_temp,0,'f',1)+","
+                         ""+QString("%1").arg(set_hoper_temp,0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[0],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[1],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[2],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[3],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[4],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[5],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[6],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[7],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(injdelaytime,0,'f',1)+","
+                         ""+QString("%1").arg(cooltime,0,'f',1)+","
+                         ""+QString("%1").arg(chgdelaytime,0,'f',1)+","
+                         ""+QString("%1").arg(injtime,0,'f',1)+")"
+               );
+
     }
 }
 void gefranseven_base_logic::current_update(){
@@ -1207,6 +1461,7 @@ void gefranseven_base_logic::current_update(){
     QString update_temp;
     int production_count = datamap->value(QString("%1").arg(gmb_TOTPR))->value.toInt();
     QString mold_name = get_mold_name();
+    QString program_name = get_program_name();
     int object_count = datamap->value(QString("%1").arg(gmb_TOTPS))->value.toInt();
     int cabity = datamap->value(QString("%1").arg(gmb_CAVITY))->value.toInt();
     double cycle_time = datamap->value(QString("%1").arg(gmb_CYCLCT))->value.toDouble()/10.0;
@@ -1247,8 +1502,9 @@ void gefranseven_base_logic::current_update(){
                           "cycle_time = \'%6\',"
                           "run_mode = \'%7\',"
                           "warning_flag = '%8',"
-                          "warning_data = '%9' "
-                          "where machine_name = \'%10\'")
+                          "warning_data = '%9', "
+                          "machine_program = '%10' "
+                          "where machine_name = \'%11\'")
                           .arg(crypto.encryptToString(QString("%1").arg(production_count)))
                           .arg(crypto.encryptToString(mold_name))
                           .arg(crypto.encryptToString(QString("%1").arg(object_count)))
@@ -1258,8 +1514,10 @@ void gefranseven_base_logic::current_update(){
                           .arg(crypto.encryptToString(QString("%1").arg(run_mode)))
                           .arg(crypto.encryptToString(QString("%1").arg(warning_flag)))
                           .arg(crypto.encryptToString(QString("%1").arg(warning_data)))
+                          .arg(crypto.encryptToString(QString("%1").arg(program_name)))
                           .arg(mancine_name);
     mysqlquery1.exec(update_temp);
+
 
 }
 
@@ -1409,3 +1667,13 @@ QString gefranseven_base_logic::get_mold_name(){
     QString mold_name = QString(mold_name_byte);
     return mold_name;
 }
+QString gefranseven_base_logic::get_program_name(){
+    QByteArray program_name_byte;
+    for(int i=0;i<20;i++){
+        int temp_program_name  = datamap->value(QString("%1").arg(gmb_WorkFile_1+i*2))->value.toInt();
+        program_name_byte.append(temp_program_name);
+    }
+    QString program_name = QString(program_name_byte);
+    return program_name;
+}
+

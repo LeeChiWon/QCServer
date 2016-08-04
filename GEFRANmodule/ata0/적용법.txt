@@ -1,0 +1,6 @@
+gefran.spt 에
+routeAdd "0","192.168.11.1"
+
+gld "CMSProgram.out"
+
+을 추가한다. 

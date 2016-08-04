@@ -17,6 +17,11 @@
 #include <QMessageAuthenticationCode>
 #include "globalheader.h"
 #include <alrammap_data.h>
+#define GEN_ALRAM_MAX 130
+#define ALRAM_MAX 900
+#define HtGr_ALRAM_START 140
+#define Htzo_ALRAM_START 200
+#define Ax_ALRAM_START 600
 
 class BNRvalue {
 public:
@@ -48,8 +53,9 @@ public:
     QSqlDatabase remotedb;
     QWaitCondition waitcondition;
     QMutex mutex;
+    QMutex httpmutex;
     bnr_moudle_thread *moudle_thread;
-    void requst_read_value(QString ip, QString address);
+
     void url_bnrbaseloop();
     void TA_REC_SAVE();
     void TA_current_update();
@@ -63,8 +69,10 @@ public:
 
 
 signals:
+    void sig_requst_read_value(QString ip,QString address);
 
 public slots:
+    void requst_read_value(QString ip, QString address);
     void managerfinished(QNetworkReply *reply);
     void pageloadfinish(bool);
 
