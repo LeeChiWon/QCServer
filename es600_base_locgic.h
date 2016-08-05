@@ -309,7 +309,7 @@ signals:
 
 public slots:
     void slot_statue_update(bool statue);
-    void modbudread_ready();
+    void modbusread_ready();
     void modbusstatue_change(int state);
 };
 

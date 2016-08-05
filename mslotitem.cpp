@@ -21,6 +21,8 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
     type->addItem("es600/");
     type->addItem("BNR/TAC1XX11");
     type->addItem("BNR/TEC1XX01");
+    type->addItem("BNR/DLA1XX01");
+    type->addItem("bluecon/");
     status->setTextFormat(Qt::RichText);
     status->setText(tr("<img src=\":/icon/icon/stop.png\">  STOP"));
     QSqlQuery litequery1(localdb);
@@ -192,6 +194,7 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
     bnr_base_logic = new Bnr_base_locgic(this);
     gefran_base_logic = new gefranseven_base_logic(this);
     Es600_base_locgic = new es600_base_locgic(this);
+    Bluecon_base_logic = new bluecon_base_logic(this);
 
     gefranset_popup = 0;
 
@@ -230,6 +233,11 @@ void mslotitem::maintimer_timeout(){
             Es600_base_locgic->init();
         }
         Es600_base_locgic->loop();
+    }else if(type->currentText().split("/").at(0).compare("bluecon")==0){
+        if(!Bluecon_base_logic->initflag){
+            Bluecon_base_logic->init();
+        }
+        Bluecon_base_logic->loop();
     }
 }
 

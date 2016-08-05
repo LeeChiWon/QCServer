@@ -1006,6 +1006,7 @@ void MainWindow::remotesql_init(){
                          "`Inj_Position_10` DOUBLE NULL DEFAULT '0',"
                          "`SOV_Time` DOUBLE NULL DEFAULT '0',"
                          "`SOV_Position` DOUBLE NULL DEFAULT '0',"
+                         "`SOV_Prs` DOUBLE NULL DEFAULT '0',"
                          "`Hld_Pressure_1` DOUBLE NULL DEFAULT '0',"
                          "`Hld_Pressure_2` DOUBLE NULL DEFAULT '0',"
                          "`Hld_Pressure_3` DOUBLE NULL DEFAULT '0',"
@@ -1068,7 +1069,7 @@ void MainWindow::remotesql_init(){
          );
 
     }else if(type == ODBC){
-        mysqlquery1.exec("CREATE TABLE [dbo].[shot_data_rec2]("
+        mysqlquery1.exec("CREATE TABLE shot_data_rec2("
                          "[rec_idx] [numeric](18, 0) IDENTITY(1,1) NOT NULL,"
                          "[Machine_Name] [text] NULL,"
                          "[Additional_Info_1] [text] NULL,"
@@ -1109,6 +1110,7 @@ void MainWindow::remotesql_init(){
                          "[Inj_Position_10] [real] NULL,"
                          "[SOV_Time] [real] NULL,"
                          "[SOV_Position] [real] NULL,"
+                         "[SOV_Prs] [real] NULL,"
                          "[Hld_Pressure_1] [real] NULL,"
                          "[Hld_Pressure_2] [real] NULL,"
                          "[Hld_Pressure_3] [real] NULL,"
@@ -1181,6 +1183,7 @@ void MainWindow::remotesql_init(){
                          "`Alarm_Number` INT(11) NULL DEFAULT '0',"
                          "`Alarm_Start_Time` DATETIME NULL DEFAULT NULL,"
                          "`Alarm_End_Time` DATETIME NULL DEFAULT NULL,"
+                         "`Alarm_flag` INT(11) NULL DEFAULT '0',"
                          "PRIMARY KEY (`idx`)"
                          ")"
                          "   COLLATE='utf8_bin'"
@@ -1195,6 +1198,7 @@ void MainWindow::remotesql_init(){
                          "[Alarm_Number] [int] NULL,"
                          "[Alarm_Start_Time] [datetime] NULL,"
                          "[Alarm_End_Time] [datetime] NULL,"
+                         "[Alarm_flag] [int] NULL,"
                          "PRIMARY KEY CLUSTERED "
                          "("
                          "           [idx] ASC"
