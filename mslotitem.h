@@ -20,6 +20,7 @@
 #include "gefranseven_base_logic.h"
 #include "globalheader.h"
 #include "es600_base_locgic.h"
+#include "bluecon_base_logic.h"
 #include <QSqlError>
 #include <gefransetup_popup.h>
 
@@ -42,6 +43,7 @@ public:
     Bnr_base_locgic *bnr_base_logic;
     gefranseven_base_logic *gefran_base_logic;
     es600_base_locgic *Es600_base_locgic;
+    bluecon_base_logic *Bluecon_base_logic;
     QWidget *parent_src;
     gefransetup_popup *gefranset_popup;
     void set_connectlabel_text(QString data);

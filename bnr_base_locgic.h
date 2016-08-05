@@ -61,6 +61,8 @@ public:
     void TA_current_update();
     void TE_current_update();
     void TE_REC_SAVE();
+    void DL_current_update();
+    void DL_REC_SAVE();
     void alram_update();
     QString get_mold_name();
     int before_prod_actpcs;

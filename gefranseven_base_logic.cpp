@@ -13,6 +13,7 @@ gefranseven_base_logic::gefranseven_base_logic(QObject *parentmslot,QObject *par
 bool gefranseven_base_logic::init(){
     mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
     datamap = new QMap<QString,gefranvalue *>;
+    alrammap = new QMap<QString,alrammap_data *> ;
     //connect(&manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerfinished(QNetworkReply*)));
     litedb = QSqlDatabase::database("localdb");
     QSqlQuery litequery1(litedb);
@@ -353,6 +354,8 @@ bool gefranseven_base_logic::init(){
     addrlist.append(gmb_program_name_19);
     addrlist.append(gmb_program_name_20);
 
+    addrlist.append(gmb_pr_EX_Holdp);
+
     //index 를 찾지 못해 나오는 에러를 방지
     for(int i=0;i<addrlist.size();i++){
         datamap->insert(QString("%1").arg(addrlist.at(i))
@@ -383,59 +386,7 @@ bool gefranseven_base_logic::init(){
 
 //금형 이름 받는 로직
 void gefranseven_base_logic::telnetreadready(){
-    /*
-    QByteArray data;
-    mslotitem *parent_item = (mslotitem *)parentmslot; //부모 위젯
-    while(true){
-        data = tcpsocket->readLine();
-        if(data.size()==0){
-            break;
-        }
-        QString datastr = QString(data);
 
-        int errormsg = datastr.indexOf("Sorry,");
-        if(errormsg>=0){
-            tcpsocket->disconnectFromHost();
-
-        }
-        int loginfind = datastr.indexOf("login:");
-
-        if(loginfind>0){
-            tcpsocket->write("telnet\r\n");
-            tcpsocket->write("gefranseven\r\n");
-            tcpsocket->flush();
-        }
-        int startpointfin2 = datastr.indexOf("WorkFile = ");
-        if(startpointfin2>=0){
-            QString tempfrount = datastr.split(':').at(0);
-            QString tempaddrvalue= tempfrount.split('=').at(1);
-            tempaddrvalue = tempaddrvalue.trimmed();
-            tcpsocket->write(QString("d %1,13\r\n").arg(tempaddrvalue).toLocal8Bit());
-            tcpsocket->flush();
-        }
-        if(datastr.split('*').size()==3){
-            QString tempfrontstr = datastr.split('*').at(0);
-            QString tempfrontstr1 =  tempfrontstr.split(':').at(1);
-            bool msgendflag = false;
-            if(tempfrontstr1.indexOf("00")>2){
-                 msgendflag = true;
-                 temp_mold_info.append(QString(datastr.split('*').at(1)));
-            }else if(tempfrontstr1.indexOf("00")<0){
-                msgendflag = false;
-                temp_mold_info.append(QString(datastr.split('*').at(1)));
-            }else{
-                msgendflag = false;
-            }
-
-            if(msgendflag){
-                result_mold_name = temp_mold_info.replace('.',"").trimmed();
-                temp_mold_info = "";
-                 qDebug()<<result_mold_name;
-            }
-        }
-//        qDebug()<<datastr;
-    }
-    */
 }
 
 
@@ -447,43 +398,22 @@ void gefranseven_base_logic::loop(){
             slot_statue_update(true);
             QModbusReply *reply;
             reply = qctx->sendReadRequest(QModbusDataUnit(QModbusDataUnit::HoldingRegisters,addrlist.at(modbuscount),2),255);
-            connect(reply,SIGNAL(finished()),this,SLOT(modbudread_ready()));
+            connect(reply,SIGNAL(finished()),this,SLOT(modbusread_ready()));
             modbuscount++;
         }
     }
-
-    //requst_read_value(ip,"cgi-bin/SevenCgiLib.out");
-    //금형 이름을 받기 위함
-    /*
-    if(tcpsocket->state() == QTcpSocket::ConnectedState){
-        tcpsocket->write("WorkFile\r\n");
-        tcpsocket->flush();
-    }else if (tcpsocket->state() == QTcpSocket::UnconnectedState){
-        tcpsocket->connectToHost(parent_item->ip->text(),23);
-        parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
-        parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
-    }else if (tcpsocket->state() == QTcpSocket::HostLookupState){
-
-    }else if(tcpsocket->state() == QTcpSocket::ConnectingState){
-        parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
-        parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
-
-    }
-    */
-    //qDebug()<<tcpsocket->state();
 }
 
 void gefranseven_base_logic::gefranseven_base_loop(){
 
     current_update();
     REC_save();
+    alram_update();
 
-
-    //qDebug()<<"baseloop()";
 }
 
 
-void gefranseven_base_logic::modbudread_ready(){
+void gefranseven_base_logic::modbusread_ready(){
     auto reply = qobject_cast<QModbusReply *>(sender());
     if (!reply){
             reply->deleteLater();
@@ -514,7 +444,7 @@ void gefranseven_base_logic::modbudread_ready(){
         if(qctx->state()==QModbusDevice::ConnectedState){
             QModbusReply *reply;
             reply = qctx->sendReadRequest(QModbusDataUnit(QModbusDataUnit::HoldingRegisters,addrlist.at(modbuscount),2),255);
-            connect(reply,SIGNAL(finished()),this,SLOT(modbudread_ready()));
+            connect(reply,SIGNAL(finished()),this,SLOT(modbusread_ready()));
             modbuscount++;
         }
     }
@@ -1217,6 +1147,8 @@ void gefranseven_base_logic::REC_save(){
         double injtime = datamap->value(QString("%1").arg(gmb_INJETM))->value.toDouble()/100.0;
         timerstr = QString("%1/%2/%3/%4").arg(injtime).arg(cooltime).arg(injdelaytime).arg(chgdelaytime);
 
+        double sovprs = datamap->value(QString("%1").arg(gmb_pr_EX_Holdp))->value.toDouble()/10.0;
+
         insertquery =QString("INSERT INTO shot_data_rec"
                 "(Machine_Name"
                 ",Additional_Info_1"
@@ -1311,6 +1243,7 @@ void gefranseven_base_logic::REC_save(){
                          ",Inj_Position_10"
                          ",SOV_Time"
                          ",SOV_Position"
+                         ",SOV_Prs"
                          ",Hld_Pressure_1"
                          ",Hld_Pressure_2"
                          ",Hld_Pressure_3"
@@ -1407,6 +1340,7 @@ void gefranseven_base_logic::REC_save(){
                          ""+QString("%1").arg(0.0,0,'f',1)+","
                          ""+QString("%1").arg(0.0,0,'f',1)+","
                          ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(sovprs,0,'f',1)+","
                          ""+QString("%1").arg(hldPressure[0],0,'f',1)+","
                          ""+QString("%1").arg(hldPressure[1],0,'f',1)+","
                          ""+QString("%1").arg(hldPressure[2],0,'f',1)+","
@@ -1463,7 +1397,6 @@ void gefranseven_base_logic::REC_save(){
                          ""+QString("%1").arg(injdelaytime,0,'f',1)+","
                          ""+QString("%1").arg(chgdelaytime,0,'f',1)+")"
                );
-
     }
 }
 void gefranseven_base_logic::current_update(){
@@ -1945,10 +1878,167 @@ void gefranseven_base_logic::current_update(){
 
     bool result = mysqlquery1.exec(update_temp);
 
+    QString S_ITEM_TYPE = crypto.encryptToString(parent_item->type->currentText());
+    QString S_injstep = crypto.encryptToString(datamap->value(QString("%1").arg(gmb_SetInjectionStep))->value);
+    int injstep = datamap->value(QString("%1").arg(gmb_SetInjectionStep))->value.toInt();
+    double injVelocity[6];
+    QString S_injVelocity[6];
+    double injPressure[6];
+    QString S_injPressure[6];
+    double injPosition[6];
+    QString S_injPosition[6];
+    for(int i=0;i<6;i++){
+        injVelocity[i] = datamap->value(QString("%1").arg(gmb_sp_Inject_0+i*2))->value.toDouble()/10.0;
+         injPressure[i] = datamap->value(QString("%1").arg(gmb_pr_Inject_0+i*2))->value.toDouble()/10.0;
+         injPosition[i] = datamap->value(QString("%1").arg(gmb_po_Inject_0+i*2))->value.toDouble()/10.0;
+        if(injstep<i){
+            injVelocity[i] = 0.0;
+            injPressure[i] = 0.0;
+            injPosition[i] = 0.0;
+        }
+        S_injVelocity[i] = crypto.encryptToString(QString("%1").arg(injVelocity[i],0,'f',1));
+        S_injPressure[i] = crypto.encryptToString(QString("%1").arg(injPressure[i],0,'f',1));
+        S_injPosition[i] = crypto.encryptToString(QString("%1").arg(injPosition[i],0,'f',1));
+    }
+    int hldstep = datamap->value(QString("%1").arg(gmb_SetHoldingStep))->value.toInt();
+    QString S_hldstep = crypto.encryptToString(datamap->value(QString("%1").arg(gmb_SetHoldingStep))->value);
+    double hldPressure[3];
+    QString S_hldPressure[3];
+    double hldTime[3];
+    QString S_hldTime[3];
+    double hldVel[3];
+    QString S_hldVel[3];
+    for(int i=0;i<3;i++){
+        hldPressure[i] = datamap->value(QString("%1").arg(gmb_pr_Holdp_0+i*2))->value.toDouble()/10.0;
+        hldTime[i] = datamap->value(QString("%1").arg(gmb_ts_Holdp_0+i*2))->value.toDouble()/10.0;
+        hldVel[i] = datamap->value(QString("%1").arg(gmb_sp_Holdp_0+i*2))->value.toDouble()/10.0;
+        if(hldstep<i){
+            hldPressure[i] = 0.0;
+            hldTime[i] = 0.0;
+            hldVel[i] = 0.0;
+        }
+        S_hldPressure[i] = crypto.encryptToString(QString("%1").arg(hldPressure[i],0,'f',1));
+        S_hldTime[i] = crypto.encryptToString(QString("%1").arg(hldTime[i],0,'f',1));
+        S_hldVel[i] = crypto.encryptToString(QString("%1").arg(hldVel[i],0,'f',1));
+    }
 
+    double chgPosition[4];
+    double chgSpeed[4];
+    double backPressure[4];
+    QString S_chgPosition[4];
+    QString S_chgSpeed[4];
+    QString S_backPressure[4];
+    for(int i=0;i<4;i++){
+        chgPosition[i] = datamap->value(QString("%1").arg(gmb_po_Charge_0+i*2))->value.toDouble()/10.0;
+        S_chgPosition[i] = crypto.encryptToString(QString("%1").arg(chgPosition[i],0,'f',1));
+        chgSpeed[i] = datamap->value(QString("%1").arg(gmb_sp_Charge_0+i*2))->value.toDouble()/10.0;
+        S_chgSpeed[i] = crypto.encryptToString(QString("%1").arg(chgSpeed[i],0,'f',1));
+        backPressure[i] = datamap->value(QString("%1").arg(gmb_bp_Charge_0+i*2))->value.toDouble()/10.0;
+        S_backPressure[i] = crypto.encryptToString(QString("%1").arg(backPressure[i],0,'f',1));
+    }
+    double suckbackPosition0 = datamap->value(QString("%1").arg(gmb_po_Suckb_0))->value.toDouble()/10.0;;
+    double suckbackPosition2 = datamap->value(QString("%1").arg(gmb_po_Suckb_2))->value.toDouble()/10.0;;
+    QString S_suckbackPosition0 = crypto.encryptToString(QString("%1").arg(suckbackPosition0,0,'f',1));
+    QString S_suckbackPosition2 = crypto.encryptToString(QString("%1").arg(suckbackPosition2,0,'f',1));
+    double suckbackSpeed1 = datamap->value(QString("%1").arg(gmb_sp_Suckb_0))->value.toDouble()/10.0;;
+    double suckbackSpeed2 = datamap->value(QString("%1").arg(gmb_sp_Suckb_1))->value.toDouble()/10.0;;
+    QString S_suckbackSpeed1  = crypto.encryptToString(QString("%1").arg(suckbackSpeed1,0,'f',1));
+    QString S_suckbackSpeed2 = crypto.encryptToString(QString("%1").arg(suckbackSpeed2,0,'f',1));
+
+    double pr_EX_Holdp = datamap->value(QString("%1").arg(gmb_pr_EX_Holdp))->value.toDouble()/10.0;;
+    QString S_pr_EX_Holdp = crypto.encryptToString(QString("%1").arg(pr_EX_Holdp,0,'f',1));
+
+    double injtime = datamap->value(QString("%1").arg(gmb_INJETM))->value.toDouble()/100.0;
+    QString S_injtime = crypto.encryptToString(QString("%1").arg(injtime,0,'f',1));
+
+    double injdelaytime = datamap->value(QString("%1").arg(gmb_SPR2TM))->value.toDouble()/100.0;
+    QString S_injdelaytime = crypto.encryptToString(QString("%1").arg(injdelaytime,0,'f',1));
+
+    double cooltime = datamap->value(QString("%1").arg(gmb_COOLTM))->value.toDouble()/100.0;
+    QString S_cooltime = crypto.encryptToString(QString("%1").arg(cooltime,0,'f',1));
+
+    double chgdelaytime = datamap->value(QString("%1").arg(gmb_CHDLTM))->value.toDouble()/100.0;
+    QString S_chgdelaytime = crypto.encryptToString(QString("%1").arg(chgdelaytime,0,'f',1));
+    update_temp = QString("UPDATE Recipe_Info "
+                        "SET "
+                      "ITEM_TYPE = '"+S_ITEM_TYPE+"'"
+                      ",injstep = '"+S_injstep+"'"
+                      ",holdstep = '"+S_hldstep+"'"
+                      ",injspd_1 = '"+S_injVelocity[0]+"'"
+                      ",injspd_2 = '"+S_injVelocity[1]+"'"
+                      ",injspd_3 = '"+S_injVelocity[2]+"'"
+                      ",injspd_4 = '"+S_injVelocity[3]+"'"
+                      ",injspd_5 = '"+S_injVelocity[4]+"'"
+                      ",injspd_6 = '"+S_injVelocity[5]+"'"
+                      ",injspd_7 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injspd_8 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injspd_9 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injspd_10 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injprs_1 = '"+S_injPressure[0]+"'"
+                      ",injprs_2 = '"+S_injPressure[1]+"'"
+                      ",injprs_3 = '"+S_injPressure[2]+"'"
+                      ",injprs_4 = '"+S_injPressure[3]+"'"
+                      ",injprs_5 = '"+S_injPressure[4]+"'"
+                      ",injprs_6 = '"+S_injPressure[5]+"'"
+                      ",injprs_7 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injprs_8 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injprs_9 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injprs_10 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injpos_1 = '"+S_injPosition[0]+"'"
+                      ",injpos_2 = '"+S_injPosition[1]+"'"
+                      ",injpos_3 = '"+S_injPosition[2]+"'"
+                      ",injpos_4 = '"+S_injPosition[3]+"'"
+                      ",injpos_5 = '"+S_injPosition[4]+"'"
+                      ",injpos_6 = '"+S_injPosition[5]+"'"
+                      ",injpos_7 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injpos_8 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injpos_9 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injpos_10 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdspd_1 = '"+S_hldVel[0]+"'"
+                      ",holdspd_2 = '"+S_hldVel[1]+"'"
+                      ",holdspd_3 = '"+S_hldVel[2]+"'"
+                      ",holdspd_4 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdspd_5 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdprs_1 = '"+S_hldPressure[0]+"'"
+                      ",holdprs_2 = '"+S_hldPressure[1]+"'"
+                      ",holdprs_3 = '"+S_hldPressure[2]+"'"
+                      ",holdprs_4 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdprs_5 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdtime_1 = '"+S_hldTime[0]+"'"
+                      ",holdtime_2 = '"+S_hldTime[1]+"'"
+                      ",holdtime_3 = '"+S_hldTime[2]+"'"
+                      ",holdtime_4 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdtime_5 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",chgspd_1 = '"+S_chgSpeed[0]+"'"
+                      ",chgspd_2 = '"+S_chgSpeed[1]+"'"
+                      ",chgspd_3 = '"+S_chgSpeed[2]+"'"
+                      ",chgspd_4 = '"+S_chgSpeed[3]+"'"
+                      ",chgbps_1 = '"+S_backPressure[0]+"'"
+                      ",chgbps_2 = '"+S_backPressure[1]+"'"
+                      ",chgbps_3 = '"+S_backPressure[2]+"'"
+                      ",chgbps_4 = '"+S_backPressure[3]+"'"
+                      ",chgpos_1 = '"+S_chgPosition[0]+"'"
+                      ",chgpos_2 = '"+S_chgPosition[1]+"'"
+                      ",chgpos_3 = '"+S_chgPosition[2]+"'"
+                      ",chgpos_4 = '"+S_chgPosition[3]+"'"
+                      ",suckbspd_1 = '"+S_suckbackSpeed1+"'"
+                      ",suckbspd_2 = '"+S_suckbackSpeed2+"'"
+                      ",suckbpos_1 = '"+S_suckbackPosition0+"'"
+                      ",suckbpos_2 = '"+S_suckbackPosition2+"'"
+                      ",sovpos = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",sovprs = '"+S_pr_EX_Holdp+"'"
+                      ",sovtime = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injtime = '"+S_injtime+"'"
+                      ",injdeltime = '"+S_injdelaytime+"'"
+                      ",cooltime = '"+S_cooltime+"'"
+                      ",chgdeltime = '"+S_chgdelaytime+"' "
+                );
+    update_temp.append(QString("where machine_name = '%1'").arg(mancine_name));
+    mysqlquery1.exec(update_temp);
 
 
 }
+
 
 void gefranseven_base_logic::modbusstatue_change(int state){
 
@@ -1976,116 +2066,15 @@ void gefranseven_base_logic::slot_statue_update(bool statue){
 
 
 void gefranseven_base_logic::requst_read_value(QString ip, QString address){
-    /*
-    QString url = QString("http://%1/%2").arg(ip).arg(address);
-    requast.setUrl(url);
-    manager.get(requast);
-    */
+
 }
 
 void gefranseven_base_logic::managerfinished(QNetworkReply *reply){
-    /*
-    QByteArray temp_data;
-    mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
-    temp_data = reply->readAll();
-    QString htmldata  = QString(temp_data);
-    if(temp_data.size()>0){
-         if(parent_item->connectlabel->text().indexOf("play-button")<0){
-                parent_item->set_connectlabel_text("<img src=\":/icon/icon/play-button16.png\">  connect");
-                parent_item->set_status_text("<img src=\":/icon/icon/play-button16.png\">  play");
-         }
-    }else {
-        parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
-        parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
-        delete reply;
-        return ;
-    }
-    if(temp_data.indexOf("PLC Realtime monitoring")>0){
-        int startpoint = 0;
 
-        while(true){
-            int startpointvar = htmldata.indexOf("<i>",startpoint);
-            if(startpointvar<0){
-                break;
-            }
-            startpoint = startpointvar + 3; //numer4 is mean <i> length;
-            int endpointlabel = htmldata.indexOf("</i>",startpoint);
-            QString varname = htmldata.mid(startpoint,endpointlabel-startpoint);
-            int startpoint_value = htmldata.indexOf("[ <b>",endpointlabel);
-            startpoint_value = startpoint_value + 5;
-            int endpoint_value = htmldata.indexOf("</b>  ]",startpoint_value);
-            QString value = htmldata.mid(startpoint_value,endpoint_value-startpoint_value);
-            gefranvalue *tempgefdata;
-            if(!datamap->contains(varname)){
-                 tempgefdata = new gefranvalue();
-                 tempgefdata->name = varname;
-                 datamap->insert(varname,tempgefdata);
-             }else {
-                  tempgefdata = datamap->value(varname);
-             }
-             tempgefdata->value = value;
-        }
-        waitcondition.wakeAll();
-
-    }else if(temp_data.indexOf("Please enter login information")>0){
-        QByteArray postData;
-        postData.append("user=master&");
-        postData.append("pwd=master&");
-        postData.append("button_login=Login");
-        QString ip = parent_item->ip->text();
-        QString seturl = QString("http://%1/cgi-bin/SevenCgiLib.out").arg(ip);
-        requast.setUrl(QUrl(seturl));
-        requast.setHeader(QNetworkRequest::ContentTypeHeader,
-                          "application/x-www-form-urlencoded");
-
-        manager.post(requast,postData);
-    }else if (temp_data.indexOf("Select listed variables and click")>0){
-        QByteArray postData;
-        int startpoint = 0;
-        while(true){
-            int intputstartpoint =  htmldata.indexOf("<input",startpoint);
-            if(intputstartpoint<0){
-                break;
-            }
-            startpoint = intputstartpoint + 6;
-            int intputendpoint =  htmldata.indexOf("</input>",startpoint);
-            QString linesplit = htmldata.mid(intputstartpoint,intputendpoint-intputstartpoint);
-            QString selon_name = linesplit.split('\"').at(3);
-            if(selon_name.compare("Submit")==0){
-                break;
-            }
-            QString data  = QString("%1=SEL-ON&").arg(selon_name);
-            postData.append(data.toLocal8Bit());
-        }
-        postData.append("button_getvars=submit");
-        QString ip = parent_item->ip->text();
-        QString seturl = QString("http://%1/cgi-bin/SevenCgiLib.out").arg(ip);
-        requast.setUrl(QUrl(seturl));
-        requast.setHeader(QNetworkRequest::ContentTypeHeader,
-                          "application/x-www-form-urlencoded");
-        manager.post(requast,postData);
-    }
-    delete reply;
-    */
 }
 
 void gefranseven_base_logic::url_gefranbaseloop(){
-    /*
-    mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
-    QString mancine_name = parent_item->machinename->text();
-    QSqlQuery mysqlquery1(remotedb);
-    bool result;
-    result = mysqlquery1.exec("UPDATE `temp_table` SET `temp1_down`=6 WHERE  `machine_name`=\'5호\'");
-    qDebug()<<"TOTPS = "<<datamap->value("TOTPS")->value;
-    qDebug()<<"LSTCYC = "<<datamap->value("LSTCYC")->value;
-    if(result){
 
-    }else {
-        remotedb.open();
-        qDebug()<<"gefran false";
-    }
-//    qDebug()<<datamap->value(QString("sp_Injec_0"))->value;
-*/
 }
 QString gefranseven_base_logic::get_mold_name(){
     QByteArray mold_name_byte;
@@ -2106,3 +2095,76 @@ QString gefranseven_base_logic::get_program_name(){
     return program_name;
 }
 
+void gefranseven_base_logic::alram_update(){
+    mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
+    QString mancine_name = parent_item->machinename->text();
+    QString monitertype = parent_item->type->currentText();
+    int alramflagdata = datamap->value(QString("%1").arg(gmb_dfl_Alarm))->value.toInt();
+    QString datetime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+    QSqlQuery mysqlquery1(remotedb);
+    QStringList maplist = alrammap->keys();
+    for(int j=0;j<maplist.size();j++){
+        alrammap_data *tempmapdata;
+        tempmapdata = alrammap->value(maplist.at(j));
+        tempmapdata->currentflag = false;
+    }
+    if(alramflagdata > 0){
+        for(int i=0;i<10;i++){
+            QString temp_alramdata = datamap->value(QString("%1").arg(gmb_alramnumber0+(i*2)))->value;
+            alrammap_data *tempmapdata;
+            if(temp_alramdata == "65535"){
+                continue;
+            }
+            if(!alrammap->contains(temp_alramdata)){
+                tempmapdata = new alrammap_data();
+                alrammap->insert(temp_alramdata,tempmapdata);
+            }else{
+                tempmapdata = alrammap->value(temp_alramdata);
+            }
+            tempmapdata->currentflag = true;
+        }
+    }
+    maplist = alrammap->keys();
+    for(int j=0;j<maplist.size();j++){
+        alrammap_data *tempmapdata;
+        tempmapdata = alrammap->value(maplist.at(j));
+        if(tempmapdata->beforeflag != tempmapdata->currentflag){
+            tempmapdata->beforeflag = tempmapdata->currentflag;
+            if(tempmapdata->currentflag){
+                mysqlquery1.exec("INSERT INTO "
+                                 "Alarm_Log (Machine_Name,"
+                                 "Controller_Info,"
+                                 "Alarm_Number,"
+                                 "Alarm_Start_Time,"
+                                 "Alarm_End_Time,"
+                                 "Alarm_flag) "
+                                 "VALUES "
+                                 "('"+mancine_name+"',"
+                                 "'"+monitertype+"', "
+                                 ""+maplist.at(j)+", "
+                                 "'"+datetime+"', "
+                                 "'1999-01-01 00:00:00',"
+                                 "1)"
+                                 ";"
+                            );
+            }else {
+                mysqlquery1.exec("INSERT INTO "
+                                 "Alarm_Log (Machine_Name,"
+                                 "Controller_Info,"
+                                 "Alarm_Number,"
+                                 "Alarm_Start_Time,"
+                                 "Alarm_End_Time,"
+                                 "Alarm_flag) "
+                                 "VALUES "
+                                 "('"+mancine_name+"',"
+                                 "'"+monitertype+"', "
+                                 ""+maplist.at(j)+", "
+                                 "'1999-01-01 00:00:00', "
+                                 "'"+datetime+"',"
+                                 "0)"
+                                 ";"
+                           );
+            }
+        }
+    }
+}
