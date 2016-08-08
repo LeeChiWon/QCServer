@@ -32,7 +32,9 @@ SOURCES += main.cpp\
     gefranseven_moudle_thread.cpp \
     simplecrypt.cpp \
     alrammap_data.cpp \
-    gefransetup_popup.cpp
+    gefransetup_popup.cpp \
+    bluecon_base_logic.cpp \
+    bluecon_modbus_thread.cpp
 
 HEADERS  += mainwindow.h \
     mslotitem.h \
@@ -46,7 +48,9 @@ HEADERS  += mainwindow.h \
     gefranseven_moudle_thread.h \
     simplecrypt.h \
     alrammap_data.h \
-    gefransetup_popup.h
+    gefransetup_popup.h \
+    bluecon_base_logic.h \
+    bluecon_modbus_thread.h
 
 FORMS    += mainwindow.ui \
     serversetform.ui \

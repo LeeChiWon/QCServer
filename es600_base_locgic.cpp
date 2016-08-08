@@ -202,27 +202,6 @@ bool es600_base_locgic::init(){
      addrlist.append(mb_injstep);
      addrlist.append(mb_hldstep);
 
-     addrlist.append(mb_injVelocity1);
-     addrlist.append(mb_injVelocity2);
-     addrlist.append(mb_injVelocity3);
-     addrlist.append(mb_injVelocity4);
-     addrlist.append(mb_injVelocity5);
-     addrlist.append(mb_injVelocity6);
-
-     addrlist.append(mb_injPressure1);
-     addrlist.append(mb_injPressure2);
-     addrlist.append(mb_injPressure3);
-     addrlist.append(mb_injPressure4);
-     addrlist.append(mb_injPressure5);
-     addrlist.append(mb_injPressure6);
-
-     addrlist.append(mb_injPosition1);
-     addrlist.append(mb_injPosition2);
-     addrlist.append(mb_injPosition3);
-     addrlist.append(mb_injPosition4);
-     addrlist.append(mb_injPosition5);
-     addrlist.append(mb_injPosition6);
-
      addrlist.append(mb_hldPressure1);
      addrlist.append(mb_hldPressure2);
      addrlist.append(mb_hldPressure3);
@@ -318,7 +297,7 @@ void es600_base_locgic::loop(){
         QModbusReply *reply;
         for(int i=0;i<addrlist.size();i++){
             reply = qctx->sendReadRequest(QModbusDataUnit(QModbusDataUnit::HoldingRegisters,addrlist.at(i),1),1);
-            connect(reply,SIGNAL(finished()),this,SLOT(modbudread_ready()));
+            connect(reply,SIGNAL(finished()),this,SLOT(modbusread_ready()));
         }
     }
 }
@@ -356,13 +335,41 @@ void es600_base_locgic::TB_current_update(){
                                .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value,0,'f',1)));
 
+        }else if(i=7){
+            double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
+                               .arg(8)
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_down_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(1)));
+
+        }else if(i=8){
+            double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
+                               .arg(7)
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_down_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value,0,'f',1)));
+
         }else {
             double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
-         temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
                             .arg(i)
                             .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
                             .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
@@ -397,9 +404,9 @@ void es600_base_locgic::TB_current_update(){
     if(warning_flag>0){
         for(int i=0;i<10;i++){
             short temp_alaram_data = datamap->value(QString("%1").arg(mb_alrammap1+(i*2)))->value.toInt();
-        }
-        if(temp_alaram_data > 0){
-            warning_data.append(QString("%1/").arg(temp_alaram_data));
+            if(temp_alaram_data > 0){
+                warning_data.append(QString("%1/").arg(temp_alaram_data));
+            }
         }
     }else {
         warning_data="";
@@ -427,6 +434,166 @@ void es600_base_locgic::TB_current_update(){
                           .arg(crypto.encryptToString(QString("%1").arg(program_name)))
                           .arg(mancine_name);
     mysqlquery1.exec(update_temp);
+    QString S_ITEM_TYPE = crypto.encryptToString(parent_item->type->currentText());
+    QString S_injstep = crypto.encryptToString(datamap->value(QString("%1").arg(mb_injstep))->value);
+    int injstep = datamap->value(QString("%1").arg(mb_injstep))->value.toInt();
+    double injVelocity[6];
+    QString S_injVelocity[6];
+    double injPressure[6];
+    QString S_injPressure[6];
+    double injPosition[6];
+    QString S_injPosition[6];
+    for(int i=0;i<6;i++){
+        injVelocity[i] = datamap->value(QString("%1").arg(mb_injVelocity1+i*2))->value.toDouble()/10.0;
+         injPressure[i] = datamap->value(QString("%1").arg(mb_injPressure1+i*2))->value.toDouble()/10.0;
+         injPosition[i] = datamap->value(QString("%1").arg(mb_injPosition1+i*2))->value.toDouble()/10.0;
+        if(injstep<i){
+            injVelocity[i] = 0.0;
+            injPressure[i] = 0.0;
+            injPosition[i] = 0.0;
+        }
+        S_injVelocity[i] = crypto.encryptToString(QString("%1").arg(injVelocity[i],0,'f',1));
+        S_injPressure[i] = crypto.encryptToString(QString("%1").arg(injPressure[i],0,'f',1));
+        S_injPosition[i] = crypto.encryptToString(QString("%1").arg(injPosition[i],0,'f',1));
+    }
+    int hldstep = datamap->value(QString("%1").arg(mb_hldstep))->value.toInt();
+    QString S_hldstep = crypto.encryptToString(datamap->value(QString("%1").arg(mb_hldstep))->value);
+    double hldPressure[3];
+    QString S_hldPressure[3];
+    double hldTime[3];
+    QString S_hldTime[3];
+    double hldVel[3];
+    QString S_hldVel[3];
+    for(int i=0;i<3;i++){
+        hldPressure[i] = datamap->value(QString("%1").arg(mb_hldPressure1+i*2))->value.toDouble()/10.0;
+        hldTime[i] = datamap->value(QString("%1").arg(mb_hldTime1+i*2))->value.toDouble()/10.0;
+        hldVel[i] = datamap->value(QString("%1").arg(mb_hldVel1+i*2))->value.toDouble()/10.0;
+        if(hldstep<i){
+            hldPressure[i] = 0.0;
+            hldTime[i] = 0.0;
+            hldVel[i] = 0.0;
+        }
+        S_hldPressure[i] = crypto.encryptToString(QString("%1").arg(hldPressure[i],0,'f',1));
+        S_hldTime[i] = crypto.encryptToString(QString("%1").arg(hldTime[i],0,'f',1));
+        S_hldVel[i] = crypto.encryptToString(QString("%1").arg(hldVel[i],0,'f',1));
+    }
+
+    double chgPosition[4];
+    double chgSpeed[4];
+    double backPressure[4];
+    QString S_chgPosition[4];
+    QString S_chgSpeed[4];
+    QString S_backPressure[4];
+    for(int i=0;i<4;i++){
+        chgPosition[i] = datamap->value(QString("%1").arg(mb_chgPosition1+i*2))->value.toDouble()/10.0;
+        S_chgPosition[i] = crypto.encryptToString(QString("%1").arg(chgPosition[i],0,'f',1));
+        chgSpeed[i] = datamap->value(QString("%1").arg(mb_chgSpeed1+i*2))->value.toDouble()/10.0;
+        S_chgSpeed[i] = crypto.encryptToString(QString("%1").arg(chgSpeed[i],0,'f',1));
+        backPressure[i] = datamap->value(QString("%1").arg(mb_backPressure1+i*2))->value.toDouble()/10.0;
+        S_backPressure[i] = crypto.encryptToString(QString("%1").arg(backPressure[i],0,'f',1));
+    }
+    double suckbackPosition0 = 0.0;
+    double suckbackPosition2 = datamap->value(QString("%1").arg(mb_suckbackPosition2))->value.toDouble()/10.0;
+    QString S_suckbackPosition0 = crypto.encryptToString(QString("%1").arg(suckbackPosition0,0,'f',1));
+    QString S_suckbackPosition2 = crypto.encryptToString(QString("%1").arg(suckbackPosition2,0,'f',1));
+    double suckbackSpeed1 = datamap->value(QString("%1").arg(mb_suckbackSpeed1))->value.toDouble()/10.0;;
+    double suckbackSpeed2 = datamap->value(QString("%1").arg(mb_suckbackSpeed2))->value.toDouble()/10.0;;
+    QString S_suckbackSpeed1  = crypto.encryptToString(QString("%1").arg(suckbackSpeed1,0,'f',1));
+    QString S_suckbackSpeed2 = crypto.encryptToString(QString("%1").arg(suckbackSpeed2,0,'f',1));
+
+    double pr_EX_Holdp = 0.0;
+    QString S_pr_EX_Holdp = crypto.encryptToString(QString("%1").arg(pr_EX_Holdp,0,'f',1));
+
+    double injtime = datamap->value(QString("%1").arg(mb_injtime))->value.toDouble()/100.0;
+    QString S_injtime = crypto.encryptToString(QString("%1").arg(injtime,0,'f',1));
+
+    double injdelaytime = 0.0;
+    QString S_injdelaytime = crypto.encryptToString(QString("%1").arg(injdelaytime,0,'f',1));
+
+    double cooltime = datamap->value(QString("%1").arg(mb_cooltime))->value.toDouble()/100.0;
+    QString S_cooltime = crypto.encryptToString(QString("%1").arg(cooltime,0,'f',1));
+
+    double chgdelaytime = datamap->value(QString("%1").arg(mb_chgtime))->value.toDouble()/100.0;
+    QString S_chgdelaytime = crypto.encryptToString(QString("%1").arg(chgdelaytime,0,'f',1));
+
+
+    update_temp = QString("UPDATE Recipe_Info "
+                        "SET "
+                      "ITEM_TYPE = '"+S_ITEM_TYPE+"'"
+                      ",injstep = '"+S_injstep+"'"
+                      ",holdstep = '"+S_hldstep+"'"
+                      ",injspd_1 = '"+S_injVelocity[0]+"'"
+                      ",injspd_2 = '"+S_injVelocity[1]+"'"
+                      ",injspd_3 = '"+S_injVelocity[2]+"'"
+                      ",injspd_4 = '"+S_injVelocity[3]+"'"
+                      ",injspd_5 = '"+S_injVelocity[4]+"'"
+                      ",injspd_6 = '"+S_injVelocity[5]+"'"
+                      ",injspd_7 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injspd_8 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injspd_9 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injspd_10 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injprs_1 = '"+S_injPressure[0]+"'"
+                      ",injprs_2 = '"+S_injPressure[1]+"'"
+                      ",injprs_3 = '"+S_injPressure[2]+"'"
+                      ",injprs_4 = '"+S_injPressure[3]+"'"
+                      ",injprs_5 = '"+S_injPressure[4]+"'"
+                      ",injprs_6 = '"+S_injPressure[5]+"'"
+                      ",injprs_7 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injprs_8 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injprs_9 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injprs_10 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injpos_1 = '"+S_injPosition[0]+"'"
+                      ",injpos_2 = '"+S_injPosition[1]+"'"
+                      ",injpos_3 = '"+S_injPosition[2]+"'"
+                      ",injpos_4 = '"+S_injPosition[3]+"'"
+                      ",injpos_5 = '"+S_injPosition[4]+"'"
+                      ",injpos_6 = '"+S_injPosition[5]+"'"
+                      ",injpos_7 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injpos_8 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injpos_9 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injpos_10 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdspd_1 = '"+S_hldVel[0]+"'"
+                      ",holdspd_2 = '"+S_hldVel[1]+"'"
+                      ",holdspd_3 = '"+S_hldVel[2]+"'"
+                      ",holdspd_4 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdspd_5 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdprs_1 = '"+S_hldPressure[0]+"'"
+                      ",holdprs_2 = '"+S_hldPressure[1]+"'"
+                      ",holdprs_3 = '"+S_hldPressure[2]+"'"
+                      ",holdprs_4 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdprs_5 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdtime_1 = '"+S_hldTime[0]+"'"
+                      ",holdtime_2 = '"+S_hldTime[1]+"'"
+                      ",holdtime_3 = '"+S_hldTime[2]+"'"
+                      ",holdtime_4 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",holdtime_5 = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",chgspd_1 = '"+S_chgSpeed[0]+"'"
+                      ",chgspd_2 = '"+S_chgSpeed[1]+"'"
+                      ",chgspd_3 = '"+S_chgSpeed[2]+"'"
+                      ",chgspd_4 = '"+S_chgSpeed[3]+"'"
+                      ",chgbps_1 = '"+S_backPressure[0]+"'"
+                      ",chgbps_2 = '"+S_backPressure[1]+"'"
+                      ",chgbps_3 = '"+S_backPressure[2]+"'"
+                      ",chgbps_4 = '"+S_backPressure[3]+"'"
+                      ",chgpos_1 = '"+S_chgPosition[0]+"'"
+                      ",chgpos_2 = '"+S_chgPosition[1]+"'"
+                      ",chgpos_3 = '"+S_chgPosition[2]+"'"
+                      ",chgpos_4 = '"+S_chgPosition[3]+"'"
+                      ",suckbspd_1 = '"+S_suckbackSpeed1+"'"
+                      ",suckbspd_2 = '"+S_suckbackSpeed2+"'"
+                      ",suckbpos_1 = '"+S_suckbackPosition0+"'"
+                      ",suckbpos_2 = '"+S_suckbackPosition2+"'"
+                      ",sovpos = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",sovprs = '"+S_pr_EX_Holdp+"'"
+                      ",sovtime = '"+crypto.encryptToString(QString("0"))+"'"
+                      ",injtime = '"+S_injtime+"'"
+                      ",injdeltime = '"+S_injdelaytime+"'"
+                      ",cooltime = '"+S_cooltime+"'"
+                      ",chgdeltime = '"+S_chgdelaytime+"' "
+                );
+    update_temp.append(QString("where machine_name = '%1'").arg(mancine_name));
+    mysqlquery1.exec(update_temp);
+
 
 }
 
@@ -1014,6 +1181,201 @@ void es600_base_locgic::TB_REC_save(){
         queryresult = mysqlquery1.exec(insertquery);
 //        qDebug()<<mysqlquery1.lastQuery();
 //        qDebug()<<mysqlquery1.lastError().text();
+
+        mysqlquery1.exec("INSERT INTO shot_data_rec2"
+                         "(Machine_Name"
+                         ",Additional_Info_1"
+                         ",Additional_Info_2"
+                         ",TimeStamp"
+                         ",Shot_Number"
+                         ",inj_step"
+                         ",hold_step"
+                         ",Inj_Velocity_1"
+                         ",Inj_Velocity_2"
+                         ",Inj_Velocity_3"
+                         ",Inj_Velocity_4"
+                         ",Inj_Velocity_5"
+                         ",Inj_Velocity_6"
+                         ",Inj_Velocity_7"
+                         ",Inj_Velocity_8"
+                         ",Inj_Velocity_9"
+                         ",Inj_Velocity_10"
+                         ",Inj_Pressure_1"
+                         ",Inj_Pressure_2"
+                         ",Inj_Pressure_3"
+                         ",Inj_Pressure_4"
+                         ",Inj_Pressure_5"
+                         ",Inj_Pressure_6"
+                         ",Inj_Pressure_7"
+                         ",Inj_Pressure_8"
+                         ",Inj_Pressure_9"
+                         ",Inj_Pressure_10"
+                         ",Inj_Position_1"
+                         ",Inj_Position_2"
+                         ",Inj_Position_3"
+                         ",Inj_Position_4"
+                         ",Inj_Position_5"
+                         ",Inj_Position_6"
+                         ",Inj_Position_7"
+                         ",Inj_Position_8"
+                         ",Inj_Position_9"
+                         ",Inj_Position_10"
+                         ",SOV_Time"
+                         ",SOV_Position"
+                         ",SOV_Prs"
+                         ",Hld_Pressure_1"
+                         ",Hld_Pressure_2"
+                         ",Hld_Pressure_3"
+                         ",Hld_Pressure_4"
+                         ",Hld_Pressure_5"
+                         ",Hld_Time_1"
+                         ",Hld_Time_2"
+                         ",Hld_Time_3"
+                         ",Hld_Time_4"
+                         ",Hld_Time_5"
+                         ",Hld_Vel_1"
+                         ",Hld_Vel_2"
+                         ",Hld_Vel_3"
+                         ",Hld_Vel_4"
+                         ",Hld_Vel_5"
+                         ",Chg_Position_1"
+                         ",Chg_Position_2"
+                         ",Chg_Position_3"
+                         ",Chg_Position_4"
+                         ",Chg_Speed_1"
+                         ",Chg_Speed_2"
+                         ",Chg_Speed_3"
+                         ",Chg_Speed_4"
+                         ",BackPressure_1"
+                         ",BackPressure_2"
+                         ",BackPressure_3"
+                         ",BackPressure_4"
+                         ",Suckback_Position_1"
+                         ",Suckback_Position_2"
+                         ",Suckback_Speed_1"
+                         ",Suckback_Speed_2"
+                         ",Barrel_Temperature_1"
+                         ",Barrel_Temperature_2"
+                         ",Barrel_Temperature_3"
+                         ",Barrel_Temperature_4"
+                         ",Barrel_Temperature_5"
+                         ",Barrel_Temperature_6"
+                         ",Barrel_Temperature_7"
+                         ",Barrel_Temperature_hopper"
+                         ",Mold_Temperature_1"
+                         ",Mold_Temperature_2"
+                         ",Mold_Temperature_3"
+                         ",Mold_Temperature_4"
+                         ",Mold_Temperature_5"
+                         ",Mold_Temperature_6"
+                         ",Mold_Temperature_7"
+                         ",Mold_Temperature_8"
+                         ",Mold_Temperature_9"
+                         ",Mold_Temperature_10"
+                         ",Mold_Temperature_11"
+                         ",Mold_Temperature_12"
+                         ",set_injtime"
+                         ",set_cooltime"
+                         ",set_injdelaytime"
+                         ",set_chgdelaytime)"
+                   "VALUES"
+                         "("
+                         "("+QString("'%1'").arg(mancine_name)+","
+                         ""+QString("'%1'").arg(moldname)+","
+                         ""+"''"+","
+                         ""+"'"+current_date+" "+current_time+"',"
+                         ""+QString("%1").arg(current_shotcount)+","
+                         ""+QString("%1").arg(injstep)+","
+                         ""+QString("%1").arg(hldstep)+","
+                         ""+QString("%1").arg(injVelocity[0],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[1],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[2],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[3],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[4],0,'f',1)+","
+                         ""+QString("%1").arg(injVelocity[5],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[0],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[1],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[2],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[3],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[4],0,'f',1)+","
+                         ""+QString("%1").arg(injPressure[5],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[0],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[1],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[2],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[3],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[4],0,'f',1)+","
+                         ""+QString("%1").arg(injPosition[5],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(hldPressure[0],0,'f',1)+","
+                         ""+QString("%1").arg(hldPressure[1],0,'f',1)+","
+                         ""+QString("%1").arg(hldPressure[2],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(hldTime[0],0,'f',1)+","
+                         ""+QString("%1").arg(hldTime[1],0,'f',1)+","
+                         ""+QString("%1").arg(hldTime[2],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(hldVel[0],0,'f',1)+","
+                         ""+QString("%1").arg(hldVel[1],0,'f',1)+","
+                         ""+QString("%1").arg(hldVel[2],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[0],0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[1],0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[2],0,'f',1)+","
+                         ""+QString("%1").arg(chgPosition[3],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[0],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[1],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[2],0,'f',1)+","
+                         ""+QString("%1").arg(chgSpeed[3],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[0],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[1],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[2],0,'f',1)+","
+                         ""+QString("%1").arg(backPressure[3],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(suckbackPosition2,0,'f',1)+","
+                         ""+QString("%1").arg(suckbackSpeed1,0,'f',1)+","
+                         ""+QString("%1").arg(suckbackSpeed2,0,'f',1)+","
+                         ""+QString("%1").arg(tempset[0],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[1],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[2],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[3],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[4],0,'f',1)+","
+                         ""+QString("%1").arg(tempset[5],0,'f',1)+","
+                         ""+QString("%1").arg(oilset,0,'f',1)+","
+                         ""+QString("%1").arg(tempset[6],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[0],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[1],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[2],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[3],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[4],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[5],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[6],0,'f',1)+","
+                         ""+QString("%1").arg(moldtempset[7],0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(injtime,0,'f',1)+","
+                         ""+QString("%1").arg(cooltime,0,'f',1)+","
+                         ""+QString("%1").arg(0.0,0,'f',1)+","
+                         ""+QString("%1").arg(chgtime,0,'f',1)+")"
+               );
     }
 
     if(queryresult){
@@ -1022,200 +1384,9 @@ void es600_base_locgic::TB_REC_save(){
         remotedb.open();
         qDebug()<<"es600 false";
     }
-    remotequery.exec("INSERT INTO shot_data_rec2"
-                     "(Machine_Name"
-                     ",Additional_Info_1"
-                     ",Additional_Info_2"
-                     ",TimeStamp"
-                     ",Shot_Number"
-                     ",inj_step"
-                     ",hold_step"
-                     ",Inj_Velocity_1"
-                     ",Inj_Velocity_2"
-                     ",Inj_Velocity_3"
-                     ",Inj_Velocity_4"
-                     ",Inj_Velocity_5"
-                     ",Inj_Velocity_6"
-                     ",Inj_Velocity_7"
-                     ",Inj_Velocity_8"
-                     ",Inj_Velocity_9"
-                     ",Inj_Velocity_10"
-                     ",Inj_Pressure_1"
-                     ",Inj_Pressure_2"
-                     ",Inj_Pressure_3"
-                     ",Inj_Pressure_4"
-                     ",Inj_Pressure_5"
-                     ",Inj_Pressure_6"
-                     ",Inj_Pressure_7"
-                     ",Inj_Pressure_8"
-                     ",Inj_Pressure_9"
-                     ",Inj_Pressure_10"
-                     ",Inj_Position_1"
-                     ",Inj_Position_2"
-                     ",Inj_Position_3"
-                     ",Inj_Position_4"
-                     ",Inj_Position_5"
-                     ",Inj_Position_6"
-                     ",Inj_Position_7"
-                     ",Inj_Position_8"
-                     ",Inj_Position_9"
-                     ",Inj_Position_10"
-                     ",SOV_Time"
-                     ",SOV_Position"
-                     ",Hld_Pressure_1"
-                     ",Hld_Pressure_2"
-                     ",Hld_Pressure_3"
-                     ",Hld_Pressure_4"
-                     ",Hld_Pressure_5"
-                     ",Hld_Time_1"
-                     ",Hld_Time_2"
-                     ",Hld_Time_3"
-                     ",Hld_Time_4"
-                     ",Hld_Time_5"
-                     ",Hld_Vel_1"
-                     ",Hld_Vel_2"
-                     ",Hld_Vel_3"
-                     ",Hld_Vel_4"
-                     ",Hld_Vel_5"
-                     ",Chg_Position_1"
-                     ",Chg_Position_2"
-                     ",Chg_Position_3"
-                     ",Chg_Position_4"
-                     ",Chg_Speed_1"
-                     ",Chg_Speed_2"
-                     ",Chg_Speed_3"
-                     ",Chg_Speed_4"
-                     ",BackPressure_1"
-                     ",BackPressure_2"
-                     ",BackPressure_3"
-                     ",BackPressure_4"
-                     ",Suckback_Position_1"
-                     ",Suckback_Position_2"
-                     ",Suckback_Speed_1"
-                     ",Suckback_Speed_2"
-                     ",Barrel_Temperature_1"
-                     ",Barrel_Temperature_2"
-                     ",Barrel_Temperature_3"
-                     ",Barrel_Temperature_4"
-                     ",Barrel_Temperature_5"
-                     ",Barrel_Temperature_6"
-                     ",Barrel_Temperature_7"
-                     ",Barrel_Temperature_oil"
-                     ",Barrel_Temperature_hopper"
-                     ",Mold_Temperature_1"
-                     ",Mold_Temperature_2"
-                     ",Mold_Temperature_3"
-                     ",Mold_Temperature_4"
-                     ",Mold_Temperature_5"
-                     ",Mold_Temperature_6"
-                     ",Mold_Temperature_7"
-                     ",Mold_Temperature_8"
-                     ",Mold_Temperature_9"
-                     ",Mold_Temperature_10"
-                     ",Mold_Temperature_11"
-                     ",Mold_Temperature_12"
-                     ",set_injtime"
-                     ",set_cooltime"
-                     ",set_injdelaytime"
-                     ",set_chgdelaytime)"
-               "VALUES"
-                     "("
-                     "("+QString("'%1'").arg(mancine_name)+","
-                     +QString("'%1'").arg(moldname)+","
-                     +"''"+","
-                     +"'"+current_date+" "+current_time+"',"
-                     +QString("%1").arg(current_shotcount)+","
-                     ""+QString("%1").arg(injstep)+","
-                     ""+QString("%1").arg(hldstep)+","
-                     ""+QString("%1").arg(injVelocity[0],0,'f',1)+","
-                     ""+QString("%1").arg(injVelocity[1],0,'f',1)+","
-                     ""+QString("%1").arg(injVelocity[2],0,'f',1)+","
-                     ""+QString("%1").arg(injVelocity[3],0,'f',1)+","
-                     ""+QString("%1").arg(injVelocity[4],0,'f',1)+","
-                     ""+QString("%1").arg(injVelocity[5],0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(injPressure[0],0,'f',1)+","
-                     ""+QString("%1").arg(injPressure[1],0,'f',1)+","
-                     ""+QString("%1").arg(injPressure[2],0,'f',1)+","
-                     ""+QString("%1").arg(injPressure[3],0,'f',1)+","
-                     ""+QString("%1").arg(injPressure[4],0,'f',1)+","
-                     ""+QString("%1").arg(injPressure[5],0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(injPosition[0],0,'f',1)+","
-                     ""+QString("%1").arg(injPosition[1],0,'f',1)+","
-                     ""+QString("%1").arg(injPosition[2],0,'f',1)+","
-                     ""+QString("%1").arg(injPosition[3],0,'f',1)+","
-                     ""+QString("%1").arg(injPosition[4],0,'f',1)+","
-                     ""+QString("%1").arg(injPosition[5],0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(hldPressure[0],0,'f',1)+","
-                     ""+QString("%1").arg(hldPressure[1],0,'f',1)+","
-                     ""+QString("%1").arg(hldPressure[2],0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(hldTime[0],0,'f',1)+","
-                     ""+QString("%1").arg(hldTime[1],0,'f',1)+","
-                     ""+QString("%1").arg(hldTime[2],0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(hldVel[0],0,'f',1)+","
-                     ""+QString("%1").arg(hldVel[1],0,'f',1)+","
-                     ""+QString("%1").arg(hldVel[2],0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(chgPosition[0],0,'f',1)+","
-                     ""+QString("%1").arg(chgPosition[1],0,'f',1)+","
-                     ""+QString("%1").arg(chgPosition[2],0,'f',1)+","
-                     ""+QString("%1").arg(chgPosition[3],0,'f',1)+","
-                     ""+QString("%1").arg(chgSpeed[0],0,'f',1)+","
-                     ""+QString("%1").arg(chgSpeed[1],0,'f',1)+","
-                     ""+QString("%1").arg(chgSpeed[2],0,'f',1)+","
-                     ""+QString("%1").arg(chgSpeed[3],0,'f',1)+","
-                     ""+QString("%1").arg(backPressure[0],0,'f',1)+","
-                     ""+QString("%1").arg(backPressure[1],0,'f',1)+","
-                     ""+QString("%1").arg(backPressure[2],0,'f',1)+","
-                     ""+QString("%1").arg(backPressure[3],0,'f',1)+","
-                     ""+QString("%1").arg(suckbackPosition0,0,'f',1)+","
-                     ""+QString("%1").arg(suckbackPosition2,0,'f',1)+","
-                     ""+QString("%1").arg(suckbackSpeed1,0,'f',1)+","
-                     ""+QString("%1").arg(suckbackSpeed2,0,'f',1)+","
-                     ""+QString("%1").arg(set_temperature_1,0,'f',1)+","
-                     ""+QString("%1").arg(set_temperature_2,0,'f',1)+","
-                     ""+QString("%1").arg(set_temperature_3,0,'f',1)+","
-                     ""+QString("%1").arg(set_temperature_4,0,'f',1)+","
-                     ""+QString("%1").arg(set_temperature_5,0,'f',1)+","
-                     ""+QString("%1").arg(set_temperature_6,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(set_oil_temp,0,'f',1)+","
-                     ""+QString("%1").arg(set_hoper_temp,0,'f',1)+","
-                     ""+QString("%1").arg(moldtempset[0],0,'f',1)+","
-                     ""+QString("%1").arg(moldtempset[1],0,'f',1)+","
-                     ""+QString("%1").arg(moldtempset[2],0,'f',1)+","
-                     ""+QString("%1").arg(moldtempset[3],0,'f',1)+","
-                     ""+QString("%1").arg(moldtempset[4],0,'f',1)+","
-                     ""+QString("%1").arg(moldtempset[5],0,'f',1)+","
-                     ""+QString("%1").arg(moldtempset[6],0,'f',1)+","
-                     ""+QString("%1").arg(moldtempset[7],0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(0.0,0,'f',1)+","
-                     ""+QString("%1").arg(injdelaytime,0,'f',1)+","
-                     ""+QString("%1").arg(cooltime,0,'f',1)+","
-                     ""+QString("%1").arg(chgdelaytime,0,'f',1)+","
-                     ""+QString("%1").arg(injtime,0,'f',1)+")"
-           );
+
+
+
 
 }
 
@@ -1232,10 +1403,11 @@ void es600_base_locgic::slot_statue_update(bool statue){
 }
 
 
-void es600_base_locgic::modbudread_ready(){
+void es600_base_locgic::modbusread_ready(){
 
     auto reply = qobject_cast<QModbusReply *>(sender());
     if (!reply)
+            reply->deleteLater();
             return;
     const QModbusDataUnit unit = reply->result();
     if (reply->error() == QModbusDevice::NoError) {
@@ -1252,6 +1424,7 @@ void es600_base_locgic::modbudread_ready(){
             waitcondition.wakeAll();
         }
     }
+    reply->deleteLater();
 }
 
 void es600_base_locgic::alram_update(){
@@ -1281,13 +1454,15 @@ void es600_base_locgic::alram_update(){
                                  "Controller_Info,"
                                  "Alarm_Number,"
                                  "Alarm_Start_Time,"
-                                 "Alarm_End_Time) "
+                                 "Alarm_End_Time,"
+                                 "Alarm_flag) "
                                  "VALUES "
                                  "('"+mancine_name+"',"
                                  "'"+monitertype+"', "
                                  ""+alramnumber+", "
                                  "'"+datetime+"', "
-                                 "'1999-01-01 00:00:00')"
+                                 "'1999-01-01 00:00:00',"
+                                 "1)"
                                  ";"
                             );
             }else {//알람 해제 시점
@@ -1296,13 +1471,15 @@ void es600_base_locgic::alram_update(){
                                  "Controller_Info,"
                                  "Alarm_Number,"
                                  "Alarm_Start_Time,"
-                                 "Alarm_End_Time) "
+                                 "Alarm_End_Time,"
+                                 "Alarm_flag) "
                                  "VALUES "
                                  "('"+mancine_name+"',"
                                  "'"+monitertype+"', "
                                  ""+alramnumber+", "
                                  "'1999-01-01 00:00:00', "
-                                 "'"+datetime+"')"
+                                 "'"+datetime+"',"
+                                 "0)"
                                  ";"
                             );
             }

@@ -311,6 +311,8 @@
 #define gmb_program_name_19 3512
 #define gmb_program_name_20 3514
 
+#define gmb_pr_EX_Holdp 3516
+
 
 class gefranvalue {
 public:
@@ -336,8 +338,8 @@ public:
     QObject *parentmslot;
     QMap<QString,gefranvalue *> *datamap; //<name,value>
     QMap<QString,alrammap_data *> *alrammap;
-    QNetworkAccessManager manager;
-    QNetworkRequest requast;
+    //QNetworkAccessManager manager;
+    //QNetworkRequest requast;
     QSqlDatabase litedb;
     QSqlDatabase remotedb;
     QWaitCondition waitcondition;
@@ -371,6 +373,7 @@ public:
 
     QString get_mold_name();
     QString get_program_name();
+    void alram_update();
     // gefran은 리시브를 받지 않고 바로 요청 패킷을 보내면 연결을 해제 한다.
     int modbuscount;
 signals:
@@ -379,7 +382,7 @@ public slots:
     void managerfinished(QNetworkReply *reply);
     void telnetreadready();
     void modbusstatue_change(int state);
-    void modbudread_ready();
+    void modbusread_ready();
     void gefranseven_base_loop();
     void slot_statue_update(bool statue);
 
