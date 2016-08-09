@@ -240,6 +240,7 @@ void bluecon_base_logic::loop(){
 void bluecon_base_logic::bluecon_base_loop(){
     //qDebug()<<"test";
     alram_update();
+    REC_save();
 }
 
 void bluecon_base_logic::modbusread_ready(){
@@ -286,6 +287,18 @@ void bluecon_base_logic::current_update(){
 }
 
 void bluecon_base_logic::REC_save(){
+    if(before_shotcount<0){
+        before_shotcount = current_shotcount;
+        //modbus_write_register(ctx,mb_actstatus,0);
+    }
+    if(before_shotcount!=current_shotcount){
+        before_shotcount=current_shotcount;
+         QString mold_name = get_mold_name();
+         int fooldata =datamap->value(QString("%1").arg(bmb_SHOTDATA_fooldata))->value.toInt();
+         double injectiontime = datamap->value(QString("%1").arg(bmb_SHOTDATA_inctiontime))->value.toDouble()/10.0;
+         double fillingtime = datamap->value(QString("%1").arg(mb_SHOTDATA_fillingtime))->value.toDouble()/100.0;
+    }
+
 
 }
 void bluecon_base_logic::alram_update(){
@@ -390,4 +403,40 @@ void bluecon_base_logic::slot_statue_update(bool statue){
         parent_item->set_connectlabel_text("<img src=\":/icon/icon/light-bulb_red.png\">  disconnect");
         parent_item->set_status_text("<img src=\":/icon/icon/stop.png\">  STOP");
     }
+}
+QString bluecon_base_logic::get_mold_name(){
+    unsigned short moldname1 = datamap->value(QString("%1").arg(bmb_moldname1))->value.toShort();
+    unsigned short moldname2 = datamap->value(QString("%1").arg(bmb_moldname2))->value.toShort();
+    unsigned short moldname3 = datamap->value(QString("%1").arg(bmb_moldname3))->value.toShort();
+    unsigned short moldname4 = datamap->value(QString("%1").arg(bmb_moldname4))->value.toShort();
+    unsigned short moldname5 = datamap->value(QString("%1").arg(bmb_moldname5))->value.toShort();
+    unsigned short moldname6 = datamap->value(QString("%1").arg(bmb_moldname6))->value.toShort();
+    unsigned short moldname7 = datamap->value(QString("%1").arg(bmb_moldname7))->value.toShort();
+    unsigned short moldname8 = datamap->value(QString("%1").arg(bmb_moldname8))->value.toShort();
+    unsigned short moldname9 = datamap->value(QString("%1").arg(bmb_moldname9))->value.toShort();
+    unsigned short moldname10 = datamap->value(QString("%1").arg(bmb_moldname10))->value.toShort();
+    QByteArray mold_name;
+    mold_name.append((char)(moldname1>>8));
+    mold_name.append((char)(moldname1));
+    mold_name.append((char)(moldname2>>8));
+    mold_name.append((char)(moldname2));
+    mold_name.append((char)(moldname3>>8));
+    mold_name.append((char)(moldname3));
+    mold_name.append((char)(moldname4>>8));
+    mold_name.append((char)(moldname4));
+    mold_name.append((char)(moldname5>>8));
+    mold_name.append((char)(moldname5));
+    mold_name.append((char)(moldname6>>8));
+    mold_name.append((char)(moldname6));
+    mold_name.append((char)(moldname7>>8));
+    mold_name.append((char)(moldname7));
+    mold_name.append((char)(moldname8>>8));
+    mold_name.append((char)(moldname8));
+    mold_name.append((char)(moldname9>>8));
+    mold_name.append((char)(moldname9));
+    mold_name.append((char)(moldname10>>8));
+    mold_name.append((char)(moldname10));
+    QString moldname = mold_name;
+    return moldname;
+
 }
