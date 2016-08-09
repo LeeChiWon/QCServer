@@ -287,19 +287,134 @@ void bluecon_base_logic::current_update(){
 }
 
 void bluecon_base_logic::REC_save(){
+    mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
+    QString mancine_name = parent_item->machinename->text();
+
+    QSqlQuery mysqlquery1(remotedb);
     if(before_shotcount<0){
         before_shotcount = current_shotcount;
         //modbus_write_register(ctx,mb_actstatus,0);
     }
     if(before_shotcount!=current_shotcount){
         before_shotcount=current_shotcount;
-         QString mold_name = get_mold_name();
+
          int fooldata =datamap->value(QString("%1").arg(bmb_SHOTDATA_fooldata))->value.toInt();
          double injectiontime = datamap->value(QString("%1").arg(bmb_SHOTDATA_inctiontime))->value.toDouble()/10.0;
-         double fillingtime = datamap->value(QString("%1").arg(mb_SHOTDATA_fillingtime))->value.toDouble()/100.0;
+         double fillingtime = datamap->value(QString("%1").arg(bmb_SHOTDATA_fillingtime))->value.toDouble()/10.0;
+         double cycle_time = datamap->value(QString("%1").arg(bmb_SHOTDATA_cycle_time))->value.toDouble()/100.0;
+         double cushion_position = datamap->value(QString("%1").arg(bmb_SHOTDATA_cushion_position))->value.toDouble()/10.0;
+         double clamp_close_time  = datamap->value(QString("%1").arg(bmb_SHOTDATA_clamp_close_time))->value.toDouble()/10.0;
+         double plasticizing_position = datamap->value(QString("%1").arg(bmb_SHOTDATA_plasticizing_position))->value.toDouble()/10.0;
+         double max_injection_speed = datamap->value(QString("%1").arg(bmb_SHOTDATA__max_injection_speed))->value.toDouble()/10.0;
+         double clamp_open_position = datamap->value(QString("%1").arg(bmb_SHOTDATA_clamp_open_position))->value.toDouble()/10.0;
+         double switch_over_position  = datamap->value(QString("%1").arg(bmb_SHOTDATA_switch_over_position))->value.toDouble()/10.0;
+         double max_switch_over_pressure = datamap->value(QString("%1").arg(bmb_SHOTDATA__max_switch_over_pressure))->value.toDouble()/10.0;
+         double max_back_pressure = datamap->value(QString("%1").arg(bmb_SHOTDATA__max_switch_over_pressure))->value.toDouble()/10.0;
+         double max_screw_RPM = datamap->value(QString("%1").arg(bmb_SHOTDATA__max_screw_RPM))->value.toDouble()/10.0;
+         double average_screw_RPM = datamap->value(QString("%1").arg(bmb_SHOTDATA__average_screw_RPM))->value.toDouble()/10.0;
+         double max_injection_pressure = datamap->value(QString("%1").arg(bmb_SHOTDATA__max_injection_pressure))->value.toDouble()/10.0;
+         double average_back_pressure = datamap->value(QString("%1").arg(bmb_SHOTDATA__average_back_pressure))->value.toDouble()/10.0;
+         double temp1=datamap->value(QString("%1").arg(bmb_temp1_real))->value.toDouble()/10.0;
+         double temp2=datamap->value(QString("%1").arg(bmb_temp2_real))->value.toDouble()/10.0;
+         double temp3=datamap->value(QString("%1").arg(bmb_temp3_real))->value.toDouble()/10.0;
+         double temp4=datamap->value(QString("%1").arg(bmb_temp4_real))->value.toDouble()/10.0;
+         double temp5=datamap->value(QString("%1").arg(bmb_temp5_real))->value.toDouble()/10.0;
+         double temp6=datamap->value(QString("%1").arg(bmb_temp6_real))->value.toDouble()/10.0;
+         double temp7=datamap->value(QString("%1").arg(bmb_temp7_real))->value.toDouble()/10.0;
+         double oil_temp=datamap->value(QString("%1").arg(bmb_temp8_real))->value.toDouble()/10.0;
+         double moldtemp1 = datamap->value(QString("%1").arg(bmb_temp9_real))->value.toDouble()/10.0;
+         double moldtemp2 = datamap->value(QString("%1").arg(bmb_temp10_real))->value.toDouble()/10.0;
+         double moldtemp3 = datamap->value(QString("%1").arg(bmb_temp11_real))->value.toDouble()/10.0;
+         double moldtemp4 = datamap->value(QString("%1").arg(bmb_temp12_real))->value.toDouble()/10.0;
+         double moldtemp5 = datamap->value(QString("%1").arg(bmb_temp13_real))->value.toDouble()/10.0;
+         double moldtemp6 = datamap->value(QString("%1").arg(bmb_temp14_real))->value.toDouble()/10.0;
+         double moldtemp7 = datamap->value(QString("%1").arg(bmb_temp15_real))->value.toDouble()/10.0;
+         double moldtemp8 = datamap->value(QString("%1").arg(bmb_temp16_real))->value.toDouble()/10.0;
+
+         QString moldname = get_moldname();
+         QString current_date = QDate::currentDate().toString("yyyy-MM-dd");
+         QString current_time = QTime::currentTime().toString("hh:mm:ss");
+         QString insertquery = QString("INSERT INTO shot_data "
+                                       "(Machine_Name"
+                                       ",Additional_Info_1"
+                                       ",Additional_Info_2"
+                                       ",TimeStamp"
+                                       ",Shot_Number"
+                                       ",NGmark"
+                                       ",Injection_Time"
+                                       ",Filling_Time"
+                                       ",Plasticizing_Time"
+                                       ",Cycle_Time"
+                                       ",Clamp_Close_Time"
+                                       ",Cushion_Position"
+                                       ",Switch_Over_Position"
+                                       ",Plasticizing_Position"
+                                       ",Clamp_Open_Position"
+                                       ",Max_Injection_Speed"
+                                       ",Max_Screw_RPM"
+                                       ",Average_Screw_RPM"
+                                       ",Max_Injection_Pressure"
+                                       ",Max_Switch_Over_Pressure"
+                                       ",Max_Back_Pressure"
+                                       ",Average_Back_Pressure"
+                                       ",Barrel_Temperature_1"
+                                       ",Barrel_Temperature_2"
+                                       ",Barrel_Temperature_3"
+                                       ",Barrel_Temperature_4"
+                                       ",Barrel_Temperature_5"
+                                       ",Barrel_Temperature_6"
+                                       ",Barrel_Temperature_7"
+                                       ",Hopper_Temperature"
+                                       ",Mold_Temperature_1"
+                                       ",Mold_Temperature_2"
+                                       ",Mold_Temperature_3"
+                                       ",Mold_Temperature_4"
+                                       ",Mold_Temperature_5"
+                                       ",Mold_Temperature_6"
+                                       ",Mold_Temperature_7"
+                                       ",Mold_Temperature_8)"
+                                 "VALUES ("
+                                       +QString("'%1'").arg(mancine_name)+","
+                                       +QString("'%1'").arg(moldname)+","
+                                       +"''"+","
+                                       +"'"+current_date+" "+current_time+"',"
+                                       +QString("%1").arg(current_shotcount)+","
+                                       +QString("%1").arg(fooldata)+","
+                                       +QString("%1").arg(injectiontime)+","
+                                       +QString("%1").arg(fillingtime)+","
+                                       +QString("%1").arg(plasticizing_time)+","
+                                       +QString("%1").arg(cycle_time)+","  //Cycle_Time
+                                       +QString("%1").arg(clamp_close_time)+"," //Clamp_Close_Time
+                                       +QString("%1").arg(cushion_position)+"," //Cushion_Position
+                                       +QString("%1").arg(switch_over_position)+","//Switch_Over_Position
+                                       +QString("%1").arg(plasticizing_position)+","//Plasticizing_Position
+                                       +QString("%1").arg(clamp_open_position)+","//Clamp_Open_Position
+                                       +QString("%1").arg(max_injection_speed)+","//Max_Injection_Speed
+                                       +QString("%1").arg(max_screw_RPM)+","//Max_Screw_RPM
+                                       +QString("%1").arg(average_screw_RPM)+","//Average_Screw_RPM
+                                       +QString("%1").arg(max_injection_pressure)+","//Max_Injection_Pressure
+                                       +QString("%1").arg(max_switch_over_pressure)+","//Max_Switch_Over_Pressure
+                                       +QString("%1").arg(max_back_pressure)+","//Max_Back_Pressure
+                                       +QString("%1").arg(average_back_pressure)+","//Average_Back_Pressure
+                                       +QString("%1").arg(temp1)+","
+                                       +QString("%1").arg(temp2)+","
+                                       +QString("%1").arg(temp3)+","
+                                       +QString("%1").arg(temp4)+","
+                                       +QString("%1").arg(temp5)+","
+                                       +QString("%1").arg(temp6)+","
+                                       +QString("%1").arg(oil_temp)+","
+                                       +QString("%1").arg(temp7)+","
+                                       +QString("%1").arg(moldtemp1)+","
+                                       +QString("%1").arg(moldtemp2)+","
+                                       +QString("%1").arg(moldtemp3)+","
+                                       +QString("%1").arg(moldtemp4)+","
+                                       +QString("%1").arg(moldtemp5)+","
+                                       +QString("%1").arg(moldtemp6)+","
+                                       +QString("%1").arg(moldtemp7)+","
+                                       +QString("%1").arg(moldtemp8)+")"
+                    );
+         queryresult = mysqlquery1.exec(insertquery);
     }
-
-
 }
 void bluecon_base_logic::alram_update(){
     mslotitem * parent_item = (mslotitem *)parentmslot; //부모 위젯
