@@ -376,6 +376,11 @@ void Bnr_base_locgic::TA_current_update(){
     update_temp.append(QString("%1%2%3").arg(Charge[CHGBPS].at(0),Charge[CHGBPS].at(1),Charge[CHGBPS].at(2)));
     update_temp.append(QString("%1%2%3").arg(Charge[CHGPOS].at(0),Charge[CHGPOS].at(1),Charge[CHGPOS].at(2)));
 
+    update_temp.append(QString("ITEM_TYPE = '%1',")
+                       .arg(crypto.encryptToString(QString("%1").arg(parent_item->type->currentText())))
+                       );
+
+
     update_temp.append(QString("suckbspd_1='%1', suckbspd_2='%2', suckbpos_1='%3', suckbpos_2='%4',")
                        .arg(crypto.encryptToString(QString("%1").arg(datamap->value("REC_DATA.IP.NS.SvDB")->value.toFloat()/10,0,'f',1)))
                        .arg(crypto.encryptToString(QString("%1").arg(datamap->value("REC_DATA.IP.NS.SvDA")->value.toFloat()/10,0,'f',1)))
@@ -1827,6 +1832,11 @@ void Bnr_base_locgic::DL_current_update(){
     update_temp.append(QString("%1%2%3").arg(Charge[CHGSPD].at(0),Charge[CHGSPD].at(1),Charge[CHGSPD].at(2)));
     update_temp.append(QString("%1%2%3").arg(Charge[CHGBPS].at(0),Charge[CHGBPS].at(1),Charge[CHGBPS].at(2)));
     update_temp.append(QString("%1%2%3").arg(Charge[CHGPOS].at(0),Charge[CHGPOS].at(1),Charge[CHGPOS].at(2)));
+
+    update_temp.append(QString("ITEM_TYPE = '%1',")
+                       .arg(crypto.encryptToString(QString("%1").arg(parent_item->type->currentText())))
+                       );
+
 
     update_temp.append(QString("suckbspd_1='%1', suckbspd_2='%2', suckbpos_1='%3', suckbpos_2='%4',")
                        .arg(crypto.encryptToString(QString("%1").arg(datamap->value("REC_DATA.IP.NS.SvDB")->value.toFloat()/10,0,'f',1)))

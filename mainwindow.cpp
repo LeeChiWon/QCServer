@@ -1050,6 +1050,7 @@ void MainWindow::remotesql_init(){
                          "`Mold_Temperature_2` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_3` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_4` DOUBLE NULL DEFAULT '0',"
+                         "`Mold_Temperature_5` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_6` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_7` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_8` DOUBLE NULL DEFAULT '0',"

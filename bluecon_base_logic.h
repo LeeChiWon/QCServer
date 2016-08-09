@@ -30,11 +30,11 @@
 #define bmb_moldname3 58
 #define bmb_moldname4 59
 #define bmb_moldname5 60
-#define bmb_moldname6 62
-#define bmb_moldname7 64
-#define bmb_moldname8 66
-#define bmb_moldname9 68
-#define bmb_moldname10 70
+#define bmb_moldname6 61
+#define bmb_moldname7 62
+#define bmb_moldname8 63
+#define bmb_moldname9 64
+#define bmb_moldname10 65
 
 #define bmb_injVelocity1 114
 #define bmb_injVelocity2 116
