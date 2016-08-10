@@ -335,13 +335,13 @@ void es600_base_locgic::TB_current_update(){
                                .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value,0,'f',1)));
 
-        }else if(i=7){
+        }else if(i==7){
             double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
-            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
                                .arg(8)
                                .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
@@ -349,13 +349,13 @@ void es600_base_locgic::TB_current_update(){
                                .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(1)));
 
-        }else if(i=8){
+        }else if(i==8){
             double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
-            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
+            temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
                                .arg(7)
                                .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
@@ -391,12 +391,12 @@ void es600_base_locgic::TB_current_update(){
         remotedb.open();
         qDebug()<<"es600 false";
     }
-    int run_mode =datamap->value(QString("%1").arg(addrlist.at(mb_run_mode)))->value.toInt();
-    int object_count = datamap->value(QString("%1").arg(addrlist.at(mb_object_count)))->value.toInt();
-    int production_count = datamap->value(QString("%1").arg(addrlist.at(mb_production_count)))->value.toInt();
+    int run_mode =datamap->value(QString("%1").arg(mb_run_mode))->value.toInt();
+    int object_count = datamap->value(QString("%1").arg(mb_object_count))->value.toInt();
+    int production_count = datamap->value(QString("%1").arg(mb_production_count))->value.toInt();
     double achievemen_rate = (double)object_count/(double)production_count;
-    int cabity = datamap->value(QString("%1").arg(addrlist.at(mb_cabity)))->value.toInt();
-    int warning_flag = datamap->value(QString("%1").arg(addrlist.at(mb_warning_flag)))->value.toInt();
+    int cabity = datamap->value(QString("%1").arg(mb_cabity))->value.toInt();
+    int warning_flag = datamap->value(QString("%1").arg(mb_warning_flag))->value.toInt();
     double cycle_time = datamap->value(QString("%1").arg(mb_SHOTDATA_cycle_time))->value.toDouble()/100.0;
     QString mold_name = get_moldname();
     QString program_name = "";
@@ -966,16 +966,19 @@ void es600_base_locgic::TB_REC_save(){
             hldVelstr.append(QString("%1/").arg(hldVel[0]));
         }else{
             hldVelstr.append(QString("%1/").arg(0.0));
+            hldVel[0] = 0.0;
         }
         if(hldstep>1){
             hldVelstr.append(QString("%1/").arg(hldVel[1]));
         }else{
             hldVelstr.append(QString("%1/").arg(0.0));
+            hldVel[1] = 0.0;
         }
         if(hldstep>2){
             hldVelstr.append(QString("%1").arg(hldVel[2]));
         }else{
             hldVelstr.append(QString("%1").arg(0.0));
+            hldVel[2] = 0.0;
         }
 
         QString chgPositionstr;

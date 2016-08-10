@@ -1050,6 +1050,7 @@ void MainWindow::remotesql_init(){
                          "`Mold_Temperature_2` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_3` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_4` DOUBLE NULL DEFAULT '0',"
+                         "`Mold_Temperature_5` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_6` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_7` DOUBLE NULL DEFAULT '0',"
                          "`Mold_Temperature_8` DOUBLE NULL DEFAULT '0',"
@@ -1071,7 +1072,7 @@ void MainWindow::remotesql_init(){
     }else if(type == ODBC){
         mysqlquery1.exec("CREATE TABLE shot_data_rec2("
                          "[rec_idx] [numeric](18, 0) IDENTITY(1,1) NOT NULL,"
-                         "[Machine_Name] [text] NULL,"
+                         "[Machine_Name] [varchar](50) NULL,"
                          "[Additional_Info_1] [text] NULL,"
                          "[Additional_Info_2] [text] NULL,"
                          "[TimeStamp] [datetime] NULL,"

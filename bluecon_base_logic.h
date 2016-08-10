@@ -30,11 +30,11 @@
 #define bmb_moldname3 58
 #define bmb_moldname4 59
 #define bmb_moldname5 60
-#define bmb_moldname6 62
-#define bmb_moldname7 64
-#define bmb_moldname8 66
-#define bmb_moldname9 68
-#define bmb_moldname10 70
+#define bmb_moldname6 61
+#define bmb_moldname7 62
+#define bmb_moldname8 63
+#define bmb_moldname9 64
+#define bmb_moldname10 65
 
 #define bmb_injVelocity1 114
 #define bmb_injVelocity2 116
@@ -111,6 +111,23 @@
 #define bmb_suckbackSpeed1 426
 #define bmb_suckbackSpeed2 428
 
+#define bmb_temp1_use 398
+#define bmb_temp2_use 399
+#define bmb_temp3_use 400
+#define bmb_temp4_use 401
+#define bmb_temp5_use 402
+#define bmb_temp6_use 403
+#define bmb_temp7_use 404
+#define bmb_temp8_use 405
+#define bmb_temp9_use 406
+#define bmb_temp10_use 407
+#define bmb_temp11_use 408
+#define bmb_temp12_use 409
+#define bmb_temp13_use 410
+#define bmb_temp14_use 411
+#define bmb_temp15_use 412
+#define bmb_temp16_use 413
+
 #define bmb_temp1_set 434
 #define bmb_temp2_set 436
 #define bmb_temp3_set 438
@@ -127,6 +144,43 @@
 #define bmb_temp14_set 484
 #define bmb_temp15_set 486
 #define bmb_temp16_set 488
+
+#define bmb_temp1_up 454
+#define bmb_temp2_up 456
+#define bmb_temp3_up 458
+#define bmb_temp4_up 460
+#define bmb_temp5_up 462
+#define bmb_temp6_up 464
+#define bmb_temp7_up 466
+#define bmb_temp8_up 468
+#define bmb_temp9_up 470
+#define bmb_temp10_up 470
+#define bmb_temp11_up 470
+#define bmb_temp12_up 470
+#define bmb_temp13_up 470
+#define bmb_temp14_up 470
+#define bmb_temp15_up 470
+#define bmb_temp16_up 470
+
+#define bmb_temp1_down 494
+#define bmb_temp2_down 496
+#define bmb_temp3_down 498
+#define bmb_temp4_down 500
+#define bmb_temp5_down 502
+#define bmb_temp6_down 504
+#define bmb_temp7_down 506
+#define bmb_temp8_down 508
+#define bmb_temp9_down 510
+#define bmb_temp10_down 510
+#define bmb_temp11_down 510
+#define bmb_temp12_down 510
+#define bmb_temp13_down 510
+#define bmb_temp14_down 510
+#define bmb_temp15_down 510
+#define bmb_temp16_down 510
+
+
+
 
 #define bmb_INJETM 514
 #define bmb_COOLTM 516
