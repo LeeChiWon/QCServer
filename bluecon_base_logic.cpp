@@ -374,42 +374,42 @@ void bluecon_base_logic::current_update(){
             double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
-
+            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble();
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
                                .arg(8)
                                .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_down_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
-                               .arg(crypto.encryptToString(QString("%1").arg(1)));
+                               .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value)));
 
         }else if(i==8){
             double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
-            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
+
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6' ")
                                .arg(7)
                                .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_down_value,0,'f',1)))
                                .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
-                               .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value,0,'f',1)));
+                               .arg(crypto.encryptToString(QString("%1").arg(1)));
 
         }else {
             double temp_set_value = datamap->value(QString("%1").arg(addrlist.at(temp_set_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_up_value = datamap->value(QString("%1").arg(addrlist.at(temp_up_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_down_value = datamap->value(QString("%1").arg(addrlist.at(temp_down_atnumber+i-1)))->value.toDouble()/10.0;
             double temp_real_value = datamap->value(QString("%1").arg(addrlist.at(temp_real_atnumber+i-1)))->value.toDouble()/10.0;
-            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble()/10.0;
+            double temp_onoff_value = datamap->value(QString("%1").arg(addrlist.at(temp_onoff_atnumber+i-1)))->value.toDouble();
             temp_append = QString("temp%1_set='%2', temp%1_up='%3', temp%1_down='%4', temp%1_real='%5', temp%1_onoff = '%6', ")
                             .arg(i)
                             .arg(crypto.encryptToString(QString("%1").arg(temp_set_value,0,'f',1)))
                             .arg(crypto.encryptToString(QString("%1").arg(temp_up_value,0,'f',1)))
                             .arg(crypto.encryptToString(QString("%1").arg(temp_down_value,0,'f',1)))
                             .arg(crypto.encryptToString(QString("%1").arg(temp_real_value,0,'f',1)))
-                            .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value,0,'f',1)));
+                            .arg(crypto.encryptToString(QString("%1").arg(temp_onoff_value)));
 
         }
          update_temp.append(temp_append);
@@ -428,7 +428,7 @@ void bluecon_base_logic::current_update(){
     int run_mode =datamap->value(QString("%1").arg(bmb_run_mode))->value.toInt();
     int object_count = datamap->value(QString("%1").arg(bmb_object_count))->value.toInt();
     int production_count = datamap->value(QString("%1").arg(bmb_production_count))->value.toInt();
-    double achievemen_rate = (double)object_count/(double)production_count;
+    double achievemen_rate = ((double)production_count/(double)object_count)*100;
     int cabity = datamap->value(QString("%1").arg(bmb_cabity))->value.toInt();
     int warning_flag = datamap->value(QString("%1").arg(bmb_warning_flag))->value.toInt();
     double cycle_time = datamap->value(QString("%1").arg(bmb_SHOTDATA_cycle_time))->value.toDouble()/10.0;
