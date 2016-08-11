@@ -394,7 +394,7 @@ void es600_base_locgic::TB_current_update(){
     int run_mode =datamap->value(QString("%1").arg(mb_run_mode))->value.toInt();
     int object_count = datamap->value(QString("%1").arg(mb_object_count))->value.toInt();
     int production_count = datamap->value(QString("%1").arg(mb_production_count))->value.toInt();
-    double achievemen_rate = (double)object_count/(double)production_count * 100;
+    double achievemen_rate = ((double)production_count/(double)object_count)*100;
     int cabity = datamap->value(QString("%1").arg(mb_cabity))->value.toInt();
     int warning_flag = datamap->value(QString("%1").arg(mb_warning_flag))->value.toInt();
     double cycle_time = datamap->value(QString("%1").arg(mb_SHOTDATA_cycle_time))->value.toDouble()/100.0;
