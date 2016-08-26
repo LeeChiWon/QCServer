@@ -778,8 +778,8 @@ void bluecon_base_logic::REC_save(){
          double injPosition[10];
          for(int i=0;i<10;i++){
              if(i==9){
-                 injVelocity[i] = datamap->value(QString("%1").arg(bmb_injVelocity1+i*2))->value.toDouble()/100.0;
-                 injPressure[i] = datamap->value(QString("%1").arg(bmb_injPressure1+i*2))->value.toDouble();
+                 injVelocity[i] = datamap->value(QString("%1").arg(bmb_injVelocity1+i*2))->value.toDouble()/10.0;
+                 injPressure[i] = datamap->value(QString("%1").arg(bmb_injPressure1+i*2))->value.toDouble()/10.0;
                  injPosition[i] = datamap->value(QString("%1").arg(bmb_injPosition1+i*2))->value.toDouble()/10.0;
                  if(injstep>i){
                      Inj_Velocitystr.append(QString("%1").arg(injVelocity[i]));
@@ -794,8 +794,8 @@ void bluecon_base_logic::REC_save(){
                      injPosition[i] = 0.0;
                  }
              }else {
-                 injVelocity[i] = datamap->value(QString("%1").arg(bmb_injVelocity1+i*2))->value.toDouble()/100.0;
-                 injPressure[i] = datamap->value(QString("%1").arg(bmb_injPressure1+i*2))->value.toDouble();
+                 injVelocity[i] = datamap->value(QString("%1").arg(bmb_injVelocity1+i*2))->value.toDouble()/10.0;
+                 injPressure[i] = datamap->value(QString("%1").arg(bmb_injPressure1+i*2))->value.toDouble()/10.0;
                  injPosition[i] = datamap->value(QString("%1").arg(bmb_injPosition1+i*2))->value.toDouble()/10.0;
                  if(injstep>i){
                      Inj_Velocitystr.append(QString("%1/").arg(injVelocity[i]));
@@ -814,9 +814,9 @@ void bluecon_base_logic::REC_save(){
         QString hldPressurestr;
         QString hldTimestr;
         QString hldVelstr;
-        double hldTime[3];
-        double hldPressure[4];
-        double hldVel[3];
+        double hldTime[5];
+        double hldPressure[5];
+        double hldVel[5];
         int hldstep = datamap->value(QString("%1").arg(mb_hldstep))->value.toInt();
         for(int i=0;i<5;i++){
             if(i == 4){
