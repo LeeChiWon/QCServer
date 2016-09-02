@@ -1055,8 +1055,8 @@ void bluecon_base_logic::REC_save(){
         queryresult = mysqlquery1.exec(insertquery);
 //        qDebug()<<mysqlquery1.lastQuery();
 
-        qDebug()<<mysqlquery1.lastQuery();
-        qDebug()<<mysqlquery1.lastError().text();
+//        qDebug()<<mysqlquery1.lastQuery();
+//        qDebug()<<mysqlquery1.lastError().text();
 
         mysqlquery1.exec("INSERT INTO shot_data_rec2"
                          "(Machine_Name"

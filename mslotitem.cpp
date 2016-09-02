@@ -190,6 +190,86 @@ mslotitem::mslotitem(QString iptext, QString machinenametext, QObject *parent) :
 //    qDebug()<<mysqlquery1.lastQuery();
 //    qDebug()<<mysqlquery1.lastError().text();
     }
+
+    if(typeDB == MYSQL){
+    quertstr2 =  QString("INSERT INTO Systeminfo ("
+                                 "machine_name,"
+                                 "ipaddress,"
+                                 "ITEMCONNECT,"
+                                 "ITEMSTATUS,"
+                                 "ITEMTYPE"
+                                 ") values ("
+                                 "'%1',"  //machine_name
+                                 "'%2',"  // ipaddress
+                                 "'%3',"  //ITEMCONNECT
+                                 "'%4',"  //ITEMSTATUS
+                                 "'%5'"   //ITEMTYPE
+                                 ") ON DUPLICATE KEY UPDATE "
+                                 "ITEMCONNECT = '%3',"
+                                 "ITEMSTATUS = '%4'"
+                                 ).arg(machinenametext)
+                                  .arg(iptext)
+                                  .arg(connectlabel->text())
+                                  .arg(status->text())
+                                  .arg(type->currentText());
+                                  ;
+    mysqlquery1.exec(quertstr2);
+    }else if(typeDB == ODBC){
+   quertstr2 =  QString("UPDATE Systeminfo SET "
+                                "ITEMCONNECT = '%3',"
+                                "ITEMSTATUS = '%4' "
+                                "where machine_name = '%1'"
+                                "IF @@ROWCOUNT=0 "
+                                "INSERT INTO Systeminfo("
+                                "machine_name,"
+                                "ipaddress,"
+                                "ITEMCONNECT,"
+                                "ITEMSTATUS,"
+                                "ITEMTYPE"
+                                ") values ("
+                                "'%1',"  //machine_name
+                                "'%2',"  // ipaddress
+                                "'%3',"  //ITEMCONNECT
+                                "'%4',"  //ITEMSTATUS
+                                "'%5')"   //ITEMTYPE
+                                ).arg(machinenametext)
+                                 .arg(iptext)
+                                 .arg(connectlabel->text())
+                                 .arg(status->text())
+                                 .arg(type->currentText());
+                                 ;
+        mysqlquery1.exec(quertstr2);
+    }
+    if(typeDB == MYSQL){
+        quertstr2 = QString("select Machine_Name from ExcelCell_Info where Machine_Name = '%1'")
+                            .arg(machinenametext);
+
+        mysqlquery1.exec(quertstr2);
+
+        bool isdataflag = false;
+        if(mysqlquery1.next()){
+            isdataflag = true;
+        }
+        if(!isdataflag)
+        quertstr2 = QString("INSERT INTO ExcelCell_Info (Machine_Name) values ('%1')"
+                            ).arg(machinenametext);
+        mysqlquery1.exec(quertstr2);
+    }else if(typeDB == ODBC){
+        quertstr2 = QString("select Machine_Name from ExcelCell_Info where Machine_Name = '%1'")
+                                .arg(machinenametext);
+        mysqlquery1.exec(quertstr2);
+
+        bool isdataflag = false;
+        if(mysqlquery1.next()){
+              isdataflag = true;
+        }
+        if(!isdataflag){
+        quertstr2 = QString("INSERT INTO ExcelCell_Info(Machine_Name) values('%1')")
+                .arg(machinenametext);
+        mysqlquery1.exec(quertstr2);
+        }
+
+    }
     maintimer.setInterval(MAINTIMERTIME);
     bnr_base_logic = new Bnr_base_locgic(this);
     gefran_base_logic = new gefranseven_base_logic(this);
